@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.ui
+package com.lukmannudin.moviecatalogue.ui.home
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

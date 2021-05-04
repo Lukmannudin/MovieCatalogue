@@ -11,20 +11,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieCatalogue">
-        <activity android:name=".ui.movies.moviesdetail.MoviesDetailActivity"
-            android:parentActivityName=".ui.HomeActivity"
-            android:theme="@style/Theme.MovieCatalogue.NoActionBar"
-            >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomeActivity" />
-        </activity>
-        <activity android:name=".ui.HomeActivity">
+
+        <activity android:name=".ui.home.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name="com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailActivity"
+            android:parentActivityName=".ui.home.HomeActivity"
+            android:theme="@style/Theme.MovieCatalogue.NoActionBar"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.home.HomeActivity" />
+        </activity>
+
+        <activity android:name="com.lukmannudin.moviecatalogue.ui.tvshowsdetail.TvShowsDetailActivity"
+            android:parentActivityName=".ui.home.HomeActivity"
+            android:theme="@style/Theme.MovieCatalogue.NoActionBar"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.home.HomeActivity" />
         </activity>
     </application>
 

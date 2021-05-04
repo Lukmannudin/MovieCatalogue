@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.ui
+package com.lukmannudin.moviecatalogue.ui.home
 
 import android.content.Context
 import androidx.annotation.StringRes
@@ -20,14 +20,15 @@ class SectionPagerAdapter(private val mContext: Context, fm: FragmentManager) : 
         private val TAB_TITLES = intArrayOf(R.string.movies, R.string.tv_shows)
     }
 
-    override fun getItem(position: Int): Fragment =
+    override fun getItem(position: Int):Fragment =
         when (position) {
             0 -> MoviesFragment()
             1 -> TvShowFragment()
             else -> Fragment()
         }
 
-    override fun getPageTitle(position: Int): CharSequence? = mContext.resources.getString(TAB_TITLES[position])
+    override fun getPageTitle(position: Int): CharSequence = mContext.resources.getString(
+        TAB_TITLES[position])
 
     override fun getCount(): Int = 2
 

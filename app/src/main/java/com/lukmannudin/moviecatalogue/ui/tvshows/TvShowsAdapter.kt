@@ -5,7 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.data.TvShow
 import com.lukmannudin.moviecatalogue.databinding.ItemTvshowBinding
-import com.lukmannudin.moviecatalogue.loadImage
+import com.lukmannudin.moviecatalogue.utils.setImage
+import com.lukmannudin.moviecatalogue.ui.tvshowsdetail.TvShowsDetailActivity
 
 /**
  * Created by Lukmannudin on 5/3/21.
@@ -13,7 +14,10 @@ import com.lukmannudin.moviecatalogue.loadImage
 
 
 class TvShowsAdapter : RecyclerView.Adapter<TvShowsAdapter.MoviesViewHolder>() {
+
     private var tvShows = ArrayList<TvShow>()
+
+    lateinit var shareCallback: (TvShow) -> Unit
 
     fun setTvShows(tvShows: List<TvShow>?) {
         if (tvShows == null) return
@@ -28,31 +32,26 @@ class TvShowsAdapter : RecyclerView.Adapter<TvShowsAdapter.MoviesViewHolder>() {
 
     override fun onBindViewHolder(holder: MoviesViewHolder, position: Int) {
         val tvShow = tvShows[position]
-        holder.bind(tvShow)
+        holder.bind(tvShow, shareCallback)
     }
 
     override fun getItemCount(): Int = tvShows.size
 
-
     class MoviesViewHolder(private val binding: ItemTvshowBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(tvShow: TvShow) {
+        fun bind(tvShow: TvShow, shareCallback: (TvShow) -> Unit) {
             with(binding) {
                 tvItemTitle.text = tvShow.title
                 tvItemDate.text = tvShow.releaseDate
 
-                imgPoster.loadImage(itemView.context, tvShow.posterPath)
+                ivPoster.setImage(itemView.context, tvShow.posterPath)
 
-//                itemView.setOnClickListener {
-//                    val intent = Intent(itemView.context, DetailCourseActivity::class.java)
-//                    intent.putExtra(DetailCourseActivity.EXTRA_COURSE, course.courseId)
-//                    itemView.context.startActivity(intent)
-//                }
-//                Glide.with(itemView.context)
-//                    .load(course.imagePath)
-//                    .apply(
-//                        RequestOptions.placeholderOf(R.drawable.ic_loading)
-//                            .error(R.drawable.ic_error))
-//                    .into(imgPoster)
+                ivShare.setOnClickListener {
+                    shareCallback.invoke(tvShow)
+                }
+
+                itemView.setOnClickListener {
+                    TvShowsDetailActivity.start(itemView.context, tvShow)
+                }
             }
         }
     }

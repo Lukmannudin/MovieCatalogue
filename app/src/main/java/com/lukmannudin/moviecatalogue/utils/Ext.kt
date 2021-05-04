@@ -1,16 +1,18 @@
-package com.lukmannudin.moviecatalogue
+package com.lukmannudin.moviecatalogue.utils
 
 import android.content.Context
 import android.widget.ImageView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.lukmannudin.moviecatalogue.R
 
 /**
  * Created by Lukmannudin on 5/4/21.
  */
 
 
-fun ImageView.loadImage(context: Context, imagePath: String) {
+fun ImageView.setImage(context: Context, imagePath: String) {
     Glide.with(context)
         .load(imagePath)
         .apply(
@@ -18,4 +20,8 @@ fun ImageView.loadImage(context: Context, imagePath: String) {
                 .error(R.drawable.ic_error)
         )
         .into(this)
+}
+
+fun Context.showToast(message: String){
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }

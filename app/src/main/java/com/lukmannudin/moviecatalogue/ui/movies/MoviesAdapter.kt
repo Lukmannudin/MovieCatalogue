@@ -1,13 +1,12 @@
 package com.lukmannudin.moviecatalogue.ui.movies
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.databinding.ItemMovieBinding
-import com.lukmannudin.moviecatalogue.loadImage
-import com.lukmannudin.moviecatalogue.ui.movies.moviesdetail.MoviesDetailActivity
+import com.lukmannudin.moviecatalogue.utils.setImage
+import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailActivity
 
 /**
  * Created by Lukmannudin on 5/3/21.
@@ -15,7 +14,10 @@ import com.lukmannudin.moviecatalogue.ui.movies.moviesdetail.MoviesDetailActivit
 
 
 class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
+
     private var movies = ArrayList<Movie>()
+
+    lateinit var shareCallback: (Movie) -> Unit
 
     fun setMovies(movies: List<Movie>?) {
         if (movies == null) return
@@ -24,40 +26,34 @@ class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
-        val itemsAcademyBinding = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val itemsAcademyBinding =
+            ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MoviesViewHolder(itemsAcademyBinding)
     }
 
     override fun onBindViewHolder(holder: MoviesViewHolder, position: Int) {
         val movie = movies[position]
-        holder.bind(movie)
+        holder.bind(movie, shareCallback)
     }
 
     override fun getItemCount(): Int = movies.size
 
 
-    class MoviesViewHolder(private val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(movie: Movie) {
+    class MoviesViewHolder(private val binding: ItemMovieBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(movie: Movie, shareCallback: (Movie) -> Unit) {
             with(binding) {
                 tvItemTitle.text = movie.title
                 tvItemDate.text = movie.releaseDate
-                imgPoster.loadImage(itemView.context, movie.posterPath)
+                ivPoster.setImage(itemView.context, movie.posterPath)
+
+                ivShare.setOnClickListener {
+                    shareCallback.invoke(movie)
+                }
 
                 itemView.setOnClickListener {
-                    val intent = Intent(itemView.context, MoviesDetailActivity::class.java)
-                    itemView.context.startActivity(intent)
+                    MoviesDetailActivity.start(itemView.context, movie)
                 }
-//                itemView.setOnClickListener {
-//                    val intent = Intent(itemView.context, DetailCourseActivity::class.java)
-//                    intent.putExtra(DetailCourseActivity.EXTRA_COURSE, course.courseId)
-//                    itemView.context.startActivity(intent)
-//                }
-//                Glide.with(itemView.context)
-//                    .load(course.imagePath)
-//                    .apply(
-//                        RequestOptions.placeholderOf(R.drawable.ic_loading)
-//                            .error(R.drawable.ic_error))
-//                    .into(imgPoster)
             }
         }
     }

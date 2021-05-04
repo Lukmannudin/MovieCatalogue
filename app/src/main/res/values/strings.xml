@@ -6,4 +6,9 @@
     <string name="tv_shows">Tv Shows</string>
     <string name="title">title</string>
     <string name="dateline">dateline</string>
+    <string name="overview">overview</string>
+    <string name="failed_load_movie">unable to load movie</string>
+    <string name="failed_load_tvshow">unable to load tvshow</string>
+    <string name="share_text">let\'s watch %s movie, i think this is a good film</string>
+    <string name="share_the_film_now">Share this film now.</string>
 </resources>
