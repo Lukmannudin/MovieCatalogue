@@ -23,6 +23,6 @@ class TvShowsViewModelTest {
     fun getTvShows() {
         val tvShows = viewModel.getTvShows()
         assertNotNull(tvShows)
-        assertEquals(3, tvShows.size)
+        assertEquals(10, tvShows.size)
     }
 }
