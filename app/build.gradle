@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -16,6 +18,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+        buildConfigField "String", "MOVIE_DB_API_KEY", "\"71a0aa78b8982598bc043f96ac0b3937\""
     }
 
     buildTypes {
@@ -43,7 +48,7 @@ android {
 
 dependencies {
 //kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation "androidx.core:core-ktx:$coreVersion"
 
     //ui
@@ -64,5 +69,16 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$androidTestVersion"
     androidTestImplementation "androidx.test:rules:$androidTestVersion"
     androidTestImplementation "androidx.test.ext:junit:$junitExtversion"
-    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+
+    // hilt
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
+    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+
+    // retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitGsonConverterVersion"
+
+    // okhttp
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
 }

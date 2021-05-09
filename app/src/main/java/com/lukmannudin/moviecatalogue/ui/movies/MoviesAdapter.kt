@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.databinding.ItemMovieBinding
-import com.lukmannudin.moviecatalogue.utils.setImage
 import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailActivity
+import com.lukmannudin.moviecatalogue.utils.setImage
 
 /**
  * Created by Lukmannudin on 5/3/21.
@@ -23,6 +23,7 @@ class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
         if (movies == null) return
         this.movies.clear()
         this.movies.addAll(movies)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {

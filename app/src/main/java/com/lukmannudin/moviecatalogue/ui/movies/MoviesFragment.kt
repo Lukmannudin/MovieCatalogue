@@ -4,29 +4,29 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentMovieBinding
+import com.lukmannudin.moviecatalogue.ui.movies.MoviesViewModel.MoviesState
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Created by Lukmannudin on 5/3/21.
  */
 
+@AndroidEntryPoint
 class MoviesFragment : Fragment() {
 
     private var _binding: FragmentMovieBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var moviesAdapter: MoviesAdapter
-    private lateinit var viewModel: MoviesViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setupViewModel()
-    }
+    private val viewModel: MoviesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,12 +38,10 @@ class MoviesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupAdapter()
+        viewModel.getMovies()
 
-        if (activity != null) {
-            val movies = viewModel.getMovies()
-            moviesAdapter.setMovies(movies)
-        }
+        setupAdapter()
+        setupObserver()
     }
 
     private fun setupAdapter() {
@@ -68,10 +66,18 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.NewInstanceFactory()
-        )[MoviesViewModel::class.java]
+    private fun setupObserver(){
+        viewModel.moviesState.observe(viewLifecycleOwner, { viewState ->
+            when (viewState){
+                is MoviesState.Loading -> {}
+                is MoviesState.Error -> {
+                    Toast.makeText(requireActivity(), viewState.errorMessage, Toast.LENGTH_SHORT).show()
+                }
+                is MoviesState.Loaded -> {
+                    moviesAdapter.setMovies(viewState.movies)
+                }
+            }
+        })
     }
+
 }

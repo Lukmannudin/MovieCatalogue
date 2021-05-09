@@ -10,11 +10,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentTvShowBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Created by Lukmannudin on 5/3/21.
  */
 
+@AndroidEntryPoint
 class TvShowFragment : Fragment() {
 
     private var _binding: FragmentTvShowBinding? = null

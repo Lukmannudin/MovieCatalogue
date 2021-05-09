@@ -11,7 +11,9 @@ import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
 import com.lukmannudin.moviecatalogue.databinding.ActivityMoviesDetailBinding
 import com.lukmannudin.moviecatalogue.utils.setImage
 import com.lukmannudin.moviecatalogue.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MoviesDetailActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MoviesDetailViewModel

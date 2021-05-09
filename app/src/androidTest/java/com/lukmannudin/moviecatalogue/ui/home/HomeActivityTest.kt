@@ -52,6 +52,7 @@ class HomeActivityTest {
 
     @Test
     fun loadDetailMovie(){
+        onView(withId(R.id.tabs)).perform(Utils.selectTabAtPosition(0))
         onView(withId(R.id.rv_movies)).check(matches(isDisplayed()))
         onView(withId(R.id.rv_movies)).perform(
             RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
