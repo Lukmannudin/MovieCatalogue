@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.data.moviessource.remote
+package com.lukmannudin.moviecatalogue.data.tvshowssource.remote
 
 import com.google.gson.annotations.SerializedName
 
@@ -7,20 +7,21 @@ import com.google.gson.annotations.SerializedName
  */
 
 
-data class MovieRemote (
+data class TvShowRemote(
+
     @SerializedName("id")
     val id: Int? = null,
 
-    @SerializedName("title")
-    val title: String? = null,
+    @SerializedName("name")
+    val name: String? = null,
 
-    @SerializedName("original_title")
-    val originalTitle: String? = null,
+    @SerializedName("original_name")
+    val original_name: String? = null,
 
     @SerializedName("overview")
     val overview: String? = null,
 
-    @SerializedName("release_date")
+    @SerializedName("first_air_date")
     val releaseDate: String? = null,
 
     @SerializedName("vote_average")

@@ -1,30 +1,47 @@
 package com.lukmannudin.moviecatalogue.ui.moviesdetail
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.lukmannudin.moviecatalogue.data.Movie
+import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
+import com.lukmannudin.moviecatalogue.utils.Constant.LANGUAGE
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Created by Lukmannudin on 5/4/21.
  */
 
+@HiltViewModel
+class MoviesDetailViewModel @Inject constructor(
+    private val moviesRepository: MovieRepository
+) : ViewModel() {
 
-class MoviesDetailViewModel : ViewModel() {
-    private var currentMovie: MovieState? = null
+    val moviesState = MutableLiveData<MovieDetailState>()
 
-    fun setMovie(movie: Movie?) {
-        currentMovie = if (movie != null) {
-            MovieState.Loaded(movie)
-        } else {
-            MovieState.Failure
+    fun getMovie(movieId: Int?) {
+        moviesState.value = MovieDetailState.Loading
+
+        if (movieId == null) return
+
+        viewModelScope.launch {
+            when (val movie = moviesRepository.getMovie(movieId, LANGUAGE)){
+                is Result.Error -> {
+                    moviesState.postValue(MovieDetailState.Error(movie.exception.message.toString()))
+                }
+                is Result.Success -> {
+                    moviesState.postValue(MovieDetailState.Loaded(movie.data))
+                }
+            }
         }
     }
 
-    fun getMovie(): MovieState? {
-        return currentMovie
-    }
-
-    sealed class MovieState {
-        data class Loaded(val movie: Movie) : MovieState()
-        object Failure : MovieState()
+    sealed class MovieDetailState {
+        object Loading: MovieDetailState()
+        data class Error(val errorMessage: String): MovieDetailState()
+        data class Loaded(val movie: Movie) : MovieDetailState()
     }
 }

@@ -53,7 +53,7 @@ class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
                 }
 
                 itemView.setOnClickListener {
-                    MoviesDetailActivity.start(itemView.context, movie)
+                    MoviesDetailActivity.start(itemView.context, movie.id)
                 }
             }
         }

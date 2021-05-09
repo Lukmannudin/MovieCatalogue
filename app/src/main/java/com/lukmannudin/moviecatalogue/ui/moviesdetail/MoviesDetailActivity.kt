@@ -3,20 +3,22 @@ package com.lukmannudin.moviecatalogue.ui.moviesdetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
 import com.lukmannudin.moviecatalogue.databinding.ActivityMoviesDetailBinding
+import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailViewModel.MovieDetailState
+import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.setImage
-import com.lukmannudin.moviecatalogue.utils.showToast
+import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MoviesDetailActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MoviesDetailViewModel
+    private val viewModel: MoviesDetailViewModel by viewModels()
     private lateinit var binding: ActivityMoviesDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,31 +26,20 @@ class MoviesDetailActivity : AppCompatActivity() {
         setContentViewBinding()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.NewInstanceFactory()
-        )[MoviesDetailViewModel::class.java]
+        val movieExtras = intent?.getIntExtra(MOVIE_EXTRA, -1)
+        viewModel.getMovie(movieExtras)
 
-        val movieExtras = intent?.getParcelableExtra<Movie>(MOVIE_EXTRA)
-        viewModel.setMovie(movieExtras)
-
-        populateMovie()
+        setupObserver()
     }
 
-    private fun populateMovie() {
-        val movieState = viewModel.getMovie()
-
-        if (movieState is MoviesDetailViewModel.MovieState.Loaded) {
-            with(binding) {
-                movieState.movie.let { movie ->
-                    ivPoster.setImage(this@MoviesDetailActivity, movie.posterPath)
-                    tvTitle.text = movie.title
-                    tvDate.text = movie.releaseDate
-                    tvOverview.text = movie.overview
-                }
+    private fun populateMovie(movie: Movie) {
+        with(binding) {
+            movie.let { movie ->
+                ivPoster.setImage(this@MoviesDetailActivity, movie.posterPath)
+                tvTitle.text = movie.title
+                tvDate.text = movie.releaseDate
+                tvOverview.text = movie.overview
             }
-        } else {
-            showToast(getString(R.string.failed_load_tvshow))
         }
     }
 
@@ -66,12 +57,40 @@ class MoviesDetailActivity : AppCompatActivity() {
         setSupportActionBar(activityDetailBinding.toolbar)
     }
 
+    private fun setupObserver(){
+        viewModel.moviesState.observe(this, { viewState ->
+            when (viewState){
+                is MovieDetailState.Loading -> {
+                    showLoadingAndHideFailureView(true)
+                }
+                is MovieDetailState.Error -> {
+                    binding.lavFailure.visible()
+                }
+                is MovieDetailState.Loaded -> {
+                    showLoadingAndHideFailureView(false)
+                    populateMovie(viewState.movie)
+                }
+            }
+        })
+    }
+
+    private fun showLoadingAndHideFailureView(status: Boolean){
+        binding.lavFailure.gone()
+        with(binding.lavLoading){
+            if (status){
+                visible()
+            } else {
+                gone()
+            }
+        }
+    }
+
     companion object {
         private const val MOVIE_EXTRA = "movie_extra"
 
-        fun start(context: Context, movie: Movie) {
+        fun start(context: Context, movieId: Int) {
             val intent = Intent(context, MoviesDetailActivity::class.java)
-            intent.putExtra(MOVIE_EXTRA, movie)
+            intent.putExtra(MOVIE_EXTRA, movieId)
             context.startActivity(intent)
         }
     }

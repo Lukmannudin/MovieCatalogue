@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.data.TvShow
 import com.lukmannudin.moviecatalogue.databinding.ItemTvshowBinding
-import com.lukmannudin.moviecatalogue.utils.setImage
 import com.lukmannudin.moviecatalogue.ui.tvshowsdetail.TvShowsDetailActivity
+import com.lukmannudin.moviecatalogue.utils.setImage
 
 /**
  * Created by Lukmannudin on 5/3/21.
@@ -23,6 +23,7 @@ class TvShowsAdapter : RecyclerView.Adapter<TvShowsAdapter.MoviesViewHolder>() {
         if (tvShows == null) return
         this.tvShows.clear()
         this.tvShows.addAll(tvShows)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
@@ -50,7 +51,7 @@ class TvShowsAdapter : RecyclerView.Adapter<TvShowsAdapter.MoviesViewHolder>() {
                 }
 
                 itemView.setOnClickListener {
-                    TvShowsDetailActivity.start(itemView.context, tvShow)
+                    TvShowsDetailActivity.start(itemView.context, tvShow.id)
                 }
             }
         }

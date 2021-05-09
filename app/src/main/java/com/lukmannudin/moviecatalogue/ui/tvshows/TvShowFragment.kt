@@ -6,10 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentTvShowBinding
+import com.lukmannudin.moviecatalogue.ui.tvshows.TvShowsViewModel.TvShowsState
+import com.lukmannudin.moviecatalogue.utils.gone
+import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -22,14 +25,8 @@ class TvShowFragment : Fragment() {
     private var _binding: FragmentTvShowBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: TvShowsViewModel
+    private val viewModel: TvShowsViewModel by viewModels()
     private lateinit var tvShowsAdapter: TvShowsAdapter
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setupViewModel()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,12 +38,9 @@ class TvShowFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getTvShows()
         setupAdapter()
-
-        if (activity != null) {
-            val movies = viewModel.getTvShows()
-            tvShowsAdapter.setTvShows(movies)
-        }
+        setupObserver()
     }
 
     private fun setupAdapter() {
@@ -71,10 +65,31 @@ class TvShowFragment : Fragment() {
         }
     }
 
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.NewInstanceFactory()
-        )[TvShowsViewModel::class.java]
+    private fun setupObserver(){
+        viewModel.tvShowsState.observe(viewLifecycleOwner, { viewState ->
+            when (viewState){
+                is TvShowsState.Loading -> {
+                    showLoadingAndHideFailureView(true)
+                }
+                is TvShowsState.Error -> {
+                    binding.lavFailure.visible()
+                }
+                is TvShowsState.Loaded -> {
+                    showLoadingAndHideFailureView(false)
+                    tvShowsAdapter.setTvShows(viewState.tvShows)
+                }
+            }
+        })
+    }
+
+    private fun showLoadingAndHideFailureView(status: Boolean){
+        binding.lavFailure.gone()
+        with(binding.lavLoading){
+            if (status){
+                visible()
+            } else {
+                gone()
+            }
+        }
     }
 }

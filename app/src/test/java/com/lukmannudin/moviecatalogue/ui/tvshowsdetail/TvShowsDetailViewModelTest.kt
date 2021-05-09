@@ -1,7 +1,6 @@
 package com.lukmannudin.moviecatalogue.ui.tvshowsdetail
 
 import com.google.common.base.Verify
-import com.lukmannudin.moviecatalogue.data.TvShowsDummy
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

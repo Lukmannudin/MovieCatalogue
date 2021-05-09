@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepositoryImpl
+import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
-    private val movieRepository: MovieRepositoryImpl
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     val moviesState = MutableLiveData<MoviesState>()

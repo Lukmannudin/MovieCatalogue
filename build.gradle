@@ -42,4 +42,5 @@ ext {
     retrofitVersion = '2.8.1'
     retrofitGsonConverterVersion = '2.6.1'
     okhttpVersion = '4.7.2'
+    lottieVersion = '3.7.0'
 }

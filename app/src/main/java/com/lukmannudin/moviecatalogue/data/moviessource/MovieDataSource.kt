@@ -12,4 +12,5 @@ interface MovieDataSource {
 
     suspend fun getPopularMovies(language: String, page: Int): Result<List<Movie>>
 
+    suspend fun getMovie(id: Int, language: String): Result<Movie>
 }

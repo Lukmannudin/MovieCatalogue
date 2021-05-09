@@ -9,8 +9,6 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.lukmannudin.moviecatalogue.R
-import com.lukmannudin.moviecatalogue.data.MoviesDummy
-import com.lukmannudin.moviecatalogue.data.TvShowsDummy
 import com.lukmannudin.moviecatalogue.ui.Utils
 import org.hamcrest.core.AllOf.allOf
 import org.junit.Rule

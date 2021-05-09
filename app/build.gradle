@@ -81,4 +81,7 @@ dependencies {
 
     // okhttp
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+
+    // lottie
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 }

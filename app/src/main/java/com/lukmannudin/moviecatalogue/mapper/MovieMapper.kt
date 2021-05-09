@@ -10,14 +10,13 @@ import com.lukmannudin.moviecatalogue.mapper.mapperhelper.NullableInputListMappe
  * Created by Lukmannudin on 09/05/21.
  */
 
-
 private val movieRemoteToMovieMapper : Mapper<MovieRemote, Movie> =
     object : Mapper<MovieRemote, Movie> {
         override fun map(input: MovieRemote): Movie {
             val basePosterPath = "https://image.tmdb.org/t/p/w500"
             return Movie(
-                input.id ?: "-1",
-                input.title ?: "title not defined",
+                input.id ?: -1,
+                input.title ?: input.originalTitle ?: "title not defined",
                 input.overview ?: "overview not defined",
                 input.releaseDate ?: "release date not defined",
                 input.userScore ?: 0.0f,
@@ -39,4 +38,8 @@ fun List<MovieRemote>?.toMovies(): List<Movie> {
     } else {
         moviesRemoteToMoviesMapper.map(this)
     }
+}
+
+fun MovieRemote.toMovie(): Movie {
+    return movieRemoteToMovieMapper.map(this)
 }

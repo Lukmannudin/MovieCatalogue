@@ -3,20 +3,22 @@ package com.lukmannudin.moviecatalogue.ui.tvshowsdetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.data.TvShow
 import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
 import com.lukmannudin.moviecatalogue.databinding.ActivityMoviesDetailBinding
+import com.lukmannudin.moviecatalogue.ui.tvshowsdetail.TvShowsDetailViewModel.TvShowDetailState
+import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.setImage
-import com.lukmannudin.moviecatalogue.utils.showToast
+import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TvShowsDetailActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: TvShowsDetailViewModel
+    private val viewModel: TvShowsDetailViewModel by viewModels()
     private lateinit var binding: ActivityMoviesDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,34 +26,26 @@ class TvShowsDetailActivity : AppCompatActivity() {
         setContentViewBinding()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        setupViewModel()
+        val tvShowExtra = intent?.getIntExtra(TVSHOW_EXTRA, -1)
+        viewModel.getTvShow(tvShowExtra)
 
-        val tvShowExtra = intent?.getParcelableExtra<TvShow>(TVSHOW_EXTRA)
-        viewModel.setTvShow(tvShowExtra)
-
-        populateMovie()
+        setupObserver()
     }
 
-    private fun populateMovie() {
-        val tvShowState = viewModel.getTvShow()
-
-        if (tvShowState is TvShowsDetailViewModel.TvShowState.Loaded){
-            with(binding){
-                tvShowState.tvShow.let { tvShow ->
-                    ivPoster.setImage(this@TvShowsDetailActivity, tvShow.posterPath)
-                    tvTitle.text = tvShow.title
-                    tvDate.text = tvShow.releaseDate
-                    tvOverview.text = tvShow.overview
-                }
+    private fun populateTvShow(tvShow: TvShow) {
+        with(binding) {
+            tvShow.let { tvShow ->
+                ivPoster.setImage(this@TvShowsDetailActivity, tvShow.posterPath)
+                tvTitle.text = tvShow.title
+                tvDate.text = tvShow.releaseDate
+                tvOverview.text = tvShow.overview
             }
-        } else {
-            showToast(getString(R.string.failed_load_movie))
         }
     }
 
-    private fun setContentViewBinding(){
+    private fun setContentViewBinding() {
         val activityDetailBinding = ActivityDetailBinding.inflate(layoutInflater)
-        with(activityDetailBinding.vsContentDetail){
+        with(activityDetailBinding.vsContentDetail) {
             setOnInflateListener { _, inflated ->
                 binding = ActivityMoviesDetailBinding.bind(inflated)
             }
@@ -63,19 +57,40 @@ class TvShowsDetailActivity : AppCompatActivity() {
         setSupportActionBar(activityDetailBinding.toolbar)
     }
 
-    private fun setupViewModel(){
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.NewInstanceFactory()
-        )[TvShowsDetailViewModel::class.java]
+    private fun setupObserver() {
+        viewModel.tvShowState.observe(this, { viewState ->
+            when (viewState) {
+                is TvShowDetailState.Loading -> {
+                    showLoadingAndHideFailureView(true)
+                }
+                is TvShowDetailState.Error -> {
+                    binding.lavFailure.visible()
+                }
+                is TvShowDetailState.Loaded -> {
+                    showLoadingAndHideFailureView(false)
+                    populateTvShow(viewState.tvShow)
+                }
+            }
+        })
+    }
+
+    private fun showLoadingAndHideFailureView(status: Boolean) {
+        binding.lavFailure.gone()
+        with(binding.lavLoading) {
+            if (status) {
+                visible()
+            } else {
+                gone()
+            }
+        }
     }
 
     companion object {
         private const val TVSHOW_EXTRA = "tvshow_extra"
 
-        fun start(context: Context, tvShow: TvShow){
+        fun start(context: Context, tvShowId: Int) {
             val intent = Intent(context, TvShowsDetailActivity::class.java)
-            intent.putExtra(TVSHOW_EXTRA, tvShow)
+            intent.putExtra(TVSHOW_EXTRA, tvShowId)
             context.startActivity(intent)
         }
     }

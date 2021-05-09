@@ -1,7 +1,6 @@
 package com.lukmannudin.moviecatalogue.ui.moviesdetail
 
 import com.google.common.base.Verify.verify
-import com.lukmannudin.moviecatalogue.data.MoviesDummy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -27,9 +26,9 @@ class MoviesDetailViewModelTest {
 
         val movieState = viewModel.getMovie()
         assertNotNull(movieState)
-        verify(movieState is MoviesDetailViewModel.MovieState.Loaded)
+        verify(movieState is MoviesDetailViewModel.MovieDetailState.Loaded)
 
-        movieState as MoviesDetailViewModel.MovieState.Loaded
+        movieState as MoviesDetailViewModel.MovieDetailState.Loaded
         movieState.movie.let { movie ->
             assertEquals(dummyMovie.id, movie.id)
             assertEquals(dummyMovie.title, movie.title)
@@ -46,7 +45,7 @@ class MoviesDetailViewModelTest {
 
         val movieState = viewModel.getMovie()
         assertNotNull(movieState)
-        verify(movieState is MoviesDetailViewModel.MovieState.Failure)
+        verify(movieState is MoviesDetailViewModel.MovieDetailState.Failure)
     }
 
 }

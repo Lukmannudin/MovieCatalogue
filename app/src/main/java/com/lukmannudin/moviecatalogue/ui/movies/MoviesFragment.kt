@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentMovieBinding
 import com.lukmannudin.moviecatalogue.ui.movies.MoviesViewModel.MoviesState
+import com.lukmannudin.moviecatalogue.utils.gone
+import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -69,15 +70,28 @@ class MoviesFragment : Fragment() {
     private fun setupObserver(){
         viewModel.moviesState.observe(viewLifecycleOwner, { viewState ->
             when (viewState){
-                is MoviesState.Loading -> {}
+                is MoviesState.Loading -> {
+                    showLoadingAndHideFailureView(true)
+                }
                 is MoviesState.Error -> {
-                    Toast.makeText(requireActivity(), viewState.errorMessage, Toast.LENGTH_SHORT).show()
+                    binding.lavFailure.visible()
                 }
                 is MoviesState.Loaded -> {
+                    showLoadingAndHideFailureView(false)
                     moviesAdapter.setMovies(viewState.movies)
                 }
             }
         })
     }
 
+    private fun showLoadingAndHideFailureView(status: Boolean){
+        binding.lavFailure.gone()
+        with(binding.lavLoading){
+            if (status){
+                visible()
+            } else {
+                gone()
+            }
+        }
+    }
 }
