@@ -10,6 +10,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 /**
@@ -22,8 +24,15 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideIoDispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
+    }
+
+    @Provides
+    @Singleton
     fun provideMoviesRepository(
-        movieRemoteDataSource: MovieRemoteDataSource
+        movieRemoteDataSource: MovieRemoteDataSource,
+        coroutineDispatcher: CoroutineDispatcher
     ) : MovieRepository =
         MovieRepositoryImpl(movieRemoteDataSource)
 

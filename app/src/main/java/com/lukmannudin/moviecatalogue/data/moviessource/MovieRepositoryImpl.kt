@@ -2,6 +2,9 @@ package com.lukmannudin.moviecatalogue.data.moviessource
 
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -10,14 +13,19 @@ import javax.inject.Inject
 
 
 class MovieRepositoryImpl @Inject constructor(
-    private val movieRemoteDataSource: MovieDataSource
+    private val movieRemoteDataSource: MovieDataSource,
+    private val ioDispather: CoroutineDispatcher = Dispatchers.IO
 ) : MovieRepository {
 
     override suspend fun getPopularMovies(language: String, page:Int): Result<List<Movie>> {
-        return movieRemoteDataSource.getPopularMovies(language, page)
+        return withContext(ioDispather){
+            movieRemoteDataSource.getPopularMovies(language, page)
+        }
     }
 
     override suspend fun getMovie(id: Int, language: String): Result<Movie> {
-        return movieRemoteDataSource.getMovie(id, language)
+        return withContext(ioDispather){
+            movieRemoteDataSource.getMovie(id, language)
+        }
     }
 }

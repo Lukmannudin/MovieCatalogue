@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
+import com.lukmannudin.moviecatalogue.utils.Constant.LANGUAGE
+import com.lukmannudin.moviecatalogue.utils.Constant.PAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,14 +23,11 @@ class MoviesViewModel @Inject constructor(
 
     val moviesState = MutableLiveData<MoviesState>()
 
-    private val language = "en-US"
-    private val page = 1
-
     fun getMovies() {
         moviesState.value = MoviesState.Loading
 
         viewModelScope.launch {
-           when (val movies = movieRepository.getPopularMovies(language, page)){
+           when (val movies = movieRepository.getPopularMovies(LANGUAGE, PAGE)){
                 is Result.Error -> {
                     moviesState.postValue(MoviesState.Error(movies.exception.message.toString()))
                 }
@@ -38,7 +37,7 @@ class MoviesViewModel @Inject constructor(
                 }
 
                 else -> {
-                    moviesState.postValue(MoviesState.Error("something wrong"))
+                    moviesState.postValue(MoviesState.Error("Something Wrong"))
                 }
             }
         }

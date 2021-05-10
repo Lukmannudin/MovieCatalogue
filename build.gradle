@@ -43,4 +43,7 @@ ext {
     retrofitGsonConverterVersion = '2.6.1'
     okhttpVersion = '4.7.2'
     lottieVersion = '3.7.0'
+    androidCoreTestVersion = '2.1.0'
+    mockitoKotlinVersion = '2.2.0'
+    coroutineTestVersion = '1.4.3'
 }

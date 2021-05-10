@@ -11,4 +11,5 @@
     <string name="failed_load_tvshow">unable to load tvshow</string>
     <string name="share_text">let\'s watch %s movie, i think this is a good film</string>
     <string name="share_the_film_now">Share this film now.</string>
+    <string name="something_wrong">something wrong</string>
 </resources>
