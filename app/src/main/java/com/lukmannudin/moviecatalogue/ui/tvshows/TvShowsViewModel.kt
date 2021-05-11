@@ -7,6 +7,7 @@ import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.TvShow
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TvShowsViewModel @Inject constructor(
-    private val tvShowRepository: TvShowRepository
+    private val tvShowRepository: TvShowRepository,
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val language = "en-US"
@@ -27,7 +29,7 @@ class TvShowsViewModel @Inject constructor(
     fun getTvShows() {
         tvShowsState.value = TvShowsState.Loading
 
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
             when (val tvShows = tvShowRepository.getPopularTvShows(language, page)){
                 is Result.Error -> {
                     tvShowsState.postValue(TvShowsState.Error(tvShows.exception.message.toString()))

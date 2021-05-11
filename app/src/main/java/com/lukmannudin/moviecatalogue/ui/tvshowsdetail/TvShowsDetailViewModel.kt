@@ -8,6 +8,7 @@ import com.lukmannudin.moviecatalogue.data.TvShow
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
 import com.lukmannudin.moviecatalogue.utils.Constant
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TvShowsDetailViewModel @Inject constructor(
-    private val tvShowRepository: TvShowRepository
+    private val tvShowRepository: TvShowRepository,
+    private val ioDispatcher: CoroutineDispatcher
 ): ViewModel() {
 
     val tvShowState = MutableLiveData<TvShowDetailState>()
@@ -27,7 +29,7 @@ class TvShowsDetailViewModel @Inject constructor(
 
         tvShowState.value = TvShowDetailState.Loading
 
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
             when (val tvShow = tvShowRepository.getTvShow(tvShowId, Constant.LANGUAGE)){
                 is Result.Error -> {
                     tvShowState.postValue(TvShowDetailState.Error(

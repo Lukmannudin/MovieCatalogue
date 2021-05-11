@@ -9,6 +9,7 @@ import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
 import com.lukmannudin.moviecatalogue.utils.Constant.LANGUAGE
 import com.lukmannudin.moviecatalogue.utils.Constant.PAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
-    private val movieRepository: MovieRepository
+    private val movieRepository: MovieRepository,
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     val moviesState = MutableLiveData<MoviesState>()
@@ -26,7 +28,7 @@ class MoviesViewModel @Inject constructor(
     fun getMovies() {
         moviesState.value = MoviesState.Loading
 
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
            when (val movies = movieRepository.getPopularMovies(LANGUAGE, PAGE)){
                 is Result.Error -> {
                     moviesState.postValue(MoviesState.Error(movies.exception.message.toString()))

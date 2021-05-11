@@ -2,6 +2,7 @@ package com.lukmannudin.moviecatalogue.data.tvshowssource
 
 import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.TvShow
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 /**
@@ -10,7 +11,8 @@ import javax.inject.Inject
 
 
 class TvShowRepositoryImpl @Inject constructor(
-    private val tvShowRemoteDataSource: TvShowDataSource
+    private val tvShowRemoteDataSource: TvShowDataSource,
+    private val ioDispatcher: CoroutineDispatcher
 ) : TvShowRepository {
 
     override suspend fun getPopularTvShows(language: String, page: Int): Result<List<TvShow>> {

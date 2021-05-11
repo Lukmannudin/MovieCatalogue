@@ -3,7 +3,6 @@ package com.lukmannudin.moviecatalogue.data.moviessource
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
     private val movieRemoteDataSource: MovieDataSource,
-    private val ioDispather: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispather: CoroutineDispatcher
 ) : MovieRepository {
 
     override suspend fun getPopularMovies(language: String, page:Int): Result<List<Movie>> {

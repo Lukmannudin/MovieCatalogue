@@ -34,13 +34,14 @@ object RepositoryModule {
         movieRemoteDataSource: MovieRemoteDataSource,
         coroutineDispatcher: CoroutineDispatcher
     ) : MovieRepository =
-        MovieRepositoryImpl(movieRemoteDataSource)
+        MovieRepositoryImpl(movieRemoteDataSource, coroutineDispatcher)
 
     @Provides
     @Singleton
     fun provideTvShowsRepository(
-        tvShowRemoteDataSource: TvShowRemoteDataSource
+        tvShowRemoteDataSource: TvShowRemoteDataSource,
+        coroutineDispatcher: CoroutineDispatcher
     ) : TvShowRepository =
-        TvShowRepositoryImpl(tvShowRemoteDataSource)
+        TvShowRepositoryImpl(tvShowRemoteDataSource, coroutineDispatcher)
 }
 

@@ -1,53 +1,71 @@
 package com.lukmannudin.moviecatalogue.ui.movies
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
-import com.lukmannudin.moviecatalogue.data.Movie
-import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepositoryImpl
+import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
+import com.lukmannudin.moviecatalogue.utils.Constant
+import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.junit.MockitoJUnitRunner
 
 /**
  * Created by Lukmannudin on 5/4/21.
  */
 
 
+@ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
 class MoviesViewModelTest {
 
     private lateinit var viewModel: MoviesViewModel
+
+    private val testDispatcher = TestCoroutineDispatcher()
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Mock
-    private lateinit var moviesRepository: MovieRepositoryImpl
-
-    @Mock
-    private lateinit var observer: Observer<List<Movie>>
+    private lateinit var moviesRepository: MovieRepository
 
     @Before
     fun setup(){
-        viewModel = MoviesViewModel(moviesRepository)
+        viewModel = MoviesViewModel(moviesRepository, testDispatcher)
     }
 
     @Test
-    fun getMoviesSuccess() {
-//        val movies = viewModel.getMovies()
-//        assertNotNull(movies)
-//
-//        `when`(moviesRepository.getPopularMovies(Constant.LANGUAGE, Constant.PAGE))
-//            .thenReturn(Result.Success(emptyList()))
-//        assertEquals(10, movies.size)
+    fun getMoviesSuccess() = runBlockingTest {
+        `when`(moviesRepository.getPopularMovies(Constant.LANGUAGE, Constant.PAGE))
+            .thenReturn(Result.Success(emptyList()))
+
+        viewModel.getMovies()
+
+        verify(moviesRepository).getPopularMovies(Constant.LANGUAGE, Constant.PAGE)
+
+        val movies = viewModel.moviesState.value
+
+        assertEquals(MoviesViewModel.MoviesState.Loaded(emptyList()), movies)
     }
 
-    private val movieDummy =  Movie(
-        615457,
-        "Nobody",
-        "Hutch Mansell, a suburban dad, overlooked husband, nothing neighbor — a \"nobody.\" When two thieves break into his home one night, Hutch's unknown long-simmering rage is ignited and propels him on a brutal path that will uncover dark secrets he fought to leave behind.",
-        "Mar 26, 2021",
-        0.85f,
-        "https://www.themoviedb.org/t/p/w440_and_h660_face/oBgWY00bEFeZ9N25wWVyuQddbAo.jpg"
-    )
+    @Test
+    fun getMoviesFailed() = runBlockingTest {
+        `when`(moviesRepository.getPopularMovies(Constant.LANGUAGE, Constant.PAGE))
+            .thenReturn(Result.Error(Exception("")))
+
+        viewModel.getMovies()
+
+        verify(moviesRepository).getPopularMovies(Constant.LANGUAGE, Constant.PAGE)
+
+        val movies = viewModel.moviesState.value
+
+        assertEquals(MoviesViewModel.MoviesState.Error(""), movies)
+    }
 }
