@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlinVersion = "1.4.32"
+    ext.kotlinVersion = "1.5.0"
     ext.hiltVersion = '2.35'
     repositories {
         google()
@@ -46,4 +46,6 @@ ext {
     androidCoreTestVersion = '2.1.0'
     mockitoKotlinVersion = '2.2.0'
     coroutineTestVersion = '1.4.3'
+    idleResourceVersion = '3.3.0'
+    hiltTestingVersion = '2.35'
 }

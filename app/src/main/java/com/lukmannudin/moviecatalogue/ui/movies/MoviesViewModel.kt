@@ -27,7 +27,6 @@ class MoviesViewModel @Inject constructor(
 
     fun getMovies() {
         moviesState.value = MoviesState.Loading
-
         viewModelScope.launch(ioDispatcher) {
            when (val movies = movieRepository.getPopularMovies(LANGUAGE, PAGE)){
                 is Result.Error -> {

@@ -43,6 +43,9 @@ android {
         unitTests {
             includeAndroidResources = true
         }
+        testOptions {
+            unitTests.returnDefaultValues = true
+        }
     }
 }
 
@@ -62,6 +65,8 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //testing
+    testImplementation "androidx.arch.core:core-testing:$androidCoreTestVersion"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutineTestVersion"
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "junit:junit:$junitVersion"
@@ -70,6 +75,9 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$androidTestVersion"
     androidTestImplementation "androidx.test:rules:$androidTestVersion"
     androidTestImplementation "androidx.test.ext:junit:$junitExtversion"
+
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hiltTestingVersion"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hiltTestingVersion"
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"
@@ -86,6 +94,6 @@ dependencies {
     // lottie
     implementation "com.airbnb.android:lottie:$lottieVersion"
 
-    testImplementation "androidx.arch.core:core-testing:$androidCoreTestVersion"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
+    // espresso idling
+    implementation "androidx.test.espresso:espresso-idling-resource:$idleResourceVersion"
 }

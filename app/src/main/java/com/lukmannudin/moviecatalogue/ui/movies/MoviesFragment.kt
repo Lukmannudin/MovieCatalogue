@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentMovieBinding
 import com.lukmannudin.moviecatalogue.ui.movies.MoviesViewModel.MoviesState
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +41,6 @@ class MoviesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getMovies()
-
         setupAdapter()
         setupObserver()
     }
@@ -79,6 +79,9 @@ class MoviesFragment : Fragment() {
                 is MoviesState.Loaded -> {
                     showLoadingAndHideFailureView(false)
                     moviesAdapter.setMovies(viewState.movies)
+                    if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow){
+                        EspressoIdlingResource.decrement()
+                    }
                 }
             }
         })

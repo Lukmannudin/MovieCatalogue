@@ -3,6 +3,7 @@ package com.lukmannudin.moviecatalogue.ui.home
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.lukmannudin.moviecatalogue.databinding.ActivityHomeBinding
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -14,6 +15,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        EspressoIdlingResource.increment()
         val activityHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(activityHomeBinding.root)
 

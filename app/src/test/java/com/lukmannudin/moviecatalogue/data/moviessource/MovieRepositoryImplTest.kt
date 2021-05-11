@@ -12,7 +12,9 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
 
 /**
  * Created by Lukmannudin on 10/05/21.
@@ -20,6 +22,7 @@ import org.mockito.Mock
 
 
 @ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
 class MovieRepositoryImplTest {
 
     private val testDispatcher = TestCoroutineDispatcher()

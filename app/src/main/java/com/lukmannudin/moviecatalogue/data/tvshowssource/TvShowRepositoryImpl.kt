@@ -2,7 +2,9 @@ package com.lukmannudin.moviecatalogue.data.tvshowssource
 
 import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.TvShow
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -16,11 +18,19 @@ class TvShowRepositoryImpl @Inject constructor(
 ) : TvShowRepository {
 
     override suspend fun getPopularTvShows(language: String, page: Int): Result<List<TvShow>> {
-        return tvShowRemoteDataSource.getPopularTvShows(language, page)
+        EspressoIdlingResource.increment()
+        return withContext(ioDispatcher){
+            EspressoIdlingResource.decrement()
+            tvShowRemoteDataSource.getPopularTvShows(language, page)
+        }
     }
 
     override suspend fun getTvShow(id: Int, language: String): Result<TvShow> {
-        return tvShowRemoteDataSource.getTvShow(id, language)
+        EspressoIdlingResource.increment()
+        return withContext(ioDispatcher){
+            EspressoIdlingResource.decrement()
+            tvShowRemoteDataSource.getTvShow(id, language)
+        }
     }
 
 }
