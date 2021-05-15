@@ -45,7 +45,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_rawRes="@raw/lottie_movie_loader_animation" />
+        app:lottie_rawRes="@raw/lottie_woman_walk" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lav_failure"

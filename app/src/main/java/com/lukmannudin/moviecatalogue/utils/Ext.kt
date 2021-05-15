@@ -16,6 +16,7 @@ import com.lukmannudin.moviecatalogue.R
 fun ImageView.setImage(context: Context, imagePath: String) {
     Glide.with(context)
         .load(imagePath)
+        .centerCrop()
         .apply(
             RequestOptions.placeholderOf(R.drawable.ic_loading)
                 .error(R.drawable.ic_error)

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.databinding.ItemMovieBinding
 import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailActivity
+import com.lukmannudin.moviecatalogue.utils.Converters.toStringFormat
 import com.lukmannudin.moviecatalogue.utils.setImage
 
 /**
@@ -45,7 +46,8 @@ class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
         fun bind(movie: Movie, shareCallback: (Movie) -> Unit) {
             with(binding) {
                 tvItemTitle.text = movie.title
-                tvItemDate.text = movie.releaseDate
+                tvItemDate.text = movie.releaseDate?.toStringFormat()
+                tvItemOverview.text = movie.overview
                 ivPoster.setImage(itemView.context, movie.posterPath)
 
                 ivShare.setOnClickListener {

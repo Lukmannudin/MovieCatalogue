@@ -5,6 +5,7 @@ import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemote
 import com.lukmannudin.moviecatalogue.mapper.mapperhelper.Mapper
 import com.lukmannudin.moviecatalogue.mapper.mapperhelper.NullableInputListMapper
 import com.lukmannudin.moviecatalogue.mapper.mapperhelper.NullableInputListMapperImpl
+import com.lukmannudin.moviecatalogue.utils.Converters.toDate
 
 /**
  * Created by Lukmannudin on 09/05/21.
@@ -18,7 +19,8 @@ private val movieRemoteToMovieMapper : Mapper<MovieRemote, Movie> =
                 input.id ?: -1,
                 input.title ?: input.originalTitle ?: "title not defined",
                 input.overview ?: "overview not defined",
-                input.releaseDate ?: "release date not defined",
+//                input.releaseDate ?: "release date not defined",
+                input.releaseDate?.toDate(),
                 input.userScore ?: 0.0f,
                 basePosterPath + input.posterPath
             )

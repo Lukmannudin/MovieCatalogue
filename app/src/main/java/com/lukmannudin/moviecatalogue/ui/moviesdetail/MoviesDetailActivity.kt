@@ -10,6 +10,9 @@ import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
 import com.lukmannudin.moviecatalogue.databinding.ActivityMoviesDetailBinding
 import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailViewModel.MovieDetailState
+import com.lukmannudin.moviecatalogue.utils.Converters.toPercentage
+import com.lukmannudin.moviecatalogue.utils.Converters.toPercentageNumber
+import com.lukmannudin.moviecatalogue.utils.Converters.toStringFormat
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.setImage
 import com.lukmannudin.moviecatalogue.utils.visible
@@ -37,8 +40,12 @@ class MoviesDetailActivity : AppCompatActivity() {
             movie.let { movie ->
                 ivPoster.setImage(this@MoviesDetailActivity, movie.posterPath)
                 tvTitle.text = movie.title
-                tvDate.text = movie.releaseDate
+                tvDate.text = movie.releaseDate?.toStringFormat()
                 tvOverview.text = movie.overview
+                tvRating.text = movie.userScore.toPercentage()
+
+                pbRating.isEnabled = true
+                pbRating.progress = movie.userScore.toPercentageNumber()
             }
         }
     }
@@ -57,9 +64,9 @@ class MoviesDetailActivity : AppCompatActivity() {
         setSupportActionBar(activityDetailBinding.toolbar)
     }
 
-    private fun setupObserver(){
+    private fun setupObserver() {
         viewModel.moviesState.observe(this, { viewState ->
-            when (viewState){
+            when (viewState) {
                 is MovieDetailState.Loading -> {
                     showLoadingAndHideFailureView(true)
                 }
@@ -74,10 +81,10 @@ class MoviesDetailActivity : AppCompatActivity() {
         })
     }
 
-    private fun showLoadingAndHideFailureView(status: Boolean){
+    private fun showLoadingAndHideFailureView(status: Boolean) {
         binding.lavFailure.gone()
-        with(binding.lavLoading){
-            if (status){
+        with(binding.lavLoading) {
+            if (status) {
                 visible()
             } else {
                 gone()

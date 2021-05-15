@@ -1,6 +1,7 @@
 package com.lukmannudin.moviecatalogue
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import dagger.hilt.android.HiltAndroidApp
 
 /**
@@ -10,5 +11,9 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class MovieCatalogueApplication : Application() {
-
+    override fun onCreate() {
+        super.onCreate()
+        // set to cannot force dark mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    }
 }

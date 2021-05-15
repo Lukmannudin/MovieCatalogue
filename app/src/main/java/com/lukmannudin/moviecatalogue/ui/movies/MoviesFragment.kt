@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentMovieBinding
 import com.lukmannudin.moviecatalogue.ui.movies.MoviesViewModel.MoviesState
-import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -79,9 +78,6 @@ class MoviesFragment : Fragment() {
                 is MoviesState.Loaded -> {
                     showLoadingAndHideFailureView(false)
                     moviesAdapter.setMovies(viewState.movies)
-                    if (!EspressoIdlingResource.getEspressoIdlingResource().isIdleNow){
-                        EspressoIdlingResource.decrement()
-                    }
                 }
             }
         })
@@ -91,6 +87,7 @@ class MoviesFragment : Fragment() {
         binding.lavFailure.gone()
         with(binding.lavLoading){
             if (status){
+                playAnimation()
                 visible()
             } else {
                 gone()
