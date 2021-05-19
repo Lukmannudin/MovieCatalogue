@@ -4,8 +4,8 @@ import com.lukmannudin.moviecatalogue.api.ApiHelper
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieDataSource
-import com.lukmannudin.moviecatalogue.mapper.toMovie
-import com.lukmannudin.moviecatalogue.mapper.toMovies
+import com.lukmannudin.moviecatalogue.mapper.toMovieFromRemote
+import com.lukmannudin.moviecatalogue.mapper.toMoviesFromRemote
 import javax.inject.Inject
 
 /**
@@ -20,7 +20,7 @@ class MovieRemoteDataSource @Inject constructor(
         val movieRequest = apiHelper.getPopularMovies(language, page)
         return if (movieRequest.isSuccessful){
             val movieRequestResults = movieRequest.body()?.results
-            Result.Success(movieRequestResults.toMovies())
+            Result.Success(movieRequestResults.toMoviesFromRemote())
         } else {
             Result.Error(Exception(movieRequest.message()))
         }
@@ -33,10 +33,14 @@ class MovieRemoteDataSource @Inject constructor(
             if (movieRequestResults == null){
                 Result.Error(Exception("movie is empty"))
             } else {
-                Result.Success(movieRequestResults.toMovie())
+                Result.Success(movieRequestResults.toMovieFromRemote())
             }
         } else {
             Result.Error(Exception(movieRequest.message()))
         }
+    }
+
+    override suspend fun saveMovies(movies: List<Movie>) {
+        // do nothing
     }
 }

@@ -1,5 +1,6 @@
 package com.lukmannudin.moviecatalogue.utils
 
+import androidx.room.TypeConverter
 import java.text.DateFormatSymbols
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -27,6 +28,16 @@ object Converters {
         return "${calendar.get(Calendar.DAY_OF_MONTH)} " +
                 "${getMonthForInt(calendar.get(Calendar.MONTH))}," +
                 " ${calendar.get(Calendar.YEAR)}"
+    }
+
+    @TypeConverter
+    fun Date?.toLong(): Long? {
+        return this?.time
+    }
+
+    @TypeConverter
+    fun Long?.toDate(): Date? {
+        return this?.let { Date(it) }
     }
 
     fun Float.toPercentage(): String {

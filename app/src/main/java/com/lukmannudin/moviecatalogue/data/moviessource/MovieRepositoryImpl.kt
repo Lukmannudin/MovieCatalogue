@@ -14,22 +14,45 @@ import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
     private val movieRemoteDataSource: MovieDataSource,
+    private val movieLocalDataSource: MovieDataSource,
     private val ioDispather: CoroutineDispatcher
 ) : MovieRepository {
 
-    override suspend fun getPopularMovies(language: String, page:Int): Result<List<Movie>> {
+    override suspend fun getPopularMovies(language: String, page: Int): Result<List<Movie>> {
         EspressoIdlingResource.increment()
-        return withContext(ioDispather){
+        return withContext(ioDispather) {
             EspressoIdlingResource.decrement()
-            movieRemoteDataSource.getPopularMovies(language, page)
+            when (val moviesRemote = movieRemoteDataSource.getPopularMovies(language, page)) {
+                is Result.Success -> {
+                    movieLocalDataSource.saveMovies(moviesRemote.data)
+                    return@withContext movieLocalDataSource.getPopularMovies(language, page)
+                }
+                is Result.Error -> {
+                    return@withContext movieLocalDataSource.getPopularMovies(language, page)
+                }
+                else -> {
+                    return@withContext Result.Error(IllegalArgumentException())
+                }
+            }
         }
     }
 
     override suspend fun getMovie(id: Int, language: String): Result<Movie> {
         EspressoIdlingResource.increment()
-        return withContext(ioDispather){
+        return withContext(ioDispather) {
             EspressoIdlingResource.decrement()
-            movieRemoteDataSource.getMovie(id, language)
+            when (val movieLocal = movieLocalDataSource.getMovie(id, language)) {
+                is Result.Success -> {
+                    return@withContext movieLocal
+                }
+                is Result.Error -> {
+                    return@withContext movieRemoteDataSource.getMovie(id, language)
+                }
+                else -> {
+                    return@withContext Result.Error(IllegalArgumentException())
+                }
+            }
         }
     }
+
 }
