@@ -1,5 +1,6 @@
 package com.lukmannudin.moviecatalogue.data.moviessource.local
 
+import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -13,10 +14,10 @@ import androidx.room.Query
 interface MovieDao {
 
     @Query("SELECT * FROM movies")
-    suspend fun getMovies(): List<MovieLocal>
+    fun getMovies(): DataSource.Factory<Int, MovieLocal>
 
     @Query("SELECT * FROM movies WHERE id = :movieId")
-    suspend fun getMovie(movieId: Int): MovieLocal
+    fun getMovie(movieId: Int): MovieLocal
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMovies(movies: List<MovieLocal>)

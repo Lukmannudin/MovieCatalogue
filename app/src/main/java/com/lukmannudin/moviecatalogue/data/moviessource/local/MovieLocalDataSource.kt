@@ -1,10 +1,10 @@
 package com.lukmannudin.moviecatalogue.data.moviessource.local
 
+import androidx.paging.DataSource
+import androidx.paging.PagedList
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.moviessource.MovieDataSource
 import com.lukmannudin.moviecatalogue.mapper.toMovieFromLocal
-import com.lukmannudin.moviecatalogue.mapper.toMoviesFromLocal
 import com.lukmannudin.moviecatalogue.mapper.toMoviesLocal
 import javax.inject.Inject
 
@@ -14,27 +14,29 @@ import javax.inject.Inject
 
 class MovieLocalDataSource @Inject constructor(
     private val movieDao: MovieDao
-) : MovieDataSource {
+) {
 
-    override suspend fun getPopularMovies(language: String, page: Int): Result<List<Movie>> {
+    fun getPopularMovies(): Result<DataSource.Factory<Int, Movie>> {
         return try {
-            val movies = movieDao.getMovies()
-            Result.Success(movies.toMoviesFromLocal())
-        } catch (e: Exception){
+            val moviesDataSource = movieDao.getMovies().map {
+                it.toMovieFromLocal()
+            }
+            Result.Success(moviesDataSource)
+        } catch (e: Exception) {
             Result.Error(e)
         }
     }
 
-    override suspend fun getMovie(id: Int, language: String): Result<Movie> {
+    fun getMovie(id: Int): Result<Movie> {
         return try {
             val movies = movieDao.getMovie(id)
             Result.Success(movies.toMovieFromLocal())
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Result.Error(e)
         }
     }
 
-    override suspend fun saveMovies(movies: List<Movie>){
+    fun saveMovies(movies: List<Movie>) {
         movieDao.insertMovies(movies.toMoviesLocal())
     }
 }

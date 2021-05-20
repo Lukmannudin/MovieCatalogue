@@ -29,6 +29,8 @@ class MovieRepositoryImplTest {
 
     private lateinit var remoteMovieDataSource: FakeMovieDataSource
 
+    private lateinit var localMovieDataSource: FakeMovieDataSource
+
     @Mock
     private lateinit var movieRepository: MovieRepository
 
@@ -38,8 +40,9 @@ class MovieRepositoryImplTest {
     @Before
     fun createRepository() {
         remoteMovieDataSource = FakeMovieDataSource()
+        localMovieDataSource = FakeMovieDataSource()
         movieRepository = MovieRepositoryImpl(
-            remoteMovieDataSource, testDispatcher
+            remoteMovieDataSource, localMovieDataSource, testDispatcher
         )
     }
 

@@ -3,6 +3,7 @@ package com.lukmannudin.moviecatalogue.data.moviessource
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.utils.Constant
+import java.util.*
 
 /**
  * Created by Lukmannudin on 10/05/21.
@@ -30,12 +31,16 @@ class FakeMovieDataSource : MovieDataSource {
         }
     }
 
+    override suspend fun saveMovies(movies: List<Movie>) {
+        // do nothing
+    }
+
     companion object {
         val dummyMovie = Movie(
             1,
             "title",
             "overview",
-            "releaseDate",
+            Date(),
             0f,
             "posterPath"
         )

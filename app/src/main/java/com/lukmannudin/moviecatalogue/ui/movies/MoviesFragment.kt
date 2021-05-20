@@ -77,7 +77,9 @@ class MoviesFragment : Fragment() {
                 }
                 is MoviesState.Loaded -> {
                     showLoadingAndHideFailureView(false)
-                    moviesAdapter.setMovies(viewState.movies)
+                    viewState.movies.observe(viewLifecycleOwner, {
+                        moviesAdapter.submitList(it)
+                    })
                 }
             }
         })

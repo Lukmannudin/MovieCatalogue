@@ -49,4 +49,5 @@ ext {
     idleResourceVersion = '3.3.0'
     hiltTestingVersion = '2.35'
     roomVersion = '2.3.0'
+    pagingVersion = '2.1.1'
 }

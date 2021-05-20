@@ -2,6 +2,8 @@ package com.lukmannudin.moviecatalogue.ui.movies
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.databinding.ItemMovieBinding
@@ -14,18 +16,18 @@ import com.lukmannudin.moviecatalogue.utils.setImage
  */
 
 
-class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
+class MoviesAdapter : PagedListAdapter<Movie, MoviesAdapter.MoviesViewHolder>(DIFF_CALLBACK) {
 
-    private var movies = ArrayList<Movie>()
+//    private var movies = ArrayList<Movie>()
 
     lateinit var shareCallback: (Movie) -> Unit
 
-    fun setMovies(movies: List<Movie>?) {
-        if (movies == null) return
-        this.movies.clear()
-        this.movies.addAll(movies)
-        notifyDataSetChanged()
-    }
+//    fun setMovies(movies: List<Movie>?) {
+//        if (movies == null) return
+//        this.movies.clear()
+//        this.movies.addAll(movies)
+//        notifyDataSetChanged()
+//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
         val itemsAcademyBinding =
@@ -34,14 +36,26 @@ class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: MoviesViewHolder, position: Int) {
-        val movie = movies[position]
-        holder.bind(movie, shareCallback)
+        val movie = getItem(position)
+
+        movie?.let {
+            holder.bind(it, shareCallback)
+        }
     }
 
-    override fun getItemCount(): Int = movies.size
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Movie>() {
+            override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+                return oldItem.id == newItem.id
+            }
 
+            override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 
-    class MoviesViewHolder(private val binding: ItemMovieBinding) :
+    inner class MoviesViewHolder(private val binding: ItemMovieBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(movie: Movie, shareCallback: (Movie) -> Unit) {
             with(binding) {

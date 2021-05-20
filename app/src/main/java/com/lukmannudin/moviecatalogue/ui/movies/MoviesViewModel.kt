@@ -1,13 +1,15 @@
 package com.lukmannudin.moviecatalogue.ui.movies
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
 import com.lukmannudin.moviecatalogue.utils.Constant.LANGUAGE
-import com.lukmannudin.moviecatalogue.utils.Constant.PAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -20,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
+    private val pagedListConfig: PagedList.Config,
     private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -28,13 +31,15 @@ class MoviesViewModel @Inject constructor(
     fun getMovies() {
         moviesState.value = MoviesState.Loading
         viewModelScope.launch(ioDispatcher) {
-           when (val movies = movieRepository.getPopularMovies(LANGUAGE, PAGE)){
+           when (val movies = movieRepository.getPopularMovies(LANGUAGE, 15)){
                 is Result.Error -> {
                     moviesState.postValue(MoviesState.Error(movies.exception.message.toString()))
                 }
 
                 is Result.Success -> {
-                    moviesState.postValue(MoviesState.Loaded(movies.data))
+                    moviesState.postValue(MoviesState.Loaded(
+                        LivePagedListBuilder(movies.data, pagedListConfig).build()
+                    ))
                 }
 
                 else -> {
@@ -44,10 +49,10 @@ class MoviesViewModel @Inject constructor(
         }
     }
 
-    sealed class MoviesState(){
+    sealed class MoviesState {
         object Loading : MoviesState()
         data class Error(val errorMessage: String) : MoviesState()
-        data class Loaded(val movies: List<Movie>) : MoviesState()
+        data class Loaded(val movies: LiveData<PagedList<Movie>>) : MoviesState()
     }
 
 }
