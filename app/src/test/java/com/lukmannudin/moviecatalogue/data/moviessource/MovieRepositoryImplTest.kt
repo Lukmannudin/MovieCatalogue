@@ -48,22 +48,22 @@ class MovieRepositoryImplTest {
 
     @Test
     fun getValidPopularMovies() = runBlockingTest {
-        val movies = movieRepository.getPopularMovies(Constant.LANGUAGE, Constant.PAGE)
+        val movies = movieRepository.getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
         assertEquals(Result.Success(emptyList<Movie>()), movies)
     }
 
     @Test
     fun getValidMovie() = runBlockingTest {
-        val movie = movieRepository.getMovie(1, Constant.LANGUAGE)
+        val movie = movieRepository.getMovie(1, Constant.DEFAULT_LANGUAGE)
         assertEquals(Result.Success(FakeMovieDataSource.dummyMovie), movie)
     }
 
     @Test
     fun getInvalidPopularMovies() = runBlockingTest {
-        val moviesInvalidLanguage = movieRepository.getPopularMovies("", Constant.PAGE)
+        val moviesInvalidLanguage = movieRepository.getPopularMovies("", Constant.DEFAULT_PAGE_INDEX)
         assertNotEquals(Result.Success(emptyList<Movie>()), moviesInvalidLanguage)
 
-        val moviesInvalidPage = movieRepository.getPopularMovies(Constant.LANGUAGE, -1)
+        val moviesInvalidPage = movieRepository.getPopularMovies(Constant.DEFAULT_LANGUAGE, -1)
         assertNotEquals(Result.Success(emptyList<Movie>()), moviesInvalidPage)
 
         val moviesInvalid = movieRepository.getPopularMovies("", -1)
@@ -74,7 +74,7 @@ class MovieRepositoryImplTest {
     fun getInvalidMovie() = runBlockingTest {
         val fakeMovie = FakeMovieDataSource.dummyMovie
 
-        val movieInvalidId = movieRepository.getMovie(-1, Constant.LANGUAGE)
+        val movieInvalidId = movieRepository.getMovie(-1, Constant.DEFAULT_LANGUAGE)
         assertNotEquals(Result.Success(fakeMovie), movieInvalidId)
 
         val movieInvalidLanguage = movieRepository.getMovie(1, "")

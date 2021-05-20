@@ -11,7 +11,7 @@ import com.lukmannudin.moviecatalogue.utils.Constant
 class FakeTvShowDataSource : TvShowDataSource {
     override suspend fun getPopularTvShows(language: String, page: Int): Result<List<TvShow>> {
         return when {
-            language != Constant.LANGUAGE -> Result.Error(Exception(""))
+            language != Constant.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
             page < 1 -> Result.Error(Exception(""))
             else -> {
                 return Result.Success(emptyList())
@@ -22,7 +22,7 @@ class FakeTvShowDataSource : TvShowDataSource {
     override suspend fun getTvShow(id: Int, language: String): Result<TvShow> {
         return when {
             id < 0 -> Result.Error(Exception(""))
-            language != Constant.LANGUAGE -> Result.Error(Exception(""))
+            language != Constant.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
             else -> {
                 return Result.Success(dummyTvShow)
             }

@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentMovieBinding
@@ -14,6 +16,8 @@ import com.lukmannudin.moviecatalogue.ui.movies.MoviesViewModel.MoviesState
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
  * Created by Lukmannudin on 5/3/21.
@@ -26,6 +30,7 @@ class MoviesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var moviesAdapter: MoviesAdapter
+    private lateinit var loadStateAdapter: LoaderStateAdapter
 
     private val viewModel: MoviesViewModel by viewModels()
 
@@ -46,6 +51,7 @@ class MoviesFragment : Fragment() {
 
     private fun setupAdapter() {
         moviesAdapter = MoviesAdapter()
+        loadStateAdapter = LoaderStateAdapter()
 
         moviesAdapter.shareCallback = { movie ->
             if (activity != null) {
@@ -59,10 +65,27 @@ class MoviesFragment : Fragment() {
             }
         }
 
+        loadStateAdapter.loadStateCallBack = { loadState ->
+            when (loadState){
+                is LoadState.Error -> {
+                    viewModel.moviesState.postValue(
+                        MoviesState.Error(loadState.error.message.toString())
+                    )
+                }
+                is LoadState.Loading -> {
+                    viewModel.moviesState.postValue(MoviesState.Loading)
+                }
+                is LoadState.NotLoading -> {
+                    // do nothing
+                }
+            }
+        }
+
         with(binding.rvMovies) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
-            adapter = moviesAdapter
+            adapter = moviesAdapter.withLoadStateHeaderAndFooter(
+                loadStateAdapter, loadStateAdapter)
         }
     }
 
@@ -77,9 +100,9 @@ class MoviesFragment : Fragment() {
                 }
                 is MoviesState.Loaded -> {
                     showLoadingAndHideFailureView(false)
-                    viewState.movies.observe(viewLifecycleOwner, {
-                        moviesAdapter.submitList(it)
-                    })
+                    lifecycleScope.launch {
+                        moviesAdapter.submitData(viewState.movies)
+                    }
                 }
             }
         })

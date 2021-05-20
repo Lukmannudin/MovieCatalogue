@@ -1,11 +1,14 @@
 package com.lukmannudin.moviecatalogue.data.moviessource.local
 
-import androidx.paging.DataSource
-import androidx.paging.PagedList
+import androidx.paging.*
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.moviessource.remote.PagedKeyedMoviePagingSource
 import com.lukmannudin.moviecatalogue.mapper.toMovieFromLocal
 import com.lukmannudin.moviecatalogue.mapper.toMoviesLocal
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -16,14 +19,15 @@ class MovieLocalDataSource @Inject constructor(
     private val movieDao: MovieDao
 ) {
 
-    fun getPopularMovies(): Result<DataSource.Factory<Int, Movie>> {
-        return try {
-            val moviesDataSource = movieDao.getMovies().map {
-                it.toMovieFromLocal()
+    fun getPopularMovies(pageSize: Int): Flow<PagingData<Movie>> {
+        return Pager(
+            PagingConfig(pageSize)
+        ) {
+            movieDao.getMovies()
+        }.flow.map { pagingData ->
+            pagingData.map {  movieLocal ->
+                movieLocal.toMovieFromLocal()
             }
-            Result.Success(moviesDataSource)
-        } catch (e: Exception) {
-            Result.Error(e)
         }
     }
 

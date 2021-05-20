@@ -30,7 +30,7 @@ class TvShowsDetailViewModel @Inject constructor(
         tvShowState.value = TvShowDetailState.Loading
 
         viewModelScope.launch(ioDispatcher) {
-            when (val tvShow = tvShowRepository.getTvShow(tvShowId, Constant.LANGUAGE)){
+            when (val tvShow = tvShowRepository.getTvShow(tvShowId, Constant.DEFAULT_LANGUAGE)){
                 is Result.Error -> {
                     tvShowState.postValue(TvShowDetailState.Error(
                         tvShow.exception.message.toString()

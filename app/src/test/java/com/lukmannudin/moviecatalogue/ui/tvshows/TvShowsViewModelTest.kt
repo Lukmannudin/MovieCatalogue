@@ -42,12 +42,12 @@ class TvShowsViewModelTest {
 
     @Test
     fun getTvShowsSuccess() = runBlockingTest {
-        `when`(tvShowRepository.getPopularTvShows(Constant.LANGUAGE, Constant.PAGE))
+        `when`(tvShowRepository.getPopularTvShows(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX))
             .thenReturn(Result.Success(emptyList()))
 
         viewModel.getTvShows()
 
-        verify(tvShowRepository).getPopularTvShows(Constant.LANGUAGE, Constant.PAGE)
+        verify(tvShowRepository).getPopularTvShows(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
 
         val tvShows = viewModel.tvShowsState.value
 
@@ -56,12 +56,12 @@ class TvShowsViewModelTest {
 
     @Test
     fun getTvShowsFailed() = runBlockingTest {
-        `when`(tvShowRepository.getPopularTvShows(Constant.LANGUAGE, Constant.PAGE))
+        `when`(tvShowRepository.getPopularTvShows(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX))
             .thenReturn(Result.Error(Exception("")))
 
         viewModel.getTvShows()
 
-        verify(tvShowRepository).getPopularTvShows(Constant.LANGUAGE, Constant.PAGE)
+        verify(tvShowRepository).getPopularTvShows(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
 
         val tvShows = viewModel.tvShowsState.value
 

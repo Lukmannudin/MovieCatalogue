@@ -1,11 +1,14 @@
 package com.lukmannudin.moviecatalogue.data.moviessource.remote
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.lukmannudin.moviecatalogue.api.ApiHelper
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.moviessource.MovieDataSource
+import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
 import com.lukmannudin.moviecatalogue.mapper.toMovieFromRemote
-import com.lukmannudin.moviecatalogue.mapper.toMoviesFromRemote
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
@@ -14,23 +17,27 @@ import javax.inject.Inject
 
 
 class MovieRemoteDataSource @Inject constructor(
-    private val apiHelper: ApiHelper) : MovieDataSource {
+    private val apiHelper: ApiHelper
+) {
 
-    override suspend fun getPopularMovies(language: String, page: Int): Result<List<Movie>> {
-        val movieRequest = apiHelper.getPopularMovies(language, page)
-        return if (movieRequest.isSuccessful){
-            val movieRequestResults = movieRequest.body()?.results
-            Result.Success(movieRequestResults.toMoviesFromRemote())
-        } else {
-            Result.Error(Exception(movieRequest.message()))
-        }
+    fun getPopularMovies(
+        movieLocalDataSource: MovieLocalDataSource,
+        language: String,
+        pageSize: Int): Flow<PagingData<Movie>> {
+        return Pager(
+            PagingConfig(pageSize)
+        ) {
+            PagedKeyedMoviePagingSource(
+                movieLocalDataSource, language, apiHelper
+            )
+        }.flow
     }
 
-    override suspend fun getMovie(id: Int, language: String): Result<Movie> {
+    suspend fun getMovie(id: Int, language: String): Result<Movie> {
         val movieRequest = apiHelper.getMovie(id, language)
-        return if (movieRequest.isSuccessful){
+        return if (movieRequest.isSuccessful) {
             val movieRequestResults = movieRequest.body()
-            if (movieRequestResults == null){
+            if (movieRequestResults == null) {
                 Result.Error(Exception("movie is empty"))
             } else {
                 Result.Success(movieRequestResults.toMovieFromRemote())
@@ -38,9 +45,5 @@ class MovieRemoteDataSource @Inject constructor(
         } else {
             Result.Error(Exception(movieRequest.message()))
         }
-    }
-
-    override suspend fun saveMovies(movies: List<Movie>) {
-        // do nothing
     }
 }

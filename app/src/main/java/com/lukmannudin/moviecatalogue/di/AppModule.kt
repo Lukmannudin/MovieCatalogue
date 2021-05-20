@@ -21,4 +21,5 @@ object AppModule {
         .setInitialLoadSizeHint(4)
         .setPageSize(4)
         .build()
+
 }

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
-import com.lukmannudin.moviecatalogue.utils.Constant.LANGUAGE
+import com.lukmannudin.moviecatalogue.utils.Constant.DEFAULT_LANGUAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ class MoviesDetailViewModel @Inject constructor(
         if (movieId == null) return
 
         viewModelScope.launch(ioDispatcher) {
-            when (val movie = moviesRepository.getMovie(movieId, LANGUAGE)){
+            when (val movie = moviesRepository.getMovie(movieId, DEFAULT_LANGUAGE)){
                 is Result.Error -> {
                     moviesState.postValue(MovieDetailState.Error(movie.exception.message.toString()))
                 }

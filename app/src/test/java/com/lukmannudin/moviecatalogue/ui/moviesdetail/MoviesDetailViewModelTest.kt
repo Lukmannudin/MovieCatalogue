@@ -45,12 +45,12 @@ class MoviesDetailViewModelTest {
     fun getMovieDetailSuccess() = runBlockingTest {
         val fakeMovie = FakeMovieDataSource.dummyMovie
 
-        `when`(moviesRepository.getMovie(1, Constant.LANGUAGE))
+        `when`(moviesRepository.getMovie(1, Constant.DEFAULT_LANGUAGE))
             .thenReturn(Result.Success(fakeMovie))
 
         viewModel.getMovie(1)
 
-        verify(moviesRepository).getMovie(1, Constant.LANGUAGE)
+        verify(moviesRepository).getMovie(1, Constant.DEFAULT_LANGUAGE)
 
         val movie = viewModel.moviesState.value
 
@@ -59,12 +59,12 @@ class MoviesDetailViewModelTest {
 
     @Test
     fun getMovieDetailFailed() = runBlockingTest {
-        `when`(moviesRepository.getMovie(1, Constant.LANGUAGE))
+        `when`(moviesRepository.getMovie(1, Constant.DEFAULT_LANGUAGE))
             .thenReturn(Result.Error(Exception("")))
 
         viewModel.getMovie(1)
 
-        verify(moviesRepository).getMovie(1, Constant.LANGUAGE)
+        verify(moviesRepository).getMovie(1, Constant.DEFAULT_LANGUAGE)
 
         val movie = viewModel.moviesState.value
 

@@ -43,22 +43,22 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun getValidPopularTvShows() = runBlockingTest {
-        val tvShows = tvShowRepository.getPopularTvShows(Constant.LANGUAGE, Constant.PAGE)
+        val tvShows = tvShowRepository.getPopularTvShows(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
         assertEquals(Result.Success(emptyList<TvShow>()), tvShows)
     }
 
     @Test
     fun getValidTvShow() = runBlockingTest {
-        val tvShow = tvShowRepository.getTvShow(1, Constant.LANGUAGE)
+        val tvShow = tvShowRepository.getTvShow(1, Constant.DEFAULT_LANGUAGE)
         assertEquals(Result.Success(FakeTvShowDataSource.dummyTvShow), tvShow)
     }
 
     @Test
     fun getInvalidPopularTvShows() = runBlockingTest {
-        val tvShowInvalidLanguage = tvShowRepository.getPopularTvShows("", Constant.PAGE)
+        val tvShowInvalidLanguage = tvShowRepository.getPopularTvShows("", Constant.DEFAULT_PAGE_INDEX)
         Assert.assertNotEquals(Result.Success(emptyList<TvShow>()), tvShowInvalidLanguage)
 
-        val tvShowsInvalidPage = tvShowRepository.getPopularTvShows(Constant.LANGUAGE, -1)
+        val tvShowsInvalidPage = tvShowRepository.getPopularTvShows(Constant.DEFAULT_LANGUAGE, -1)
         Assert.assertNotEquals(Result.Success(emptyList<TvShow>()), tvShowsInvalidPage)
 
         val tvShowsInvalid = tvShowRepository.getPopularTvShows("", -1)
@@ -69,7 +69,7 @@ class TvShowRepositoryImplTest {
     fun getInvalidTvShow() = runBlockingTest {
         val tvShow = FakeTvShowDataSource.dummyTvShow
 
-        val tvShowInvalidId = tvShowRepository.getTvShow(-1, Constant.LANGUAGE)
+        val tvShowInvalidId = tvShowRepository.getTvShow(-1, Constant.DEFAULT_LANGUAGE)
         Assert.assertNotEquals(Result.Success(tvShow), tvShowInvalidId)
 
         val tvShowInvalidLanguage = tvShowRepository.getTvShow(1, "")

@@ -6,6 +6,6 @@ package com.lukmannudin.moviecatalogue.utils
 
 
 object Constant {
-    const val LANGUAGE = "en-US"
-    const val PAGE = 1
+    const val DEFAULT_LANGUAGE = "en-US"
+    const val DEFAULT_PAGE_INDEX = 1
 }

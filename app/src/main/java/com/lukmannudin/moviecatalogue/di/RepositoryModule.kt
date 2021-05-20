@@ -22,14 +22,6 @@ import javax.inject.Singleton
  * Created by Lukmannudin on 09/05/21.
  */
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class RemoteMovieDataSource
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class LocalMovieDataSource
-
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
@@ -40,7 +32,6 @@ object RepositoryModule {
         return Dispatchers.IO
     }
 
-    //    @RemoteMovieDataSource
     @Provides
     @Singleton
     fun provideRemoteMovieDataSource(apiHelper: ApiHelper): MovieRemoteDataSource =
@@ -51,9 +42,6 @@ object RepositoryModule {
     fun provideLocalMovieDataSource(movieDao: MovieDao): MovieLocalDataSource =
         MovieLocalDataSource(movieDao)
 
-    //    @LocalMovieDataSource
-//    @Singleton
-//
     @Provides
     @Singleton
     fun provideMoviesRepository(

@@ -3,6 +3,7 @@ package com.lukmannudin.moviecatalogue.ui.movies
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.data.Movie
@@ -16,7 +17,7 @@ import com.lukmannudin.moviecatalogue.utils.setImage
  */
 
 
-class MoviesAdapter : PagedListAdapter<Movie, MoviesAdapter.MoviesViewHolder>(DIFF_CALLBACK) {
+class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(DIFF_CALLBACK) {
 
 //    private var movies = ArrayList<Movie>()
 

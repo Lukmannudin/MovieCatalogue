@@ -45,12 +45,12 @@ class TvShowsDetailViewModelTest {
     fun getTvShowDetailSuccess() = runBlockingTest {
         val fakeTvShow = FakeTvShowDataSource.dummyTvShow
 
-        `when`(tvShowRepository.getTvShow(1, Constant.LANGUAGE))
+        `when`(tvShowRepository.getTvShow(1, Constant.DEFAULT_LANGUAGE))
             .thenReturn(Result.Success(fakeTvShow))
 
         viewModel.getTvShow(1)
 
-        verify(tvShowRepository).getTvShow(1, Constant.LANGUAGE)
+        verify(tvShowRepository).getTvShow(1, Constant.DEFAULT_LANGUAGE)
 
         val tvShow = viewModel.tvShowState.value
 
@@ -59,12 +59,12 @@ class TvShowsDetailViewModelTest {
 
     @Test
     fun getTvShowDetailFailed() = runBlockingTest {
-        `when`(tvShowRepository.getTvShow(1, Constant.LANGUAGE))
+        `when`(tvShowRepository.getTvShow(1, Constant.DEFAULT_LANGUAGE))
             .thenReturn(Result.Error(Exception("")))
 
         viewModel.getTvShow(1)
 
-        verify(tvShowRepository).getTvShow(1, Constant.LANGUAGE)
+        verify(tvShowRepository).getTvShow(1, Constant.DEFAULT_LANGUAGE)
 
         val tvShow = viewModel.tvShowState.value
 

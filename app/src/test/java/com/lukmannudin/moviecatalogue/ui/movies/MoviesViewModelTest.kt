@@ -43,12 +43,12 @@ class MoviesViewModelTest {
 
     @Test
     fun getMoviesSuccess() = runBlockingTest {
-        `when`(moviesRepository.getPopularMovies(Constant.LANGUAGE, Constant.PAGE))
+        `when`(moviesRepository.getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX))
             .thenReturn(Result.Success(emptyList()))
 
         viewModel.getMovies()
 
-        verify(moviesRepository).getPopularMovies(Constant.LANGUAGE, Constant.PAGE)
+        verify(moviesRepository).getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
 
         val movies = viewModel.moviesState.value
 
@@ -57,12 +57,12 @@ class MoviesViewModelTest {
 
     @Test
     fun getMoviesFailed() = runBlockingTest {
-        `when`(moviesRepository.getPopularMovies(Constant.LANGUAGE, Constant.PAGE))
+        `when`(moviesRepository.getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX))
             .thenReturn(Result.Error(Exception("")))
 
         viewModel.getMovies()
 
-        verify(moviesRepository).getPopularMovies(Constant.LANGUAGE, Constant.PAGE)
+        verify(moviesRepository).getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
 
         val movies = viewModel.moviesState.value
 

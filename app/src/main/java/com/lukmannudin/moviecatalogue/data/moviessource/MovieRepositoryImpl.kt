@@ -1,12 +1,13 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
-import androidx.paging.DataSource
+import androidx.paging.PagingData
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemoteDataSource
 import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -24,23 +25,12 @@ class MovieRepositoryImpl @Inject constructor(
     override suspend fun getPopularMovies(
         language: String,
         pageSize: Int
-    ): Result<DataSource.Factory<Int, Movie>> {
-        EspressoIdlingResource.increment()
+    ): Flow<PagingData<Movie>> {
+        movieRemoteDataSource.getPopularMovies(
+            movieLocalDataSource, language, pageSize
+        )
 
-        return withContext(ioDispather) {
-            when (val moviesRemote = movieRemoteDataSource.getPopularMovies(language, pageSize)) {
-                is Result.Success -> {
-                    movieLocalDataSource.saveMovies(moviesRemote.data)
-                    return@withContext movieLocalDataSource.getPopularMovies()
-                }
-                is Result.Error -> {
-                    return@withContext movieLocalDataSource.getPopularMovies()
-                }
-                else -> {
-                    throw IllegalArgumentException()
-                }
-            }
-        }
+        return movieLocalDataSource.getPopularMovies(pageSize)
     }
 
     override suspend fun getMovie(id: Int, language: String): Result<Movie> {
