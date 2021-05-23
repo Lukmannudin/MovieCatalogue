@@ -27,5 +27,8 @@ data class MovieLocal(
     val userScore: Float,
 
     @ColumnInfo(name = "posterPath")
-    val posterPath: String
+    val posterPath: String,
+
+    @ColumnInfo(name = "page")
+    val page: Int? = null,
 )

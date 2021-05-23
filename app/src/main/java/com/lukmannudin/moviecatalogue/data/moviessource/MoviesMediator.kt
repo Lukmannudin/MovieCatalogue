@@ -7,17 +7,13 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.lukmannudin.moviecatalogue.MovieCatalogueDatabase
 import com.lukmannudin.moviecatalogue.api.ApiHelper
-import com.lukmannudin.moviecatalogue.data.Movie
-import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieDao
+import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocal
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieRemoteKey
-import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieRemoteKeyDao
-import com.lukmannudin.moviecatalogue.mapper.toMovieFromRemote
 import com.lukmannudin.moviecatalogue.mapper.toMoviesFromRemote
 import com.lukmannudin.moviecatalogue.mapper.toMoviesLocal
 import com.lukmannudin.moviecatalogue.utils.Constant
 import okio.IOException
 import retrofit2.HttpException
-import java.io.InvalidObjectException
 
 /**
  * Created by Lukmannudin on 20/05/21.
@@ -25,98 +21,79 @@ import java.io.InvalidObjectException
 @ExperimentalPagingApi
 class MoviesMediator(
     private val apiHelper: ApiHelper,
-    private val db: MovieCatalogueDatabase
-) : RemoteMediator<Int, Movie>() {
+    private val database: MovieCatalogueDatabase
+) : RemoteMediator<Int, MovieLocal>() {
+    val movieDao = database.movieDao()
+    val remoteKeyDao = database.movieRemoteKeyDao()
 
-    private val remoteKeyDao: MovieRemoteKeyDao = db.movieRemoteKeyDao()
-    private val movieDao: MovieDao = db.movieDao()
-//    override suspend fun initialize(): InitializeAction {
-//        return InitializeAction.LAUNCH_INITIAL_REFRESH
-//    }
+    override suspend fun initialize(): InitializeAction {
+        return InitializeAction.LAUNCH_INITIAL_REFRESH
+    }
 
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, Movie>): MediatorResult {
-        val page = when (val pagedKeyData = getPagedKeyData(loadType, state)) {
-            is MediatorResult.Success -> {
-                return pagedKeyData
-            }
-            else -> {
-                pagedKeyData as Int
-            }
-        }
+    override suspend fun load(
+        loadType: LoadType,
+        state: PagingState<Int, MovieLocal>
+    ): MediatorResult {
+        return try {
+            // The network load method takes an optional `after=<user.id>` parameter. For every
+            // page after the first, we pass the last user ID to let it continue from where it
+            // left off. For REFRESH, pass `null` to load the first page.
+            val loadKey = when (loadType) {
+                LoadType.REFRESH -> null
+                // In this example, we never need to prepend, since REFRESH will always load the
+                // first page in the list. Immediately return, reporting end of pagination.
+                LoadType.PREPEND -> null
+                LoadType.APPEND -> {
+                    val lastItem = state.lastItemOrNull()
 
-        try {
-            val response =
-                apiHelper.getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
-            val isEndOfList = response.body()?.results?.isNullOrEmpty()
-            db.withTransaction {
+                    // We must explicitly check if the last item is `null` when appending,
+                    // since passing `null` to networkService is only valid for initial load.
+                    // If lastItem is `null` it means no items were loaded after the initial
+                    // REFRESH and there are no more items to load.
+
+                    lastItem?.page?.let { remoteKeyDao.remoteKeyById(it)}?.nextPage ?: 1
+                }
+            } ?: return MediatorResult.Success(true)
+
+            // Suspending network load via Retrofit. This doesn't need to be wrapped in a
+            // withContext(Dispatcher.IO) { ... } block since Retrofit's Coroutine CallAdapter
+            // dispatches on a worker thread.
+            val response = apiHelper.getPopularMovies(Constant.DEFAULT_LANGUAGE, loadKey ?: 1)
+
+            database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    remoteKeyDao.clearCache()
                     movieDao.clearCache()
+                }
+
+                // Insert new users into database, which invalidates the current
+                // PagingData, allowing Paging to present the updates in the DB.
+                val results = response.body()?.results
+                results?.map {
+                    it.page = response.body()?.page
+                }
+
+                results.toMoviesFromRemote().toMoviesLocal().let {
+                    movieDao.insertMovies(
+                        it
+                    )
+                    val currentPage = response.body()?.page
+                    if (currentPage != null) {
+                        remoteKeyDao.insert(
+                            MovieRemoteKey(
+                                currentPage,
+                                currentPage + 1,
+                                currentPage - 1
+                            )
+                        )
+                    }
                 }
             }
 
-            val prevKey = if (page == Constant.DEFAULT_PAGE_INDEX) null else page -1
-            val nextKey = if (isEndOfList!!) null else page + 1
-            val keys = response.body()?.results?.map { movieRemote ->
-                MovieRemoteKey(movieRemote.toMovieFromRemote().id, nextKey, prevKey)
-            }
-            keys?.let { remoteKeyDao.insertRemoteKeys(it) }
-            movieDao.insertMovies(response.body()?.results.toMoviesFromRemote().toMoviesLocal())
-            return MediatorResult.Success(endOfPaginationReached = isEndOfList)
-        } catch (exception: IOException) {
-            return MediatorResult.Error(exception)
-        } catch (exception: HttpException) {
-            return MediatorResult.Error(exception)
-        }
-
-    }
-
-    suspend fun getPagedKeyData(loadType: LoadType, state: PagingState<Int, Movie>): Any? {
-        return when (loadType) {
-            LoadType.REFRESH -> {
-                val remoteKey = getClosestRemoteKey(state)
-                remoteKey?.nextPage?.minus(1) ?: Constant.DEFAULT_PAGE_INDEX
-            }
-            LoadType.PREPEND -> {
-                val remoteKey = getLastRemoteKey(state)
-                    ?: throw InvalidObjectException("Remote key should not be null for $loadType")
-                remoteKey
-            }
-            LoadType.APPEND -> {
-                val remoteKeys = getFirstRemoteKey(state)
-                    ?: throw InvalidObjectException("Invalid state, key should not be null")
-                //end of list condition reached
-                remoteKeys.nextPage
-                    ?: return MediatorResult.Success(endOfPaginationReached = true)
-                remoteKeys.nextPage
-            }
+            MediatorResult.Success(endOfPaginationReached = false)
+        } catch (e: IOException) {
+            MediatorResult.Error(e)
+        } catch (e: HttpException) {
+            MediatorResult.Error(e)
         }
     }
-
-    private suspend fun getLastRemoteKey(state: PagingState<Int, Movie>): MovieRemoteKey? {
-        return state.pages
-            .lastOrNull { it.data.isNotEmpty() }
-            ?.data?.lastOrNull()
-            ?.let { movie ->
-                remoteKeyDao.remoteKeyById(movie.id)
-            }
-    }
-
-    private suspend fun getFirstRemoteKey(state: PagingState<Int, Movie>): MovieRemoteKey? {
-        return state.pages
-            .firstOrNull { it.data.isNotEmpty() }
-            ?.data?.firstOrNull()
-            ?.let { movie ->
-                remoteKeyDao.remoteKeyById(movie.id)
-            }
-    }
-
-    private suspend fun getClosestRemoteKey(state: PagingState<Int, Movie>): MovieRemoteKey? {
-        return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.id?.let { movieId ->
-                remoteKeyDao.remoteKeyById(movieId)
-            }
-        }
-    }
-
 }

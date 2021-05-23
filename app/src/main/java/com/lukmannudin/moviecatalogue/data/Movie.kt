@@ -11,5 +11,6 @@ data class Movie(
     val overview: String,
     val releaseDate: Date?,
     val userScore: Float,
-    val posterPath: String
+    val posterPath: String,
+    val page: Int?
 ) : Parcelable

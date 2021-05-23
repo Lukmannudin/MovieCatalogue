@@ -6,6 +6,7 @@ import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.PagedKeyedMoviePagingSource
 import com.lukmannudin.moviecatalogue.mapper.toMovieFromLocal
 import com.lukmannudin.moviecatalogue.mapper.toMoviesLocal
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -40,7 +41,7 @@ class MovieLocalDataSource @Inject constructor(
         }
     }
 
-    fun saveMovies(movies: List<Movie>) {
+    suspend fun saveMovies(movies: List<Movie>) {
         movieDao.insertMovies(movies.toMoviesLocal())
     }
 }

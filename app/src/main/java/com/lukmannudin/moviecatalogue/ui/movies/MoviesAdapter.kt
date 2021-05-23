@@ -19,16 +19,7 @@ import com.lukmannudin.moviecatalogue.utils.setImage
 
 class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(DIFF_CALLBACK) {
 
-//    private var movies = ArrayList<Movie>()
-
     lateinit var shareCallback: (Movie) -> Unit
-
-//    fun setMovies(movies: List<Movie>?) {
-//        if (movies == null) return
-//        this.movies.clear()
-//        this.movies.addAll(movies)
-//        notifyDataSetChanged()
-//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
         val itemsAcademyBinding =
@@ -36,11 +27,16 @@ class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(D
         return MoviesViewHolder(itemsAcademyBinding)
     }
 
-    override fun onBindViewHolder(holder: MoviesViewHolder, position: Int) {
-        val movie = getItem(position)
-
-        movie?.let {
-            holder.bind(it, shareCallback)
+    override fun onBindViewHolder(
+        holder: MoviesViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNotEmpty()){
+            val item = getItem(position)
+            item?.let { holder.bind(it, shareCallback) }
+        } else {
+            onBindViewHolder(holder, position)
         }
     }
 
@@ -52,6 +48,10 @@ class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(D
 
             override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
                 return oldItem == newItem
+            }
+
+            override fun getChangePayload(oldItem: Movie, newItem: Movie): Any? {
+                return oldItem.id == newItem.id
             }
         }
     }
@@ -74,5 +74,9 @@ class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(D
                 }
             }
         }
+    }
+
+    override fun onBindViewHolder(holder: MoviesViewHolder, position: Int) {
+        getItem(position)?.let { holder.bind(it, shareCallback) }
     }
 }

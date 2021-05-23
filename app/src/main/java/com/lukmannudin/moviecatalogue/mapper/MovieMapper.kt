@@ -21,7 +21,8 @@ private val movieRemoteToMovieMapper: Mapper<MovieRemote, Movie> =
                 input.overview ?: "overview not defined",
                 input.releaseDate?.toDate(),
                 input.userScore ?: 0.0f,
-                basePosterPath + input.posterPath
+                basePosterPath + input.posterPath,
+                null
             )
         }
     }
@@ -42,7 +43,8 @@ private val movieLocalToMovieMapper: Mapper<MovieLocal, Movie> =
                 input.overview,
                 input.releaseDate.toDate(),
                 input.userScore,
-                input.posterPath
+                input.posterPath,
+                input.page
             )
         }
     }
@@ -63,7 +65,8 @@ private val movieToLocalMapper: Mapper<Movie, MovieLocal> =
                 input.overview,
                 input.releaseDate.toLong(),
                 input.userScore,
-                input.posterPath
+                input.posterPath,
+                input.page
             )
         }
     }

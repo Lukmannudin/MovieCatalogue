@@ -17,6 +17,7 @@ import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
@@ -30,7 +31,7 @@ class MoviesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var moviesAdapter: MoviesAdapter
-    private lateinit var loadStateAdapter: LoaderStateAdapter
+    private lateinit var loadStateAdapter: PostsLoadStateAdapter
 
     private val viewModel: MoviesViewModel by viewModels()
 
@@ -51,7 +52,7 @@ class MoviesFragment : Fragment() {
 
     private fun setupAdapter() {
         moviesAdapter = MoviesAdapter()
-        loadStateAdapter = LoaderStateAdapter()
+        loadStateAdapter = PostsLoadStateAdapter(moviesAdapter)
 
         moviesAdapter.shareCallback = { movie ->
             if (activity != null) {
@@ -65,47 +66,45 @@ class MoviesFragment : Fragment() {
             }
         }
 
-        loadStateAdapter.loadStateCallBack = { loadState ->
-            when (loadState){
-                is LoadState.Error -> {
-                    viewModel.moviesState.postValue(
-                        MoviesState.Error(loadState.error.message.toString())
-                    )
-                }
-                is LoadState.Loading -> {
-                    viewModel.moviesState.postValue(MoviesState.Loading)
-                }
-                is LoadState.NotLoading -> {
-                    // do nothing
-                }
-            }
-        }
-
         with(binding.rvMovies) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
             adapter = moviesAdapter.withLoadStateHeaderAndFooter(
-                loadStateAdapter, loadStateAdapter)
+                header = loadStateAdapter,
+                footer = loadStateAdapter
+            )
+        }
+
+        lifecycleScope.launchWhenCreated {
+            moviesAdapter.loadStateFlow.collectLatest { loadState ->
+                showLoadingAndHideFailureView(loadState.mediator?.refresh is LoadState.Loading)
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.movies().collectLatest {
+                moviesAdapter.submitData(it)
+            }
         }
     }
 
     private fun setupObserver(){
-        viewModel.moviesState.observe(viewLifecycleOwner, { viewState ->
-            when (viewState){
-                is MoviesState.Loading -> {
-                    showLoadingAndHideFailureView(true)
-                }
-                is MoviesState.Error -> {
-                    binding.lavFailure.visible()
-                }
-                is MoviesState.Loaded -> {
-                    showLoadingAndHideFailureView(false)
-                    lifecycleScope.launch {
-                        moviesAdapter.submitData(viewState.movies)
-                    }
-                }
-            }
-        })
+//        viewModel.moviesState.observe(viewLifecycleOwner, { viewState ->
+//            when (viewState){
+//                is MoviesState.Loading -> {
+//                    showLoadingAndHideFailureView(true)
+//                }
+//                is MoviesState.Error -> {
+//                    binding.lavFailure.visible()
+//                }
+//                is MoviesState.Loaded -> {
+//                    showLoadingAndHideFailureView(false)
+//                    lifecycleScope.launch {
+//                        moviesAdapter.submitData(viewState.movies)
+//                    }
+//                }
+//            }
+//        })
     }
 
     private fun showLoadingAndHideFailureView(status: Boolean){

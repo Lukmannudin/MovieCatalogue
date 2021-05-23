@@ -5,13 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
 import com.lukmannudin.moviecatalogue.utils.Constant.DEFAULT_LANGUAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +28,12 @@ class MoviesViewModel @Inject constructor(
 ) : ViewModel() {
 
     val moviesState = MutableLiveData<MoviesState>()
+
+    private val clearListCh = Channel<Unit>(Channel.CONFLATED)
+
+    suspend fun movies(): Flow<PagingData<Movie>>{
+        return movieRepository.getPopularMovies(DEFAULT_LANGUAGE, 100).cachedIn(viewModelScope)
+    }
 
 //    fun getMovies() {
 //        moviesState.value = MoviesState.Loading

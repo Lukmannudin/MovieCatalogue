@@ -1,54 +1,45 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
-import androidx.paging.PagingData
+import androidx.paging.*
+import com.lukmannudin.moviecatalogue.MovieCatalogueDatabase
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
-import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemoteDataSource
-import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
+import com.lukmannudin.moviecatalogue.mapper.toMovieFromLocal
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-
 /**
  * Created by Lukmannudin on 09/05/21.
  */
 
 
-class MovieRepositoryImpl @Inject constructor(
-    private val movieRemoteDataSource: MovieRemoteDataSource,
-    private val movieLocalDataSource: MovieLocalDataSource,
-    private val ioDispather: CoroutineDispatcher
+@ExperimentalPagingApi
+class MovieRepositoryImpl @ExperimentalPagingApi
+@Inject constructor(
+    private val database: MovieCatalogueDatabase,
+    private val moviesMediator: MoviesMediator,
+    private val coroutineDispatcher: CoroutineDispatcher
 ) : MovieRepository {
 
     override suspend fun getPopularMovies(
         language: String,
         pageSize: Int
     ): Flow<PagingData<Movie>> {
-        movieRemoteDataSource.getPopularMovies(
-            movieLocalDataSource, language, pageSize
-        )
-
-        return movieLocalDataSource.getPopularMovies(pageSize)
+        return Pager(
+            config = PagingConfig(pageSize),
+            remoteMediator = moviesMediator
+        ) {
+            database.movieDao().getMovies()
+        }.flow.map { pagingData ->
+            pagingData.map {
+                it.toMovieFromLocal()
+            }
+        }
     }
 
     override suspend fun getMovie(id: Int, language: String): Result<Movie> {
-        EspressoIdlingResource.increment()
-        return withContext(ioDispather) {
-            EspressoIdlingResource.decrement()
-            when (val movieLocal = movieLocalDataSource.getMovie(id)) {
-                is Result.Success -> {
-                    return@withContext movieLocal
-                }
-                is Result.Error -> {
-                    return@withContext movieRemoteDataSource.getMovie(id, language)
-                }
-                else -> {
-                    return@withContext Result.Error(IllegalArgumentException())
-                }
-            }
-        }
+       return Result.Error(Exception())
     }
 
 }

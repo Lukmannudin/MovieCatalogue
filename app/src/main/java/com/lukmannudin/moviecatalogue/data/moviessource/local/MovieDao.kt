@@ -19,8 +19,11 @@ interface MovieDao {
     @Query("SELECT * FROM movies WHERE id = :movieId")
     fun getMovie(movieId: Int): MovieLocal
 
+    @Query("DELETE FROM movies WHERE id = :movieId")
+    fun deleteMovieById(movieId: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMovies(movies: List<MovieLocal>)
+    suspend fun insertMovies(movies: List<MovieLocal>)
 
     @Query("DELETE FROM movies")
     suspend fun clearCache()
