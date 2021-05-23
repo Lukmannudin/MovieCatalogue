@@ -59,7 +59,7 @@ class MoviesViewModel @Inject constructor(
     fun getMovies() {
         viewModelScope.launch {
             try {
-                movieRepository.getPopularMovies(DEFAULT_LANGUAGE, 100).collectLatest {
+                movieRepository.getPopularMovies(DEFAULT_LANGUAGE, 5).collectLatest {
                     moviesState.postValue(
                         MoviesState.Loaded(it)
                     )

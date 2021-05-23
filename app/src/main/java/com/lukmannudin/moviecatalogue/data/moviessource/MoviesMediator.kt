@@ -42,18 +42,19 @@ class MoviesMediator(
                 LoadType.REFRESH -> null
                 // In this example, we never need to prepend, since REFRESH will always load the
                 // first page in the list. Immediately return, reporting end of pagination.
-                LoadType.PREPEND -> null
+                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
                     val lastItem = state.lastItemOrNull()
+                        ?: return MediatorResult.Success(endOfPaginationReached = true)
 
                     // We must explicitly check if the last item is `null` when appending,
                     // since passing `null` to networkService is only valid for initial load.
                     // If lastItem is `null` it means no items were loaded after the initial
                     // REFRESH and there are no more items to load.
 
-                    lastItem?.page?.let { remoteKeyDao.remoteKeyById(it)}?.nextPage ?: 1
+                    lastItem.id
                 }
-            } ?: return MediatorResult.Success(true)
+            }
 
             // Suspending network load via Retrofit. This doesn't need to be wrapped in a
             // withContext(Dispatcher.IO) { ... } block since Retrofit's Coroutine CallAdapter
