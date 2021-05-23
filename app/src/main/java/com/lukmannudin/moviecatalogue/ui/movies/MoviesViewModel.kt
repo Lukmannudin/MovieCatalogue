@@ -23,7 +23,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
-    private val pagedListConfig: PagedList.Config,
     private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -32,7 +31,7 @@ class MoviesViewModel @Inject constructor(
     private val clearListCh = Channel<Unit>(Channel.CONFLATED)
 
     suspend fun movies(): Flow<PagingData<Movie>>{
-        return movieRepository.getPopularMovies(DEFAULT_LANGUAGE, 100).cachedIn(viewModelScope)
+        return movieRepository.getPopularMovies(DEFAULT_LANGUAGE, 1).cachedIn(viewModelScope)
     }
 
 //    fun getMovies() {
@@ -59,7 +58,7 @@ class MoviesViewModel @Inject constructor(
     fun getMovies() {
         viewModelScope.launch {
             try {
-                movieRepository.getPopularMovies(DEFAULT_LANGUAGE, 5).collectLatest {
+                movieRepository.getPopularMovies(DEFAULT_LANGUAGE, 2).collectLatest {
                     moviesState.postValue(
                         MoviesState.Loaded(it)
                     )

@@ -61,7 +61,7 @@ class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(D
         fun bind(movie: Movie, shareCallback: (Movie) -> Unit) {
             with(binding) {
                 tvItemTitle.text = movie.title
-                tvItemDate.text = movie.releaseDate?.toStringFormat()
+                tvItemDate.text = movie.id.toString()
                 tvItemOverview.text = movie.overview
                 ivPoster.setImage(itemView.context, movie.posterPath)
 

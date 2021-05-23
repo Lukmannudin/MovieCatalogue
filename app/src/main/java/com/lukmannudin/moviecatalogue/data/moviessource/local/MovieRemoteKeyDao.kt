@@ -16,11 +16,11 @@ interface MovieRemoteKeyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRemoteKeys(remoteKeys: List<MovieRemoteKey>)
 
-    @Query("SELECT * FROM movie_remote_keys WHERE movie_id = :movieId")
-    fun remoteKeyById(movieId: Int): MovieRemoteKey
+    @Query("SELECT * FROM movie_remote_keys WHERE page_index = :pageIndex")
+    suspend fun remoteKeyById(pageIndex: Int): MovieRemoteKey
 
-    @Query("DELETE FROM movie_remote_keys WHERE movie_id = :movieId")
-    suspend fun deleteById(movieId: Int)
+    @Query("DELETE FROM movie_remote_keys WHERE page_index = :pageIndex")
+    suspend fun deleteById(pageIndex: Int)
 
     @Query("DELETE FROM movie_remote_keys")
     suspend fun clearCache()
