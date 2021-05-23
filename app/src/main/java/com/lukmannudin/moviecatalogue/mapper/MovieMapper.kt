@@ -22,7 +22,7 @@ private val movieRemoteToMovieMapper: Mapper<MovieRemote, Movie> =
                 input.releaseDate?.toDate(),
                 input.userScore ?: 0.0f,
                 basePosterPath + input.posterPath,
-                null
+                input.page ?: -1
             )
         }
     }

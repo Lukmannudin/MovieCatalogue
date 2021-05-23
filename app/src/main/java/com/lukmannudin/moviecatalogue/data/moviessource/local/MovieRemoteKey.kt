@@ -16,7 +16,4 @@ data class MovieRemoteKey(
 
     @ColumnInfo(name = "next_page")
     val nextPage: Int?,
-
-    @ColumnInfo(name = "prev_key")
-    val prevPage: Int?
 )

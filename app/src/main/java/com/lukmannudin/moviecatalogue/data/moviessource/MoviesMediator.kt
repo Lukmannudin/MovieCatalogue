@@ -1,5 +1,6 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -26,9 +27,9 @@ class MoviesMediator(
     val movieDao = database.movieDao()
     val remoteKeyDao = database.movieRemoteKeyDao()
 
-    override suspend fun initialize(): InitializeAction {
-        return InitializeAction.LAUNCH_INITIAL_REFRESH
-    }
+//    override suspend fun initialize(): InitializeAction {
+//        return InitializeAction.LAUNCH_INITIAL_REFRESH
+//    }
 
     override suspend fun load(
         loadType: LoadType,
@@ -44,18 +45,32 @@ class MoviesMediator(
                 // first page in the list. Immediately return, reporting end of pagination.
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
+
                     val lastItem = state.lastItemOrNull()
                         ?: return MediatorResult.Success(endOfPaginationReached = true)
 
+                    val remoteKey = database.withTransaction {
+                        return@withTransaction remoteKeyDao.remoteKeyById(lastItem.id)
+                    }
+
+                    Log.d("cekcekcek remoteKey", remoteKey.toString())
+                    if (remoteKey.nextPage == null) {
+                        return MediatorResult.Success(
+                            endOfPaginationReached = true
+                        )
+                    }
+
+                    remoteKey.nextPage
                     // We must explicitly check if the last item is `null` when appending,
                     // since passing `null` to networkService is only valid for initial load.
                     // If lastItem is `null` it means no items were loaded after the initial
                     // REFRESH and there are no more items to load.
 
-                    lastItem.id
                 }
             }
 
+            Log.d("cekcekcekcek loadkey", loadType.toString())
+            Log.d("cekcekcekcek loadkey", loadKey.toString())
             // Suspending network load via Retrofit. This doesn't need to be wrapped in a
             // withContext(Dispatcher.IO) { ... } block since Retrofit's Coroutine CallAdapter
             // dispatches on a worker thread.
@@ -82,8 +97,7 @@ class MoviesMediator(
                         remoteKeyDao.insert(
                             MovieRemoteKey(
                                 currentPage,
-                                currentPage + 1,
-                                currentPage - 1
+                                currentPage + 1
                             )
                         )
                     }

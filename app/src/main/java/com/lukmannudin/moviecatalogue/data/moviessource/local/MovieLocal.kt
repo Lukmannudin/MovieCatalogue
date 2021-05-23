@@ -30,5 +30,5 @@ data class MovieLocal(
     val posterPath: String,
 
     @ColumnInfo(name = "page")
-    val page: Int? = null,
+    val page: Int,
 )
