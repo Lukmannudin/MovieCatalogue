@@ -48,20 +48,16 @@ class MoviesMediator(
                 LoadType.REFRESH -> null
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
-                    remoteKey?.nextPage
+                    remoteKey?.nextPage ?: 1
                 }
             }
 
-            val response = when {
-                loadKey != null -> {
-                    apiHelper.getPopularMovies(Constant.DEFAULT_LANGUAGE, loadKey)
-                }
-                remoteKey?.nextPage == null -> {
-                    apiHelper.getPopularMovies(Constant.DEFAULT_LANGUAGE, 1)
-                }
-                else -> {
-                    null
-                }
+            Log.d("cekcekcek maricek", loadType.toString())
+
+            val response = loadKey?.let { key ->
+                apiHelper.getPopularMovies(Constant.DEFAULT_LANGUAGE,
+                    key
+                )
             }
 
             if (response != null) {
