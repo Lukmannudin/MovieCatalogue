@@ -27,4 +27,7 @@ interface MovieDao {
 
     @Query("DELETE FROM movies")
     suspend fun clearCache()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMovie(movie: MovieLocal)
 }

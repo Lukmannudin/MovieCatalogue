@@ -2,7 +2,6 @@ package com.lukmannudin.moviecatalogue.ui.movies
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +14,6 @@ import com.lukmannudin.moviecatalogue.utils.setImage
 /**
  * Created by Lukmannudin on 5/3/21.
  */
-
 
 class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(DIFF_CALLBACK) {
 
@@ -32,7 +30,7 @@ class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(D
         position: Int,
         payloads: MutableList<Any>
     ) {
-        if (payloads.isNotEmpty()){
+        if (payloads.isNotEmpty()) {
             val item = getItem(position)
             item?.let { holder.bind(it, shareCallback) }
         } else {
@@ -50,7 +48,7 @@ class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(D
                 return oldItem == newItem
             }
 
-            override fun getChangePayload(oldItem: Movie, newItem: Movie): Any? {
+            override fun getChangePayload(oldItem: Movie, newItem: Movie): Any {
                 return oldItem.id == newItem.id
             }
         }
@@ -61,7 +59,7 @@ class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(D
         fun bind(movie: Movie, shareCallback: (Movie) -> Unit) {
             with(binding) {
                 tvItemTitle.text = movie.title
-                tvItemDate.text = movie.id.toString()
+                tvItemDate.text = movie.releaseDate?.toStringFormat()
                 tvItemOverview.text = movie.overview
                 ivPoster.setImage(itemView.context, movie.posterPath)
 

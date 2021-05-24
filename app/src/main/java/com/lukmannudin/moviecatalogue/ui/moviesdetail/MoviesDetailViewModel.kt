@@ -9,6 +9,8 @@ import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
 import com.lukmannudin.moviecatalogue.utils.Constant.DEFAULT_LANGUAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,20 +32,25 @@ class MoviesDetailViewModel @Inject constructor(
         if (movieId == null) return
 
         viewModelScope.launch(ioDispatcher) {
-            when (val movie = moviesRepository.getMovie(movieId, DEFAULT_LANGUAGE)){
-                is Result.Error -> {
-                    moviesState.postValue(MovieDetailState.Error(movie.exception.message.toString()))
-                }
-                is Result.Success -> {
-                    moviesState.postValue(MovieDetailState.Loaded(movie.data))
+            moviesRepository.getMovie(movieId, DEFAULT_LANGUAGE).collectLatest { resultMovie ->
+                when (resultMovie) {
+                    is Result.Error -> {
+                        moviesState.postValue(MovieDetailState.Error(resultMovie.exception.message.toString()))
+                    }
+                    is Result.Success -> {
+                        moviesState.postValue(MovieDetailState.Loaded(resultMovie.data))
+                    }
+                    else -> {
+                        moviesState.postValue(MovieDetailState.Loading)
+                    }
                 }
             }
         }
     }
 
     sealed class MovieDetailState {
-        object Loading: MovieDetailState()
-        data class Error(val errorMessage: String): MovieDetailState()
+        object Loading : MovieDetailState()
+        data class Error(val errorMessage: String) : MovieDetailState()
         data class Loaded(val movie: Movie) : MovieDetailState()
     }
 }

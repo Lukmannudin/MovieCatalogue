@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
@@ -24,6 +25,8 @@ class MoviesDetailActivity : AppCompatActivity() {
     private val viewModel: MoviesDetailViewModel by viewModels()
     private lateinit var binding: ActivityMoviesDetailBinding
 
+    private lateinit var srLayout: SwipeRefreshLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentViewBinding()
@@ -31,6 +34,11 @@ class MoviesDetailActivity : AppCompatActivity() {
 
         val movieExtras = intent?.getIntExtra(MOVIE_EXTRA, -1)
         viewModel.getMovie(movieExtras)
+
+        srLayout.setOnRefreshListener {
+            viewModel.getMovie(movieExtras)
+            srLayout.isRefreshing = false
+        }
 
         setupObserver()
     }
@@ -52,6 +60,8 @@ class MoviesDetailActivity : AppCompatActivity() {
 
     private fun setContentViewBinding() {
         val activityDetailBinding = ActivityDetailBinding.inflate(layoutInflater)
+        srLayout = activityDetailBinding.root
+
         with(activityDetailBinding.vsContentDetail) {
             setOnInflateListener { _, inflated ->
                 binding = ActivityMoviesDetailBinding.bind(inflated)

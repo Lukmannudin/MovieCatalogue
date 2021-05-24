@@ -6,9 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.lukmannudin.moviecatalogue.data.Result
 import com.lukmannudin.moviecatalogue.data.TvShow
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
+import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailViewModel
 import com.lukmannudin.moviecatalogue.utils.Constant
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,16 +32,19 @@ class TvShowsDetailViewModel @Inject constructor(
         tvShowState.value = TvShowDetailState.Loading
 
         viewModelScope.launch(ioDispatcher) {
-            when (val tvShow = tvShowRepository.getTvShow(tvShowId, Constant.DEFAULT_LANGUAGE)){
-                is Result.Error -> {
-                    tvShowState.postValue(TvShowDetailState.Error(
-                        tvShow.exception.message.toString()
-                    ))
-                }
-                is Result.Success -> {
-                    tvShowState.postValue(TvShowDetailState.Loaded(
-                        tvShow.data
-                    ))
+            tvShowRepository.getTvShow(tvShowId,
+                Constant.DEFAULT_LANGUAGE
+            ).collectLatest { resultMovie ->
+                when (resultMovie) {
+                    is Result.Error -> {
+                        tvShowState.postValue(TvShowDetailState.Error(resultMovie.exception.message.toString()))
+                    }
+                    is Result.Success -> {
+                        tvShowState.postValue(TvShowDetailState.Loaded(resultMovie.data))
+                    }
+                    else -> {
+                        tvShowState.postValue(TvShowDetailState.Loading)
+                    }
                 }
             }
         }

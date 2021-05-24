@@ -2,10 +2,14 @@ package com.lukmannudin.moviecatalogue.ui.tvshows
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.data.TvShow
-import com.lukmannudin.moviecatalogue.databinding.ItemTvshowBinding
+import com.lukmannudin.moviecatalogue.databinding.ItemMovieBinding
+import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailActivity
 import com.lukmannudin.moviecatalogue.ui.tvshowsdetail.TvShowsDetailActivity
+import com.lukmannudin.moviecatalogue.utils.Converters.toStringFormat
 import com.lukmannudin.moviecatalogue.utils.setImage
 
 /**
@@ -13,37 +17,52 @@ import com.lukmannudin.moviecatalogue.utils.setImage
  */
 
 
-class TvShowsAdapter : RecyclerView.Adapter<TvShowsAdapter.MoviesViewHolder>() {
-
-    private var tvShows = ArrayList<TvShow>()
+class TvShowsAdapter : PagingDataAdapter<TvShow, TvShowsAdapter.TvShowViewHolder>(DIFF_CALLBACK) {
 
     lateinit var shareCallback: (TvShow) -> Unit
 
-    fun setTvShows(tvShows: List<TvShow>?) {
-        if (tvShows == null) return
-        this.tvShows.clear()
-        this.tvShows.addAll(tvShows)
-        notifyDataSetChanged()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TvShowViewHolder {
+        val itemsAcademyBinding =
+            ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return TvShowViewHolder(itemsAcademyBinding)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
-        val itemTvshowBinding = ItemTvshowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MoviesViewHolder(itemTvshowBinding)
+    override fun onBindViewHolder(
+        holder: TvShowViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNotEmpty()) {
+            val item = getItem(position)
+            item?.let { holder.bind(it, shareCallback) }
+        } else {
+            onBindViewHolder(holder, position)
+        }
     }
 
-    override fun onBindViewHolder(holder: MoviesViewHolder, position: Int) {
-        val tvShow = tvShows[position]
-        holder.bind(tvShow, shareCallback)
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TvShow>() {
+            override fun areItemsTheSame(oldItem: TvShow, newItem: TvShow): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: TvShow, newItem: TvShow): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun getChangePayload(oldItem: TvShow, newItem: TvShow): Any {
+                return oldItem.id == newItem.id
+            }
+        }
     }
 
-    override fun getItemCount(): Int = tvShows.size
-
-    class MoviesViewHolder(private val binding: ItemTvshowBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class TvShowViewHolder(private val binding: ItemMovieBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(tvShow: TvShow, shareCallback: (TvShow) -> Unit) {
             with(binding) {
                 tvItemTitle.text = tvShow.title
-                tvItemDate.text = tvShow.releaseDate
-
+                tvItemDate.text = tvShow.releaseDate?.toStringFormat()
+                tvItemOverview.text = tvShow.overview
                 ivPoster.setImage(itemView.context, tvShow.posterPath)
 
                 ivShare.setOnClickListener {
@@ -55,5 +74,9 @@ class TvShowsAdapter : RecyclerView.Adapter<TvShowsAdapter.MoviesViewHolder>() {
                 }
             }
         }
+    }
+
+    override fun onBindViewHolder(holder: TvShowViewHolder, position: Int) {
+        getItem(position)?.let { holder.bind(it, shareCallback) }
     }
 }

@@ -12,13 +12,10 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentMovieBinding
-import com.lukmannudin.moviecatalogue.ui.movies.MoviesViewModel.MoviesState
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 /**
  * Created by Lukmannudin on 5/3/21.
@@ -73,7 +70,9 @@ class MoviesFragment : Fragment() {
                 footer = loadStateAdapter
             )
         }
+    }
 
+    private fun setupObserver() {
         lifecycleScope.launchWhenCreated {
             moviesAdapter.loadStateFlow.collectLatest { loadState ->
                 showLoadingAndHideFailureView(loadState.mediator?.refresh is LoadState.Loading)
@@ -85,36 +84,32 @@ class MoviesFragment : Fragment() {
                 moviesAdapter.submitData(it)
             }
         }
+
+        lifecycleScope.launchWhenCreated {
+            moviesAdapter.loadStateFlow.collectLatest { loadState ->
+                showError(loadState.mediator?.refresh is LoadState.Error)
+                showLoadingAndHideFailureView(loadState.mediator?.refresh is LoadState.Loading)
+            }
+        }
     }
 
-    private fun setupObserver(){
-//        viewModel.moviesState.observe(viewLifecycleOwner, { viewState ->
-//            when (viewState){
-//                is MoviesState.Loading -> {
-//                    showLoadingAndHideFailureView(true)
-//                }
-//                is MoviesState.Error -> {
-//                    binding.lavFailure.visible()
-//                }
-//                is MoviesState.Loaded -> {
-//                    showLoadingAndHideFailureView(false)
-//                    lifecycleScope.launch {
-//                        moviesAdapter.submitData(viewState.movies)
-//                    }
-//                }
-//            }
-//        })
-    }
-
-    private fun showLoadingAndHideFailureView(status: Boolean){
+    private fun showLoadingAndHideFailureView(status: Boolean) {
         binding.lavFailure.gone()
-        with(binding.lavLoading){
-            if (status){
+        with(binding.lavLoading) {
+            if (status) {
                 playAnimation()
                 visible()
             } else {
                 gone()
             }
+        }
+    }
+
+    private fun showError(status: Boolean) {
+        if (status) {
+            binding.lavFailure.visible()
+        } else {
+            binding.lavFailure.gone()
         }
     }
 }

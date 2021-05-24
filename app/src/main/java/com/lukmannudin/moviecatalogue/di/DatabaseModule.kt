@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.lukmannudin.moviecatalogue.MovieCatalogueDatabase
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieDao
+import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,5 +34,11 @@ object DatabaseModule {
     @Provides
     fun provideMovieDao(movieCatalogueDatabase: MovieCatalogueDatabase): MovieDao {
         return movieCatalogueDatabase.movieDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideTvShowDao(movieCatalogueDatabase: MovieCatalogueDatabase): TvShowDao {
+        return movieCatalogueDatabase.tvShowDao()
     }
 }

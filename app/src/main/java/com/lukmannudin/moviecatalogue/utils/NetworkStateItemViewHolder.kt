@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.ui.movies
+package com.lukmannudin.moviecatalogue.utils
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -28,7 +28,5 @@ class NetworkStateItemViewHolder(
     fun bindTo(loadState: LoadState) {
         progressBar.isVisible = loadState is LoadState.Loading
         retry.isVisible = loadState is Error
-        errorMsg.isVisible = (loadState is LoadState.Error)
-//        errorMsg.text = loadState.er.message.isNullOrBlank()
     }
 }

@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.ui.movies
+package com.lukmannudin.moviecatalogue.ui.tvshows
 
 import android.view.ViewGroup
 import androidx.paging.LoadState
@@ -9,7 +9,7 @@ import com.lukmannudin.moviecatalogue.utils.NetworkStateItemViewHolder
  * Created by Lukmannudin on 20/05/21.
  */
 class PostsLoadStateAdapter(
-    private val adapter: MoviesAdapter
+    private val adapter: TvShowsAdapter
 ) : LoadStateAdapter<NetworkStateItemViewHolder>() {
     override fun onBindViewHolder(holder: NetworkStateItemViewHolder, loadState: LoadState) {
         holder.bindTo(loadState)

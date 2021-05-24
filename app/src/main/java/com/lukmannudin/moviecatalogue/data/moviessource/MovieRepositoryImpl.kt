@@ -4,9 +4,12 @@ import androidx.paging.*
 import com.lukmannudin.moviecatalogue.MovieCatalogueDatabase
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
+import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemoteDataSource
 import com.lukmannudin.moviecatalogue.mapper.toMovieFromLocal
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 /**
@@ -17,6 +20,8 @@ import javax.inject.Inject
 @ExperimentalPagingApi
 class MovieRepositoryImpl @ExperimentalPagingApi
 @Inject constructor(
+    private val movieRemoteDataSource: MovieRemoteDataSource,
+    private val movieLocalDataSource: MovieLocalDataSource,
     private val database: MovieCatalogueDatabase,
     private val moviesMediator: MoviesMediator,
     private val coroutineDispatcher: CoroutineDispatcher
@@ -38,8 +43,24 @@ class MovieRepositoryImpl @ExperimentalPagingApi
         }
     }
 
-    override suspend fun getMovie(id: Int, language: String): Result<Movie> {
-       return Result.Error(Exception())
+    override suspend fun getMovie(id: Int, language: String): Flow<Result<Movie>> = flow {
+        when (val responseRemote = movieRemoteDataSource.getMovie(id, language)){
+            is Result.Success -> {
+                movieLocalDataSource.saveMovie(responseRemote.data)
+            }
+            is Result.Error -> {
+                emit(movieLocalDataSource.getMovie(id))
+            }
+        }
+
+        when (val responseLocal = movieLocalDataSource.getMovie(id)){
+            is Result.Success -> {
+                emit(Result.Success(responseLocal.data))
+            }
+            is Result.Error -> {
+                emit(Result.Error(responseLocal.exception))
+            }
+        }
     }
 
 }

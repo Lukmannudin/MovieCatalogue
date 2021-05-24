@@ -11,7 +11,11 @@ import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSour
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemoteDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepositoryImpl
+import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowsMediator
+import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowDao
+import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocalDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemoteDataSource
+import com.lukmannudin.moviecatalogue.utils.Constant
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,31 +39,38 @@ object RepositoryModule {
     }
 
     @Provides
-    @Singleton
     fun provideRemoteMovieDataSource(apiHelper: ApiHelper): MovieRemoteDataSource =
         MovieRemoteDataSource(apiHelper)
 
     @Provides
-    @Singleton
     fun provideLocalMovieDataSource(movieDao: MovieDao): MovieLocalDataSource =
         MovieLocalDataSource(movieDao)
 
-//    @Provides
-//    @Singleton
-//    fun provideMoviesRepository(
-//        movieRemoteDataSource: MovieRemoteDataSource,
-//        movieLocalDataSource: MovieLocalDataSource,
-//        coroutineDispatcher: CoroutineDispatcher
-//    ): MovieRepository =
-//        MovieRepositoryImpl(movieRemoteDataSource, movieLocalDataSource, coroutineDispatcher)
+    @Provides
+    fun provideRemoteTvShowDataSource(apiHelper: ApiHelper): TvShowRemoteDataSource =
+        TvShowRemoteDataSource(apiHelper)
 
+    @Provides
+    fun provideLocalTvShowDataSource(tvShowDao: TvShowDao): TvShowLocalDataSource =
+        TvShowLocalDataSource(tvShowDao)
+
+    @ExperimentalPagingApi
     @Provides
     @Singleton
     fun provideTvShowsRepository(
+        tvShowLocalDataSource: TvShowLocalDataSource,
         tvShowRemoteDataSource: TvShowRemoteDataSource,
+        database: MovieCatalogueDatabase,
+        tvShowsMediator: TvShowsMediator,
         coroutineDispatcher: CoroutineDispatcher
     ): TvShowRepository =
-        TvShowRepositoryImpl(tvShowRemoteDataSource, coroutineDispatcher)
+        TvShowRepositoryImpl(
+            tvShowRemoteDataSource,
+            tvShowLocalDataSource,
+            database,
+            tvShowsMediator,
+            coroutineDispatcher
+        )
 
 
     @ExperimentalPagingApi
@@ -69,16 +80,24 @@ object RepositoryModule {
         apiHelper: ApiHelper,
         database: MovieCatalogueDatabase
     ): MoviesMediator =
-        MoviesMediator(apiHelper, database)
+        MoviesMediator(apiHelper, database, Constant.DEFAULT_LANGUAGE)
 
     @ExperimentalPagingApi
     @Provides
     @Singleton
     fun provideMoviesRepository(
+        movieLocalDataSource: MovieLocalDataSource,
+        movieRemoteDataSource: MovieRemoteDataSource,
         database: MovieCatalogueDatabase,
         moviesMediator: MoviesMediator,
         coroutineDispatcher: CoroutineDispatcher
     ): MovieRepository =
-        MovieRepositoryImpl(database, moviesMediator, coroutineDispatcher)
+        MovieRepositoryImpl(
+            movieRemoteDataSource,
+            movieLocalDataSource,
+            database,
+            moviesMediator,
+            coroutineDispatcher
+        )
 }
 
