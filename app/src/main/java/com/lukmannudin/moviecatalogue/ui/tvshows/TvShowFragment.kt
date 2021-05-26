@@ -61,6 +61,10 @@ class TvShowFragment : Fragment() {
             }
         }
 
+        tvShowsAdapter.favoriteCallback = { tvShow ->
+            viewModel.updateFavorite(tvShow)
+        }
+
         with(binding.rvTvshows) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
@@ -81,13 +85,6 @@ class TvShowFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             viewModel.tvShows().collectLatest {
                 tvShowsAdapter.submitData(it)
-            }
-        }
-
-        lifecycleScope.launchWhenCreated {
-            tvShowsAdapter.loadStateFlow.collectLatest { loadState ->
-                showError(loadState.mediator?.refresh is LoadState.Error)
-                showLoadingAndHideFailureView(loadState.mediator?.refresh is LoadState.Loading)
             }
         }
     }

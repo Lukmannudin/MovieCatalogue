@@ -1,6 +1,7 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource
 
 import androidx.paging.PagingData
+import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import kotlinx.coroutines.flow.Flow
@@ -12,8 +13,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface TvShowRepository {
 
-    suspend fun getPopularTvShows(language: String, pageSize: Int): Flow<PagingData<TvShow>>
+    suspend fun getPopularTvShows(): Flow<PagingData<TvShow>>
 
     suspend fun getTvShow(id: Int, language: String): Flow<Result<TvShow>>
+
+    suspend fun updateFavorite(tvShow: TvShow)
 
 }

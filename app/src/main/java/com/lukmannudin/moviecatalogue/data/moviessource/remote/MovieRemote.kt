@@ -27,8 +27,5 @@ data class MovieRemote (
     val userScore: Float? = null,
 
     @SerializedName("poster_path")
-    val posterPath: String? = null,
-
-    @SerializedName("page")
-    var page: Int? = null
+    val posterPath: String? = null
 )

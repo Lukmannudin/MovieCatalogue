@@ -26,17 +26,21 @@ class MovieRepositoryImpl @ExperimentalPagingApi
     private val ioDispatcher: CoroutineDispatcher
 ) : MovieRepository {
 
-    override suspend fun getPopularMovies(
-        language: String,
-        pageSize: Int
-    ): Flow<PagingData<Movie>> {
+    override suspend fun getPopularMovies(): Flow<PagingData<Movie>> {
         return pagingDataSource.moviesPaging
     }
 
     override suspend fun getMovie(id: Int, language: String): Flow<Result<Movie>> = flow {
         when (val responseRemote = movieRemoteDataSource.getMovie(id, language)) {
             is Result.Success -> {
-                movieLocalDataSource.saveMovie(responseRemote.data)
+                val responseLocal = movieLocalDataSource.getMovie(id)
+                val remoteMovie = responseRemote.data
+
+                if (responseLocal is Result.Success){
+                    remoteMovie.isFavorite = responseLocal.data.isFavorite
+                }
+
+                movieLocalDataSource.saveMovie(remoteMovie)
             }
             is Result.Error -> {
                 emit(movieLocalDataSource.getMovie(id))

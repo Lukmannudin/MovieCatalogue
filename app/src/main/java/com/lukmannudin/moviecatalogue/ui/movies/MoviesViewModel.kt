@@ -24,7 +24,7 @@ class MoviesViewModel @Inject constructor(
 ) : ViewModel() {
 
     suspend fun movies(): Flow<PagingData<Movie>> {
-        return movieRepository.getPopularMovies(DEFAULT_LANGUAGE, 1).cachedIn(viewModelScope)
+        return movieRepository.getPopularMovies().cachedIn(viewModelScope)
     }
 
     fun updateFavorite(movie: Movie){

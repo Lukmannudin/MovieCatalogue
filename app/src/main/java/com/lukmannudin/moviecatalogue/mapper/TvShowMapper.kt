@@ -21,8 +21,7 @@ private val tvShowRemoteToTvShow : Mapper<TvShowRemote, TvShow> =
                 input.overview ?: "overview not defined",
                 input.releaseDate?.toDate(),
                 input.userScore ?: 0.0f,
-                basePosterPath + input.posterPath,
-                input.page ?: -1
+                basePosterPath + input.posterPath
             )
         }
     }
@@ -44,7 +43,7 @@ private val tvShowLocalToTvShowMapper: Mapper<TvShowLocal, TvShow> =
                 input.releaseDate.toDate(),
                 input.userScore,
                 input.posterPath,
-                input.page
+                input.isFavorite
             )
         }
     }
@@ -66,7 +65,7 @@ private val tvShowToLocalMapper: Mapper<TvShow, TvShowLocal> =
                 input.releaseDate.toLong(),
                 input.userScore,
                 input.posterPath,
-                input.page
+                input.isFavorite
             )
         }
     }

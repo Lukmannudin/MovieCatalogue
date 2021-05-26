@@ -12,5 +12,5 @@ data class TvShow(
     val releaseDate: Date?,
     val userScore: Float,
     val posterPath: String,
-    val page: Int
+    var isFavorite: Boolean = false
 ) : Parcelable

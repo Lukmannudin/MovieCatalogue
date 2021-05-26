@@ -88,13 +88,6 @@ class MoviesFragment : Fragment() {
                 moviesAdapter.submitData(it)
             }
         }
-
-        lifecycleScope.launchWhenCreated {
-            moviesAdapter.loadStateFlow.collectLatest { loadState ->
-                showError(loadState.mediator?.refresh is LoadState.Error)
-                showLoadingAndHideFailureView(loadState.mediator?.refresh is LoadState.Loading)
-            }
-        }
     }
 
     private fun showLoadingAndHideFailureView(status: Boolean) {

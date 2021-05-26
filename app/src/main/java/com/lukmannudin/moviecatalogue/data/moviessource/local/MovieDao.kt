@@ -10,7 +10,7 @@ import androidx.room.*
 @Dao
 interface MovieDao {
 
-    @Query("SELECT * FROM movies ORDER BY releaseDate DESC")
+    @Query("SELECT * FROM movies ORDER BY release_date DESC")
     fun getMovies(): PagingSource<Int, MovieLocal>
 
     @Query("SELECT * FROM movies WHERE id = :movieId")

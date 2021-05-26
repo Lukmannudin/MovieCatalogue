@@ -1,6 +1,7 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource.local
 
 import androidx.paging.*
+import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.mapper.*
@@ -37,8 +38,8 @@ class TvShowLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun saveTvShows(tvShows: List<TvShow>) {
-        tvShowDao.insertTvShows(tvShows.toTvShowsLocal())
+    suspend fun updateTvShow(tvShow: TvShow) {
+        tvShowDao.updateFavorite(tvShow.id, tvShow.isFavorite)
     }
 
     suspend fun saveTvShow(tvShow: TvShow){

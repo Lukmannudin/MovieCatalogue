@@ -20,17 +20,14 @@ data class MovieLocal(
     @ColumnInfo(name = "overview")
     val overview: String,
 
-    @ColumnInfo(name = "releaseDate")
+    @ColumnInfo(name = "release_date")
     val releaseDate: Long?,
 
-    @ColumnInfo(name = "userScore")
+    @ColumnInfo(name = "user_score")
     val userScore: Float,
 
-    @ColumnInfo(name = "posterPath")
+    @ColumnInfo(name = "poster_path")
     val posterPath: String,
-
-    @ColumnInfo(name = "page")
-    val page: Int,
 
     @ColumnInfo(name = "is_favorite")
     val isFavorite: Boolean = false

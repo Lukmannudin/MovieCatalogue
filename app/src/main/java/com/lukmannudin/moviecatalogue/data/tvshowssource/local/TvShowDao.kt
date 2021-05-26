@@ -13,7 +13,7 @@ import androidx.room.Query
 @Dao
 interface TvShowDao {
 
-    @Query("SELECT * FROM tvshow ORDER BY releaseDate DESC")
+    @Query("SELECT * FROM tvshow ORDER BY release_date DESC")
     fun getTvShows(): PagingSource<Int, TvShowLocal>
 
     @Query("SELECT * FROM tvshow WHERE id = :tvShowId")
@@ -30,4 +30,7 @@ interface TvShowDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTvShow(tvShow: TvShowLocal)
+
+    @Query("UPDATE tvshow SET is_favorite = :isFavorite WHERE id = :tvShowId")
+    suspend fun updateFavorite(tvShowId: Int, isFavorite: Boolean)
 }

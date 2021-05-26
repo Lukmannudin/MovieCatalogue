@@ -46,10 +46,6 @@ class MovieLocalDataSource @Inject constructor(
         movieDao.updateFavorite(movie.id, movie.isFavorite)
     }
 
-    suspend fun saveMovies(movies: List<Movie>) {
-        movieDao.insertMovies(movies.toMoviesLocal())
-    }
-
     suspend fun saveMovie(movie: Movie) {
         movieDao.insertMovie(movie.toMovieLocal())
     }

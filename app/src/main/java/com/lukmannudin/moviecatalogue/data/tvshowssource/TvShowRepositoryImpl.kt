@@ -10,6 +10,7 @@ import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemoteData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -25,10 +26,7 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
     private val ioDispatcher: CoroutineDispatcher
 ) : TvShowRepository {
 
-    override suspend fun getPopularTvShows(
-        language: String,
-        pageSize: Int
-    ): Flow<PagingData<TvShow>> {
+    override suspend fun getPopularTvShows(): Flow<PagingData<TvShow>> {
         return pagingDataSource.tvShowsPaging
     }
 
@@ -36,7 +34,14 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
 
         when (val responseRemote = tvShowRemoteDataSource.getTvShow(id, language)) {
             is Result.Success -> {
-                tvShowLocalDataSource.saveTvShow(responseRemote.data)
+                val responseLocal = tvShowLocalDataSource.getTvShow(id)
+                val remoteTvShow = responseRemote.data
+
+                if (responseLocal is Result.Success){
+                    remoteTvShow.isFavorite = responseLocal.data.isFavorite
+                }
+
+                tvShowLocalDataSource.saveTvShow(remoteTvShow)
             }
             is Result.Error -> {
                 emit(tvShowLocalDataSource.getTvShow(id))
@@ -50,6 +55,12 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
             is Result.Error -> {
                 emit(Result.Error(responseLocal.exception))
             }
+        }
+    }
+
+    override suspend fun updateFavorite(tvShow: TvShow) {
+        withContext(ioDispatcher){
+            tvShowLocalDataSource.updateTvShow(tvShow)
         }
     }
 

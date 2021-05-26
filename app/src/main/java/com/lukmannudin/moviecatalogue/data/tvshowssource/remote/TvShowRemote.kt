@@ -29,7 +29,4 @@ data class TvShowRemote(
 
     @SerializedName("poster_path")
     val posterPath: String? = null,
-
-    @SerializedName("page")
-    var page: Int? = null
 )
