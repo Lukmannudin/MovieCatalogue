@@ -13,15 +13,6 @@ interface MovieRemoteKeyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(keys: MovieRemoteKey)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRemoteKeys(remoteKeys: List<MovieRemoteKey>)
-
-//    @Query("SELECT * FROM movie_remote_keys WHERE page_index = :pageIndex")
-//    suspend fun remoteKeyById(pageIndex: Int): MovieRemoteKey
-//
-//    @Query("DELETE FROM movie_remote_keys WHERE page_index = :pageIndex")
-//    suspend fun deleteById(pageIndex: Int)
-
     @Query("SELECT * FROM movie_remote_keys LIMIT 1")
     suspend fun remote_key(): MovieRemoteKey
 

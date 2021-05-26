@@ -1,10 +1,10 @@
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.FakeMovieDataSource
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
 import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailViewModel
-import com.lukmannudin.moviecatalogue.utils.Constant
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -45,12 +45,12 @@ class MoviesDetailViewModelTest {
     fun getMovieDetailSuccess() = runBlockingTest {
         val fakeMovie = FakeMovieDataSource.dummyMovie
 
-        `when`(moviesRepository.getMovie(1, Constant.DEFAULT_LANGUAGE))
+        `when`(moviesRepository.getMovie(1, PagingCatalogueConfig.DEFAULT_LANGUAGE))
             .thenReturn(Result.Success(fakeMovie))
 
         viewModel.getMovie(1)
 
-        verify(moviesRepository).getMovie(1, Constant.DEFAULT_LANGUAGE)
+        verify(moviesRepository).getMovie(1, PagingCatalogueConfig.DEFAULT_LANGUAGE)
 
         val movie = viewModel.moviesState.value
 
@@ -59,12 +59,12 @@ class MoviesDetailViewModelTest {
 
     @Test
     fun getMovieDetailFailed() = runBlockingTest {
-        `when`(moviesRepository.getMovie(1, Constant.DEFAULT_LANGUAGE))
+        `when`(moviesRepository.getMovie(1, PagingCatalogueConfig.DEFAULT_LANGUAGE))
             .thenReturn(Result.Error(Exception("")))
 
         viewModel.getMovie(1)
 
-        verify(moviesRepository).getMovie(1, Constant.DEFAULT_LANGUAGE)
+        verify(moviesRepository).getMovie(1, PagingCatalogueConfig.DEFAULT_LANGUAGE)
 
         val movie = viewModel.moviesState.value
 

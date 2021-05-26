@@ -1,8 +1,8 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
 import androidx.paging.PagingData
-import com.lukmannudin.moviecatalogue.data.Movie
-import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.entity.Movie
+import com.lukmannudin.moviecatalogue.data.entity.Result
 import kotlinx.coroutines.flow.Flow
 
 /**

@@ -3,10 +3,10 @@ package com.lukmannudin.moviecatalogue.data.moviessource.remote
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.lukmannudin.moviecatalogue.api.ApiHelper
-import com.lukmannudin.moviecatalogue.data.Movie
+import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
 import com.lukmannudin.moviecatalogue.mapper.toMoviesFromRemote
-import com.lukmannudin.moviecatalogue.utils.Constant
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -25,7 +25,7 @@ class PagedKeyedMoviePagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
-        val page = params.key ?: Constant.DEFAULT_PAGE_INDEX
+        val page = params.key ?: PagingCatalogueConfig.DEFAULT_PAGE_INDEX
 
         return try {
             val response = apiHelper.getPopularMovies(
@@ -37,7 +37,7 @@ class PagedKeyedMoviePagingSource(
 
             LoadResult.Page(
                 response,
-                prevKey = if (page == Constant.DEFAULT_PAGE_INDEX) null else page - 1,
+                prevKey = if (page == PagingCatalogueConfig.DEFAULT_PAGE_INDEX) null else page - 1,
                 nextKey = if (response.isEmpty()) null else page + 1
             )
         } catch (e: IOException) {

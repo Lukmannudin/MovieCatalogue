@@ -1,9 +1,9 @@
 package com.lukmannudin.moviecatalogue.ui.movies
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
-import com.lukmannudin.moviecatalogue.utils.Constant
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -43,12 +43,12 @@ class MoviesViewModelTest {
 
     @Test
     fun getMoviesSuccess() = runBlockingTest {
-        `when`(moviesRepository.getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX))
+        `when`(moviesRepository.getPopularMovies(PagingCatalogueConfig.DEFAULT_LANGUAGE, PagingCatalogueConfig.DEFAULT_PAGE_INDEX))
             .thenReturn(Result.Success(emptyList()))
 
         viewModel.getMovies()
 
-        verify(moviesRepository).getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
+        verify(moviesRepository).getPopularMovies(PagingCatalogueConfig.DEFAULT_LANGUAGE, PagingCatalogueConfig.DEFAULT_PAGE_INDEX)
 
         val movies = viewModel.moviesState.value
 
@@ -57,12 +57,12 @@ class MoviesViewModelTest {
 
     @Test
     fun getMoviesFailed() = runBlockingTest {
-        `when`(moviesRepository.getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX))
+        `when`(moviesRepository.getPopularMovies(PagingCatalogueConfig.DEFAULT_LANGUAGE, PagingCatalogueConfig.DEFAULT_PAGE_INDEX))
             .thenReturn(Result.Error(Exception("")))
 
         viewModel.getMovies()
 
-        verify(moviesRepository).getPopularMovies(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
+        verify(moviesRepository).getPopularMovies(PagingCatalogueConfig.DEFAULT_LANGUAGE, PagingCatalogueConfig.DEFAULT_PAGE_INDEX)
 
         val movies = viewModel.moviesState.value
 

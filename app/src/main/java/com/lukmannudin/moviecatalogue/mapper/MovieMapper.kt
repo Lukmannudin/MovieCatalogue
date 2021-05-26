@@ -1,6 +1,6 @@
 package com.lukmannudin.moviecatalogue.mapper
 
-import com.lukmannudin.moviecatalogue.data.Movie
+import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocal
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemote
 import com.lukmannudin.moviecatalogue.mapper.mapperhelper.*

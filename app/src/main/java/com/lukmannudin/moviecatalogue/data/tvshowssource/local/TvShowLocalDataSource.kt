@@ -1,9 +1,8 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource.local
 
 import androidx.paging.*
-import com.lukmannudin.moviecatalogue.data.Movie
-import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.TvShow
+import com.lukmannudin.moviecatalogue.data.entity.Result
+import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.mapper.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -39,7 +38,7 @@ class TvShowLocalDataSource @Inject constructor(
     }
 
     suspend fun saveTvShows(tvShows: List<TvShow>) {
-        tvShowDao.insertTvShow(tvShows.toTvShowsLocal())
+        tvShowDao.insertTvShows(tvShows.toTvShowsLocal())
     }
 
     suspend fun saveTvShow(tvShow: TvShow){

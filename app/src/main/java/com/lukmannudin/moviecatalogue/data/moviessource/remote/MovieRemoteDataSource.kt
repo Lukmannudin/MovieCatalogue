@@ -4,8 +4,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.lukmannudin.moviecatalogue.api.ApiHelper
-import com.lukmannudin.moviecatalogue.data.Movie
-import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.entity.Movie
+import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
 import com.lukmannudin.moviecatalogue.mapper.toMovieFromRemote
 import kotlinx.coroutines.flow.Flow

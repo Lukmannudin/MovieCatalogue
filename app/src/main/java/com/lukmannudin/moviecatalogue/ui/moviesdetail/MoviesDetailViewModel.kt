@@ -3,13 +3,12 @@ package com.lukmannudin.moviecatalogue.ui.moviesdetail
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukmannudin.moviecatalogue.data.Movie
-import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.entity.Movie
+import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
-import com.lukmannudin.moviecatalogue.utils.Constant.DEFAULT_LANGUAGE
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig.DEFAULT_LANGUAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject

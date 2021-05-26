@@ -13,7 +13,7 @@ import androidx.room.Query
 @Dao
 interface TvShowDao {
 
-    @Query("SELECT * FROM tvshow ORDER BY page ASC")
+    @Query("SELECT * FROM tvshow ORDER BY releaseDate DESC")
     fun getTvShows(): PagingSource<Int, TvShowLocal>
 
     @Query("SELECT * FROM tvshow WHERE id = :tvShowId")
@@ -22,8 +22,8 @@ interface TvShowDao {
     @Query("DELETE FROM tvshow WHERE id = :tvShowId")
     fun deleteTvShowById(tvShowId: Int)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTvShow(tvShows: List<TvShowLocal>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertTvShows(tvShows: List<TvShowLocal>)
 
     @Query("DELETE FROM tvshow")
     suspend fun clearCache()

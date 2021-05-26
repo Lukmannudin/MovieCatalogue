@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.data
+package com.lukmannudin.moviecatalogue.data.entity
 
 /**
  * Created by Lukmannudin on 09/05/21.

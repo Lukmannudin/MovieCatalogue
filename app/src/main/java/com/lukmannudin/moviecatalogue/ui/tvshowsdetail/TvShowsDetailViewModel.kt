@@ -3,11 +3,10 @@ package com.lukmannudin.moviecatalogue.ui.tvshowsdetail
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.TvShow
+import com.lukmannudin.moviecatalogue.data.entity.Result
+import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
-import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailViewModel
-import com.lukmannudin.moviecatalogue.utils.Constant
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.collectLatest
@@ -33,7 +32,7 @@ class TvShowsDetailViewModel @Inject constructor(
 
         viewModelScope.launch(ioDispatcher) {
             tvShowRepository.getTvShow(tvShowId,
-                Constant.DEFAULT_LANGUAGE
+                PagingCatalogueConfig.DEFAULT_LANGUAGE
             ).collectLatest { resultMovie ->
                 when (resultMovie) {
                     is Result.Error -> {

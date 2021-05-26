@@ -1,16 +1,15 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource
 
-import androidx.paging.*
-import com.lukmannudin.moviecatalogue.MovieCatalogueDatabase
-import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.TvShow
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
+import com.lukmannudin.moviecatalogue.data.PagingDataSource
+import com.lukmannudin.moviecatalogue.data.entity.Result
+import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocalDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemoteDataSource
-import com.lukmannudin.moviecatalogue.mapper.toTvShow
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -22,8 +21,7 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
 @Inject constructor(
     private val tvShowRemoteDataSource: TvShowRemoteDataSource,
     private val tvShowLocalDataSource: TvShowLocalDataSource,
-    private val database: MovieCatalogueDatabase,
-    private val tvShowsMediator: TvShowsMediator,
+    private val pagingDataSource: PagingDataSource,
     private val ioDispatcher: CoroutineDispatcher
 ) : TvShowRepository {
 
@@ -31,16 +29,7 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
         language: String,
         pageSize: Int
     ): Flow<PagingData<TvShow>> {
-        return Pager(
-            config = PagingConfig(pageSize),
-            remoteMediator = tvShowsMediator
-        ) {
-            database.tvShowDao().getTvShows()
-        }.flow.map { pagingData ->
-            pagingData.map {
-                it.toTvShow()
-            }
-        }
+        return pagingDataSource.tvShowsPaging
     }
 
     override suspend fun getTvShow(id: Int, language: String): Flow<Result<TvShow>> = flow {

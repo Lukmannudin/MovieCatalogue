@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lukmannudin.moviecatalogue.R
-import com.lukmannudin.moviecatalogue.data.TvShow
+import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
 import com.lukmannudin.moviecatalogue.databinding.ActivityMoviesDetailBinding
 import com.lukmannudin.moviecatalogue.ui.tvshowsdetail.TvShowsDetailViewModel.TvShowDetailState

@@ -1,6 +1,6 @@
 package com.lukmannudin.moviecatalogue.api
 
-import com.lukmannudin.moviecatalogue.data.BaseResponse
+import com.lukmannudin.moviecatalogue.data.entity.BaseResponse
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemote
 import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemote
 import retrofit2.Response

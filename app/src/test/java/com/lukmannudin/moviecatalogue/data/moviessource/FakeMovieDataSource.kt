@@ -1,8 +1,8 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
-import com.lukmannudin.moviecatalogue.data.Movie
-import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.utils.Constant
+import com.lukmannudin.moviecatalogue.data.entity.Movie
+import com.lukmannudin.moviecatalogue.data.entity.Result
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import java.util.*
 
 /**
@@ -13,7 +13,7 @@ import java.util.*
 class FakeMovieDataSource : MovieDataSource {
     override suspend fun getPopularMovies(language: String, page: Int): Result<List<Movie>> {
         return when {
-            language != Constant.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
+            language != PagingCatalogueConfig.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
             page < 1 -> Result.Error(Exception(""))
             else -> {
                 return Result.Success(emptyList())
@@ -24,7 +24,7 @@ class FakeMovieDataSource : MovieDataSource {
     override suspend fun getMovie(id: Int, language: String): Result<Movie> {
         return when {
             id < 0 -> Result.Error(Exception(""))
-            language != Constant.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
+            language != PagingCatalogueConfig.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
             else -> {
                 return Result.Success(dummyMovie)
             }

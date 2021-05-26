@@ -5,7 +5,8 @@ package com.lukmannudin.moviecatalogue.utils
  */
 
 
-object Constant {
+object PagingCatalogueConfig {
     const val DEFAULT_LANGUAGE = "en-US"
     const val DEFAULT_PAGE_INDEX = 1
+    const val DEFAULT_PAGE_SIZE = 1
 }

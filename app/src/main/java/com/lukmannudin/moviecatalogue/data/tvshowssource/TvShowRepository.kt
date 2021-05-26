@@ -1,10 +1,8 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource
 
 import androidx.paging.PagingData
-import com.lukmannudin.moviecatalogue.data.Movie
-import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.TvShow
-import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocal
+import com.lukmannudin.moviecatalogue.data.entity.Result
+import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import kotlinx.coroutines.flow.Flow
 
 /**

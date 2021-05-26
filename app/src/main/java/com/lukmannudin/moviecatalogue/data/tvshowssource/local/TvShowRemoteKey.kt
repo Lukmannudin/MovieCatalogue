@@ -10,10 +10,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "tv_remote_keys")
 data class TvShowRemoteKey(
-    @PrimaryKey
-    @ColumnInfo(name = "page_index")
-    val pageIndex: Int,
 
-    @ColumnInfo(name = "next_page")
-    val nextPage: Int?,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 1,
+
+    @ColumnInfo(name = "tvshow_remote_key_next_page")
+    val tvShowNextPage: Int?,
 )

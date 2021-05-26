@@ -1,9 +1,9 @@
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
 import com.lukmannudin.moviecatalogue.ui.tvshows.TvShowsViewModel
-import com.lukmannudin.moviecatalogue.utils.Constant
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -42,12 +42,12 @@ class TvShowsViewModelTest {
 
     @Test
     fun getTvShowsSuccess() = runBlockingTest {
-        `when`(tvShowRepository.getPopularTvShows(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX))
+        `when`(tvShowRepository.getPopularTvShows(PagingCatalogueConfig.DEFAULT_LANGUAGE, PagingCatalogueConfig.DEFAULT_PAGE_INDEX))
             .thenReturn(Result.Success(emptyList()))
 
         viewModel.getTvShows()
 
-        verify(tvShowRepository).getPopularTvShows(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
+        verify(tvShowRepository).getPopularTvShows(PagingCatalogueConfig.DEFAULT_LANGUAGE, PagingCatalogueConfig.DEFAULT_PAGE_INDEX)
 
         val tvShows = viewModel.tvShowsState.value
 
@@ -56,12 +56,12 @@ class TvShowsViewModelTest {
 
     @Test
     fun getTvShowsFailed() = runBlockingTest {
-        `when`(tvShowRepository.getPopularTvShows(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX))
+        `when`(tvShowRepository.getPopularTvShows(PagingCatalogueConfig.DEFAULT_LANGUAGE, PagingCatalogueConfig.DEFAULT_PAGE_INDEX))
             .thenReturn(Result.Error(Exception("")))
 
         viewModel.getTvShows()
 
-        verify(tvShowRepository).getPopularTvShows(Constant.DEFAULT_LANGUAGE, Constant.DEFAULT_PAGE_INDEX)
+        verify(tvShowRepository).getPopularTvShows(PagingCatalogueConfig.DEFAULT_LANGUAGE, PagingCatalogueConfig.DEFAULT_PAGE_INDEX)
 
         val tvShows = viewModel.tvShowsState.value
 

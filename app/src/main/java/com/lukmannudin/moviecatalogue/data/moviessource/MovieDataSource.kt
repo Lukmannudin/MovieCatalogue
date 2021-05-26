@@ -1,7 +1,7 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
-import com.lukmannudin.moviecatalogue.data.Movie
-import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.entity.Movie
+import com.lukmannudin.moviecatalogue.data.entity.Result
 
 /**
  * Created by Lukmannudin on 09/05/21.

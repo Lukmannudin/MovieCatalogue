@@ -1,10 +1,10 @@
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.lukmannudin.moviecatalogue.data.Result
+import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.tvshowssource.FakeTvShowDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
 import com.lukmannudin.moviecatalogue.ui.tvshowsdetail.TvShowsDetailViewModel
-import com.lukmannudin.moviecatalogue.utils.Constant
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -45,12 +45,12 @@ class TvShowsDetailViewModelTest {
     fun getTvShowDetailSuccess() = runBlockingTest {
         val fakeTvShow = FakeTvShowDataSource.dummyTvShow
 
-        `when`(tvShowRepository.getTvShow(1, Constant.DEFAULT_LANGUAGE))
+        `when`(tvShowRepository.getTvShow(1, PagingCatalogueConfig.DEFAULT_LANGUAGE))
             .thenReturn(Result.Success(fakeTvShow))
 
         viewModel.getTvShow(1)
 
-        verify(tvShowRepository).getTvShow(1, Constant.DEFAULT_LANGUAGE)
+        verify(tvShowRepository).getTvShow(1, PagingCatalogueConfig.DEFAULT_LANGUAGE)
 
         val tvShow = viewModel.tvShowState.value
 
@@ -59,12 +59,12 @@ class TvShowsDetailViewModelTest {
 
     @Test
     fun getTvShowDetailFailed() = runBlockingTest {
-        `when`(tvShowRepository.getTvShow(1, Constant.DEFAULT_LANGUAGE))
+        `when`(tvShowRepository.getTvShow(1, PagingCatalogueConfig.DEFAULT_LANGUAGE))
             .thenReturn(Result.Error(Exception("")))
 
         viewModel.getTvShow(1)
 
-        verify(tvShowRepository).getTvShow(1, Constant.DEFAULT_LANGUAGE)
+        verify(tvShowRepository).getTvShow(1, PagingCatalogueConfig.DEFAULT_LANGUAGE)
 
         val tvShow = viewModel.tvShowState.value
 

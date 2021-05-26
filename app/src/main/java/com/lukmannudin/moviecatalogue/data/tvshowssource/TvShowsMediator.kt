@@ -7,13 +7,16 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.lukmannudin.moviecatalogue.MovieCatalogueDatabase
 import com.lukmannudin.moviecatalogue.api.ApiHelper
+import com.lukmannudin.moviecatalogue.data.entity.BaseResponse
+import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieRemoteKey
 import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocal
-import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowRemoteKey
+import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemote
 import com.lukmannudin.moviecatalogue.mapper.toTvShows
 import com.lukmannudin.moviecatalogue.mapper.toTvShowsLocal
 import kotlinx.coroutines.DelicateCoroutinesApi
 import okio.IOException
 import retrofit2.HttpException
+import retrofit2.Response
 import javax.inject.Inject
 
 /**
@@ -26,7 +29,8 @@ class TvShowsMediator @Inject constructor(
     private val language: String
 ) : RemoteMediator<Int, TvShowLocal>() {
     private val tvShowDao = database.tvShowDao()
-    private val remoteKeyDao = database.tvShowRemoteKeyDao()
+    private val remoteKeyDao = database.movieRemoteKeyDao()
+    private val prependType = -1
 
     override suspend fun initialize(): InitializeAction {
         return InitializeAction.SKIP_INITIAL_REFRESH
@@ -37,57 +41,32 @@ class TvShowsMediator @Inject constructor(
         loadType: LoadType,
         state: PagingState<Int, TvShowLocal>
     ): MediatorResult {
+
         return try {
-            val lastItem = state.lastItemOrNull()
+            val remoteKey = initializeRemoteKey()
 
-            val remoteKey = database.withTransaction {
-                lastItem?.let { lastItem -> remoteKeyDao.remoteKeyById(lastItem.page) }
-            }
+            val loadKey = getLoadKey(remoteKey, loadType)
+            if (loadKey == prependType) return MediatorResult.Success(endOfPaginationReached = true)
 
-            val loadKey = when (loadType) {
-                LoadType.REFRESH -> null
-                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
-                LoadType.APPEND -> {
-                    remoteKey?.nextPage ?: 1
-                }
-            }
+            val response = remoteResponse(loadKey)
 
-            val response = loadKey?.let { key ->
-                apiHelper.getPopularTvShows(
-                    language,
-                    key
-                )
-            }
+            val results = response?.body()?.results ?: return MediatorResult.Error(
+                Exception("something wrong with server"))
+
+            if (isLastPage(remoteKey, response.body()!!.totalPages)) return MediatorResult.Success(
+                endOfPaginationReached = true
+            )
 
             database.withTransaction {
-                val results = response?.body()?.results
-
-                results?.map {
-                    it.page = response.body()?.page
+                if (loadType == LoadType.REFRESH) {
+                    tvShowDao.clearCache()
+                    remoteKeyDao.clearCache()
                 }
 
-                results.toTvShows().toTvShowsLocal().let {
-                    tvShowDao.insertTvShow(
-                        it
-                    )
+                insertTvShowsToDB(results)
 
-                    if (lastItem != null) {
-                        remoteKeyDao.insert(
-                            TvShowRemoteKey(
-                                lastItem.page, lastItem.page.plus(1)
-                            )
-                        )
-                    }
-                }
-            }
-
-            var isLastPage: Boolean?
-
-            response?.body().let { baseResponse ->
-                val currentPage = baseResponse?.page
-                val lastPage = baseResponse?.totalPages
-
-                isLastPage = currentPage == lastPage
+                val newNextPage = remoteKey.movieNextPage?.plus(1)
+                remoteKeyDao.updateCurrentMovieNextPage(newNextPage ?: 1)
             }
 
             MediatorResult.Success(endOfPaginationReached = false)
@@ -95,6 +74,51 @@ class TvShowsMediator @Inject constructor(
             MediatorResult.Error(e)
         } catch (e: HttpException) {
             MediatorResult.Error(e)
+        }
+    }
+
+    private fun getLoadKey(remoteKey: MovieRemoteKey, loadType: LoadType): Int?{
+        return when (loadType) {
+            LoadType.REFRESH -> null
+            LoadType.PREPEND -> prependType
+            LoadType.APPEND -> {
+                remoteKey.movieNextPage
+            }
+        }
+    }
+
+    @Suppress("SENSELESS_COMPARISON")
+    private suspend fun initializeRemoteKey(): MovieRemoteKey {
+        return database.withTransaction {
+            val remoteKey = remoteKeyDao.remote_key()
+            if (remoteKey == null) {
+                remoteKeyDao.insert(MovieRemoteKey(1, 1))
+                remoteKeyDao.remote_key()
+            } else {
+                remoteKey
+            }
+        }
+    }
+
+    private fun isLastPage(remoteKey: MovieRemoteKey, lastPage:Int?): Boolean{
+        if (remoteKey.movieNextPage == null || lastPage == null) return true
+        return remoteKey.movieNextPage == lastPage
+    }
+
+    private suspend fun remoteResponse(loadKey: Int?): Response<BaseResponse<List<TvShowRemote>>>?{
+        return loadKey?.let { key ->
+            apiHelper.getPopularTvShows(
+                language,
+                key
+            )
+        }
+    }
+
+    private suspend fun insertTvShowsToDB(tvShows: List<TvShowRemote>){
+        tvShows.toTvShows().toTvShowsLocal().let { tvShowsLocal ->
+            tvShowDao.insertTvShows(
+                tvShowsLocal
+            )
         }
     }
 }

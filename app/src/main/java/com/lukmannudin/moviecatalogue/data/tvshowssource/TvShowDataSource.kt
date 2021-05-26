@@ -1,7 +1,7 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource
 
-import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.TvShow
+import com.lukmannudin.moviecatalogue.data.entity.Result
+import com.lukmannudin.moviecatalogue.data.entity.TvShow
 
 /**
  * Created by Lukmannudin on 09/05/21.

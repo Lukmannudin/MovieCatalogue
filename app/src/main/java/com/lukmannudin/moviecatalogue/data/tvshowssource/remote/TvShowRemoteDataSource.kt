@@ -1,8 +1,8 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource.remote
 
 import com.lukmannudin.moviecatalogue.api.ApiHelper
-import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.TvShow
+import com.lukmannudin.moviecatalogue.data.entity.Result
+import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowDataSource
 import com.lukmannudin.moviecatalogue.mapper.toTvShow
 import com.lukmannudin.moviecatalogue.mapper.toTvShows

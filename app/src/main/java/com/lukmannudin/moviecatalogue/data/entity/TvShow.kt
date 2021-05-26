@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.data
+package com.lukmannudin.moviecatalogue.data.entity
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
