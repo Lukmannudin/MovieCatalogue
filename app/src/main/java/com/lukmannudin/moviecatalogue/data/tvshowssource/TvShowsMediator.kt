@@ -90,7 +90,7 @@ class TvShowsMediator @Inject constructor(
                 isLastPage = currentPage == lastPage
             }
 
-            MediatorResult.Success(endOfPaginationReached = isLastPage ?: true)
+            MediatorResult.Success(endOfPaginationReached = false)
         } catch (e: IOException) {
             MediatorResult.Error(e)
         } catch (e: HttpException) {

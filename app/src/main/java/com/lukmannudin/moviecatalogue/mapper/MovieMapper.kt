@@ -44,7 +44,8 @@ private val movieLocalToMovieMapper: Mapper<MovieLocal, Movie> =
                 input.releaseDate.toDate(),
                 input.userScore,
                 input.posterPath,
-                input.page
+                input.page,
+                input.isFavorite
             )
         }
     }

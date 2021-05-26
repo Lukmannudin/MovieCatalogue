@@ -16,4 +16,6 @@ interface MovieRepository {
 
     suspend fun getMovie(id: Int, language: String): Flow<Result<Movie>>
 
+    suspend fun updateFavorite(movie: Movie)
+
 }

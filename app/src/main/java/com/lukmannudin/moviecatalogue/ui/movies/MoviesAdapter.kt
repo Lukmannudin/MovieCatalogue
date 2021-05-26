@@ -18,6 +18,7 @@ import com.lukmannudin.moviecatalogue.utils.setImage
 class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(DIFF_CALLBACK) {
 
     lateinit var shareCallback: (Movie) -> Unit
+    lateinit var favoriteCallback: (Movie) -> Unit
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
         val itemsAcademyBinding =
@@ -62,6 +63,7 @@ class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(D
                 tvItemDate.text = movie.releaseDate?.toStringFormat()
                 tvItemOverview.text = movie.overview
                 ivPoster.setImage(itemView.context, movie.posterPath)
+                cbFavorite.isChecked = movie.isFavorite
 
                 ivShare.setOnClickListener {
                     shareCallback.invoke(movie)
@@ -69,6 +71,11 @@ class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(D
 
                 itemView.setOnClickListener {
                     MoviesDetailActivity.start(itemView.context, movie.id)
+                }
+
+                cbFavorite.setOnClickListener {
+                    movie.isFavorite = cbFavorite.isChecked
+                    favoriteCallback.invoke(movie)
                 }
             }
         }

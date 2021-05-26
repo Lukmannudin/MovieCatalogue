@@ -1,5 +1,6 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -28,7 +29,7 @@ class MoviesMediator(
     private val remoteKeyDao = database.movieRemoteKeyDao()
 
     override suspend fun initialize(): InitializeAction {
-        return InitializeAction.SKIP_INITIAL_REFRESH
+        return InitializeAction.LAUNCH_INITIAL_REFRESH
     }
 
     @DelicateCoroutinesApi
@@ -37,17 +38,18 @@ class MoviesMediator(
         state: PagingState<Int, MovieLocal>
     ): MediatorResult {
         return try {
-            val lastItem = state.lastItemOrNull()
 
-            val remoteKey = database.withTransaction {
-                lastItem?.let { lastItem -> remoteKeyDao.remoteKeyById(lastItem.page) }
-            }
+
 
             val loadKey = when (loadType) {
                 LoadType.REFRESH -> null
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
-                    remoteKey?.nextPage ?: 1
+                    val nextPage = database.withTransaction {
+                        val remoteKey = remoteKeyDao.remote_key()
+                        remoteKey.movieNextPage
+                    }
+                    nextPage ?: 1
                 }
             }
 
@@ -57,6 +59,9 @@ class MoviesMediator(
                     key
                 )
             }
+
+            var isLastPage: Boolean?
+            var nextPage: Int? = 1
 
             database.withTransaction {
                 val results = response?.body()?.results
@@ -69,24 +74,32 @@ class MoviesMediator(
                     movieDao.insertMovies(
                         it
                     )
-
-                    if (lastItem != null) {
-                        remoteKeyDao.insert(
-                            MovieRemoteKey(
-                                lastItem.page, lastItem.page.plus(1)
-                            )
-                        )
-                    }
                 }
+
+                val remoteKey = database.withTransaction {
+                    remoteKeyDao.remote_key()
+                }
+
+                @Suppress("SENSELESS_COMPARISON")
+                if (remoteKey != null){
+                    remoteKey.movieNextPage?.plus(1).let { page ->
+                        page?.let {
+                            remoteKeyDao.updateCurrentMovieNextPage(
+                                it
+                            )
+                        }
+                        nextPage = page
+                    }
+                } else {
+                    remoteKeyDao.insert(MovieRemoteKey(1,1))
+                }
+
+
             }
 
-            var isLastPage: Boolean?
-
             response?.body().let { baseResponse ->
-                val currentPage = baseResponse?.page
                 val lastPage = baseResponse?.totalPages
-
-                isLastPage = currentPage == lastPage
+                isLastPage = nextPage == lastPage
             }
 
             MediatorResult.Success(endOfPaginationReached = isLastPage ?: true)

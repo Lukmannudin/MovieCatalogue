@@ -10,6 +10,8 @@ import com.lukmannudin.moviecatalogue.utils.Constant.DEFAULT_LANGUAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -24,5 +26,11 @@ class MoviesViewModel @Inject constructor(
 
     suspend fun movies(): Flow<PagingData<Movie>> {
         return movieRepository.getPopularMovies(DEFAULT_LANGUAGE, 1).cachedIn(viewModelScope)
+    }
+
+    fun updateFavorite(movie: Movie){
+        viewModelScope.launch {
+            movieRepository.updateFavorite(movie)
+        }
     }
 }

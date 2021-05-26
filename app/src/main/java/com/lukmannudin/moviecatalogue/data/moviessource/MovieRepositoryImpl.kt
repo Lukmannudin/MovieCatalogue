@@ -11,7 +11,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 /**
  * Created by Lukmannudin on 09/05/21.
  */
@@ -24,7 +26,7 @@ class MovieRepositoryImpl @ExperimentalPagingApi
     private val movieLocalDataSource: MovieLocalDataSource,
     private val database: MovieCatalogueDatabase,
     private val moviesMediator: MoviesMediator,
-    private val coroutineDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : MovieRepository {
 
     override suspend fun getPopularMovies(
@@ -44,7 +46,7 @@ class MovieRepositoryImpl @ExperimentalPagingApi
     }
 
     override suspend fun getMovie(id: Int, language: String): Flow<Result<Movie>> = flow {
-        when (val responseRemote = movieRemoteDataSource.getMovie(id, language)){
+        when (val responseRemote = movieRemoteDataSource.getMovie(id, language)) {
             is Result.Success -> {
                 movieLocalDataSource.saveMovie(responseRemote.data)
             }
@@ -53,7 +55,7 @@ class MovieRepositoryImpl @ExperimentalPagingApi
             }
         }
 
-        when (val responseLocal = movieLocalDataSource.getMovie(id)){
+        when (val responseLocal = movieLocalDataSource.getMovie(id)) {
             is Result.Success -> {
                 emit(Result.Success(responseLocal.data))
             }
@@ -63,4 +65,9 @@ class MovieRepositoryImpl @ExperimentalPagingApi
         }
     }
 
+    override suspend fun updateFavorite(movie: Movie) {
+        withContext(ioDispatcher){
+            movieLocalDataSource.updateMovie(movie)
+        }
+    }
 }

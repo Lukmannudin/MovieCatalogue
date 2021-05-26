@@ -62,6 +62,10 @@ class MoviesFragment : Fragment() {
             }
         }
 
+        moviesAdapter.favoriteCallback = { movie ->
+            viewModel.updateFavorite(movie)
+        }
+
         with(binding.rvMovies) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)

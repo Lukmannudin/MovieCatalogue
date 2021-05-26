@@ -10,10 +10,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "movie_remote_keys")
 data class MovieRemoteKey(
-    @PrimaryKey
-    @ColumnInfo(name = "page_index")
-    val pageIndex: Int,
 
-    @ColumnInfo(name = "next_page")
-    val nextPage: Int?,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 1,
+
+    @ColumnInfo(name = "movie_remote_key_next_page")
+    val movieNextPage: Int?,
 )

@@ -31,4 +31,7 @@ data class MovieLocal(
 
     @ColumnInfo(name = "page")
     val page: Int,
+
+    @ColumnInfo(name = "is_favorite")
+    val isFavorite: Boolean = false
 )

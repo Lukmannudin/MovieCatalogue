@@ -1,15 +1,15 @@
 package com.lukmannudin.moviecatalogue.data.moviessource.local
 
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.lukmannudin.moviecatalogue.data.Movie
 import com.lukmannudin.moviecatalogue.data.Result
-import com.lukmannudin.moviecatalogue.data.moviessource.remote.PagedKeyedMoviePagingSource
 import com.lukmannudin.moviecatalogue.mapper.toMovieFromLocal
 import com.lukmannudin.moviecatalogue.mapper.toMovieLocal
 import com.lukmannudin.moviecatalogue.mapper.toMoviesLocal
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -27,7 +27,7 @@ class MovieLocalDataSource @Inject constructor(
         ) {
             movieDao.getMovies()
         }.flow.map { pagingData ->
-            pagingData.map {  movieLocal ->
+            pagingData.map { movieLocal ->
                 movieLocal.toMovieFromLocal()
             }
         }
@@ -42,11 +42,15 @@ class MovieLocalDataSource @Inject constructor(
         }
     }
 
+    suspend fun updateMovie(movie: Movie) {
+        movieDao.updateFavorite(movie.id, movie.isFavorite)
+    }
+
     suspend fun saveMovies(movies: List<Movie>) {
         movieDao.insertMovies(movies.toMoviesLocal())
     }
 
-    suspend fun saveMovie(movie: Movie){
+    suspend fun saveMovie(movie: Movie) {
         movieDao.insertMovie(movie.toMovieLocal())
     }
 }

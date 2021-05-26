@@ -1,10 +1,7 @@
 package com.lukmannudin.moviecatalogue.data.moviessource.local
 
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 /**
  * Created by Lukmannudin on 19/05/21.
@@ -22,7 +19,7 @@ interface MovieDao {
     @Query("DELETE FROM movies WHERE id = :movieId")
     fun deleteMovieById(movieId: Int)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMovies(movies: List<MovieLocal>)
 
     @Query("DELETE FROM movies")
@@ -30,4 +27,7 @@ interface MovieDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovie(movie: MovieLocal)
+
+    @Query("UPDATE movies SET is_favorite = :isFavorite WHERE id = :movieId")
+    suspend fun updateFavorite(movieId: Int, isFavorite: Boolean)
 }
