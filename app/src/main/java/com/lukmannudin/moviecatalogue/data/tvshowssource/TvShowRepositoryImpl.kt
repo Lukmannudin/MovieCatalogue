@@ -39,9 +39,10 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
 
                 if (responseLocal is Result.Success){
                     remoteTvShow.isFavorite = responseLocal.data.isFavorite
+                    tvShowLocalDataSource.updateTvShow(remoteTvShow)
+                } else {
+                    tvShowLocalDataSource.saveTvShow(remoteTvShow)
                 }
-
-                tvShowLocalDataSource.saveTvShow(remoteTvShow)
             }
             is Result.Error -> {
                 emit(tvShowLocalDataSource.getTvShow(id))
@@ -60,7 +61,7 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
 
     override suspend fun updateFavorite(tvShow: TvShow) {
         withContext(ioDispatcher){
-            tvShowLocalDataSource.updateTvShow(tvShow)
+            tvShowLocalDataSource.updateTvShowFavorite(tvShow)
         }
     }
 

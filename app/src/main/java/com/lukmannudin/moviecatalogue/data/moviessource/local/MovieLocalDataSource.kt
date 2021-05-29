@@ -8,6 +8,7 @@ import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.mapper.toMovieFromLocal
 import com.lukmannudin.moviecatalogue.mapper.toMovieLocal
+import com.lukmannudin.moviecatalogue.mapper.toMoviesFlow
 import com.lukmannudin.moviecatalogue.mapper.toMoviesLocal
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -26,11 +27,15 @@ class MovieLocalDataSource @Inject constructor(
             PagingConfig(pageSize)
         ) {
             movieDao.getMovies()
-        }.flow.map { pagingData ->
-            pagingData.map { movieLocal ->
-                movieLocal.toMovieFromLocal()
-            }
-        }
+        }.toMoviesFlow()
+    }
+
+    fun getFavoriteMovies(pageSize: Int): Flow<PagingData<Movie>>{
+        return Pager(
+            PagingConfig(pageSize)
+        ){
+            movieDao.getFavoriteMovies()
+        }.toMoviesFlow()
     }
 
     fun getMovie(id: Int): Result<Movie> {
@@ -42,11 +47,15 @@ class MovieLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun updateMovie(movie: Movie) {
+    suspend fun updateFavorite(movie: Movie) {
         movieDao.updateFavorite(movie.id, movie.isFavorite)
     }
 
     suspend fun saveMovie(movie: Movie) {
         movieDao.insertMovie(movie.toMovieLocal())
+    }
+
+    suspend fun updateMovie(movie: Movie){
+        movieDao.updateMovie(movie.toMovieLocal())
     }
 }

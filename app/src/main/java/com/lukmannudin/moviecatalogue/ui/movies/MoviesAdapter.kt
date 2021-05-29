@@ -10,12 +10,13 @@ import com.lukmannudin.moviecatalogue.databinding.ItemMovieBinding
 import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailActivity
 import com.lukmannudin.moviecatalogue.utils.Converters.toStringFormat
 import com.lukmannudin.moviecatalogue.utils.setImage
+import javax.inject.Inject
 
 /**
  * Created by Lukmannudin on 5/3/21.
  */
 
-class MoviesAdapter : PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(DIFF_CALLBACK) {
+class MoviesAdapter: PagingDataAdapter<Movie, MoviesAdapter.MoviesViewHolder>(DIFF_CALLBACK) {
 
     lateinit var shareCallback: (Movie) -> Unit
     lateinit var favoriteCallback: (Movie) -> Unit

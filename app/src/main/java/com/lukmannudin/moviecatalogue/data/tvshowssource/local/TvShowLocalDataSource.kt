@@ -38,11 +38,15 @@ class TvShowLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun updateTvShow(tvShow: TvShow) {
+    suspend fun updateTvShowFavorite(tvShow: TvShow) {
         tvShowDao.updateFavorite(tvShow.id, tvShow.isFavorite)
     }
 
     suspend fun saveTvShow(tvShow: TvShow){
         tvShowDao.insertTvShow(tvShow.toTvShowLocal())
+    }
+
+    suspend fun updateTvShow(tvShow: TvShow){
+        tvShowDao.updateTvShow(tvShow.toTvShowLocal())
     }
 }

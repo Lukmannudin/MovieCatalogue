@@ -30,17 +30,22 @@ class MovieRepositoryImpl @ExperimentalPagingApi
         return pagingDataSource.moviesPaging
     }
 
+    override suspend fun getFavoriteMovies(pageSize: Int): Flow<PagingData<Movie>> {
+        return movieLocalDataSource.getFavoriteMovies(pageSize)
+    }
+
     override suspend fun getMovie(id: Int, language: String): Flow<Result<Movie>> = flow {
         when (val responseRemote = movieRemoteDataSource.getMovie(id, language)) {
             is Result.Success -> {
                 val responseLocal = movieLocalDataSource.getMovie(id)
                 val remoteMovie = responseRemote.data
 
-                if (responseLocal is Result.Success){
+                if (responseLocal is Result.Success) {
                     remoteMovie.isFavorite = responseLocal.data.isFavorite
+                    movieLocalDataSource.updateMovie(remoteMovie)
+                } else {
+                    movieLocalDataSource.saveMovie(remoteMovie)
                 }
-
-                movieLocalDataSource.saveMovie(remoteMovie)
             }
             is Result.Error -> {
                 emit(movieLocalDataSource.getMovie(id))
@@ -58,8 +63,8 @@ class MovieRepositoryImpl @ExperimentalPagingApi
     }
 
     override suspend fun updateFavorite(movie: Movie) {
-        withContext(ioDispatcher){
-            movieLocalDataSource.updateMovie(movie)
+        withContext(ioDispatcher) {
+            movieLocalDataSource.updateFavorite(movie)
         }
     }
 }

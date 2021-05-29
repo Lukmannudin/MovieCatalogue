@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MovieCatalogue</string>
+    <string name="app_name">Movie Catalogue</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="movies">Movies</string>
     <string name="tv_shows">Tv Shows</string>
@@ -12,4 +12,6 @@
     <string name="share_the_film_now">Share this film now.</string>
     <string name="something_wrong">something wrong</string>
     <string name="rating">rating</string>
+    <string name="favorite_movies">Favorite Movies</string>
+    <string name="tv_shows_favorite">Tv Shows Favorite</string>
 </resources>

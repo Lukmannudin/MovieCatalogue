@@ -18,4 +18,6 @@ interface MovieRepository {
 
     suspend fun updateFavorite(movie: Movie)
 
+    suspend fun getFavoriteMovies(pageSize: Int): Flow<PagingData<Movie>>
+
 }

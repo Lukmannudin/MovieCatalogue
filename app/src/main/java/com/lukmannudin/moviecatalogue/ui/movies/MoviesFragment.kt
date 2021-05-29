@@ -79,7 +79,7 @@ class MoviesFragment : Fragment() {
     private fun setupObserver() {
         lifecycleScope.launchWhenCreated {
             moviesAdapter.loadStateFlow.collectLatest { loadState ->
-                showLoadingAndHideFailureView(loadState.mediator?.refresh is LoadState.Loading)
+                showLoadingAndHideFailureView(loadState.refresh is LoadState.Loading)
             }
         }
 

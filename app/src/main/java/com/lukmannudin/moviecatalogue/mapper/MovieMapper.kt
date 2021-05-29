@@ -1,11 +1,16 @@
 package com.lukmannudin.moviecatalogue.mapper
 
+import androidx.paging.Pager
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocal
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemote
 import com.lukmannudin.moviecatalogue.mapper.mapperhelper.*
 import com.lukmannudin.moviecatalogue.utils.Converters.toDate
 import com.lukmannudin.moviecatalogue.utils.Converters.toLong
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * Created by Lukmannudin on 09/05/21.
@@ -102,4 +107,12 @@ fun List<Movie>.toMoviesLocal(): List<MovieLocal> {
 
 fun Movie.toMovieLocal(): MovieLocal {
     return movieToLocalMapper.map(this)
+}
+
+fun Pager<Int, MovieLocal>.toMoviesFlow(): Flow<PagingData<Movie>> {
+    return this.flow.map { pagingData ->
+        pagingData.map { movieLocal ->
+            movieLocal.toMovieFromLocal()
+        }
+    }
 }

@@ -12,28 +12,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieCatalogue">
-
-        <activity android:name=".ui.home.HomeActivity" android:theme="@style/Theme.MovieCatalogue.NoActionBar">
+        <activity android:name=".ui.movies.favoritemovie.FavoriteMoviesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.home.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:theme="@style/Theme.MovieCatalogue">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailActivity"
+        <activity
+            android:name=".ui.moviesdetail.MoviesDetailActivity"
             android:parentActivityName=".ui.home.HomeActivity"
-            android:theme="@style/Theme.MovieCatalogue.NoActionBar"
-            >
+            android:theme="@style/Theme.MovieCatalogue.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.home.HomeActivity" />
         </activity>
-
-        <activity android:name="com.lukmannudin.moviecatalogue.ui.tvshowsdetail.TvShowsDetailActivity"
+        <activity
+            android:name=".ui.tvshowsdetail.TvShowsDetailActivity"
             android:parentActivityName=".ui.home.HomeActivity"
-            android:theme="@style/Theme.MovieCatalogue.NoActionBar"
-            >
+            android:theme="@style/Theme.MovieCatalogue.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.home.HomeActivity" />

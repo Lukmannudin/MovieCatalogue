@@ -1,10 +1,7 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource.local
 
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 /**
  * Created by Lukmannudin on 19/05/21.
@@ -33,4 +30,7 @@ interface TvShowDao {
 
     @Query("UPDATE tvshow SET is_favorite = :isFavorite WHERE id = :tvShowId")
     suspend fun updateFavorite(tvShowId: Int, isFavorite: Boolean)
+
+    @Update
+    suspend fun updateTvShow(tvShowLocal: TvShowLocal)
 }
