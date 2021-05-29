@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.ui.tvshowsdetail
+package com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

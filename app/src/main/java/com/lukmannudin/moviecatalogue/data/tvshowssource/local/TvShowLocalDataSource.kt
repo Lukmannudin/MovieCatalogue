@@ -17,18 +17,6 @@ class TvShowLocalDataSource @Inject constructor(
     private val tvShowDao: TvShowDao
 ) {
 
-    fun getPopularTvShow(pageSize: Int): Flow<PagingData<TvShow>> {
-        return Pager(
-            PagingConfig(pageSize)
-        ) {
-            tvShowDao.getTvShows()
-        }.flow.map { pagingData ->
-            pagingData.map {  tvShow ->
-                tvShow.toTvShow()
-            }
-        }
-    }
-
     fun getTvShow(id: Int): Result<TvShow> {
         return try {
             val tvShow = tvShowDao.getTvShow(id)
@@ -38,15 +26,23 @@ class TvShowLocalDataSource @Inject constructor(
         }
     }
 
+    fun getFavoriteTvShows(pageSize: Int): Flow<PagingData<TvShow>>{
+        return Pager(
+            PagingConfig(pageSize)
+        ){
+            tvShowDao.getFavoriteTvShows()
+        }.toTvShowsFlow()
+    }
+
     suspend fun updateTvShowFavorite(tvShow: TvShow) {
         tvShowDao.updateFavorite(tvShow.id, tvShow.isFavorite)
     }
 
-    suspend fun saveTvShow(tvShow: TvShow){
+    suspend fun saveTvShow(tvShow: TvShow) {
         tvShowDao.insertTvShow(tvShow.toTvShowLocal())
     }
 
-    suspend fun updateTvShow(tvShow: TvShow){
+    suspend fun updateTvShow(tvShow: TvShow) {
         tvShowDao.updateTvShow(tvShow.toTvShowLocal())
     }
 }

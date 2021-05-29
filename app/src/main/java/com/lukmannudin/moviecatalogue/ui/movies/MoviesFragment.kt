@@ -28,7 +28,7 @@ class MoviesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var moviesAdapter: MoviesAdapter
-    private lateinit var loadStateAdapter: PostsLoadStateAdapter
+    private lateinit var loadStateAdapter: MoviesLoadStateAdapter
 
     private val viewModel: MoviesViewModel by viewModels()
 
@@ -48,7 +48,7 @@ class MoviesFragment : Fragment() {
 
     private fun setupAdapter() {
         moviesAdapter = MoviesAdapter()
-        loadStateAdapter = PostsLoadStateAdapter(moviesAdapter)
+        loadStateAdapter = MoviesLoadStateAdapter(moviesAdapter)
 
         moviesAdapter.shareCallback = { movie ->
             if (activity != null) {

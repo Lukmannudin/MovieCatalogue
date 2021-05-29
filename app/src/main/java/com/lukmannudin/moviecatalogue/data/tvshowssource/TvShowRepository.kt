@@ -19,4 +19,6 @@ interface TvShowRepository {
 
     suspend fun updateFavorite(tvShow: TvShow)
 
+    suspend fun getFavoriteTvShows(pageSize: Int): Flow<PagingData<TvShow>>
+
 }

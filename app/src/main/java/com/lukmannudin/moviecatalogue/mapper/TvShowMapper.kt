@@ -1,11 +1,18 @@
 package com.lukmannudin.moviecatalogue.mapper
 
+import androidx.paging.Pager
+import androidx.paging.PagingData
+import androidx.paging.map
+import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.TvShow
+import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocal
 import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocal
 import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemote
 import com.lukmannudin.moviecatalogue.mapper.mapperhelper.*
 import com.lukmannudin.moviecatalogue.utils.Converters.toDate
 import com.lukmannudin.moviecatalogue.utils.Converters.toLong
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * Created by Lukmannudin on 09/05/21.
@@ -103,4 +110,12 @@ fun TvShow.toTvShowLocal(): TvShowLocal {
 
 fun List<TvShow>.toTvShowsLocal(): List<TvShowLocal> {
     return tvShowsToLocalMapper.map(this)
+}
+
+fun Pager<Int, TvShowLocal>.toTvShowsFlow(): Flow<PagingData<TvShow>> {
+    return this.flow.map { pagingData ->
+        pagingData.map { tvShowLocal ->
+            tvShowLocal.toTvShow()
+        }
+    }
 }

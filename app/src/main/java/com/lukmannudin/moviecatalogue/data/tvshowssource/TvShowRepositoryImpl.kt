@@ -30,6 +30,10 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
         return pagingDataSource.tvShowsPaging
     }
 
+    override suspend fun getFavoriteTvShows(pageSize: Int): Flow<PagingData<TvShow>> {
+        return tvShowLocalDataSource.getFavoriteTvShows(pageSize)
+    }
+
     override suspend fun getTvShow(id: Int, language: String): Flow<Result<TvShow>> = flow {
 
         when (val responseRemote = tvShowRemoteDataSource.getTvShow(id, language)) {

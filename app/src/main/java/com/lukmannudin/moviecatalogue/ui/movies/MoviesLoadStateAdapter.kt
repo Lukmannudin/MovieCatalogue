@@ -8,7 +8,7 @@ import com.lukmannudin.moviecatalogue.utils.NetworkStateItemViewHolder
 /**
  * Created by Lukmannudin on 20/05/21.
  */
-class PostsLoadStateAdapter(
+class MoviesLoadStateAdapter(
     private val adapter: MoviesAdapter
 ) : LoadStateAdapter<NetworkStateItemViewHolder>() {
     override fun onBindViewHolder(holder: NetworkStateItemViewHolder, loadState: LoadState) {

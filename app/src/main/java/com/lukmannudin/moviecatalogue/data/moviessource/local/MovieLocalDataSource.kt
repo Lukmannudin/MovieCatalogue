@@ -22,14 +22,6 @@ class MovieLocalDataSource @Inject constructor(
     private val movieDao: MovieDao
 ) {
 
-    fun getPopularMovies(pageSize: Int): Flow<PagingData<Movie>> {
-        return Pager(
-            PagingConfig(pageSize)
-        ) {
-            movieDao.getMovies()
-        }.toMoviesFlow()
-    }
-
     fun getFavoriteMovies(pageSize: Int): Flow<PagingData<Movie>>{
         return Pager(
             PagingConfig(pageSize)

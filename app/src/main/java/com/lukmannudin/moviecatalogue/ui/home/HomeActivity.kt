@@ -7,7 +7,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.ActivityHomeBinding
-import com.lukmannudin.moviecatalogue.ui.movies.favoritemovie.FavoriteMoviesActivity
+import com.lukmannudin.moviecatalogue.ui.movies.favoritemovie.FavoriteMovieActivity
+import com.lukmannudin.moviecatalogue.ui.tvshows.favoritetvshow.FavoriteTvShowActivity
 import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,7 +35,11 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun navigateToMoviesFavorite(){
-        startActivity(Intent(this, FavoriteMoviesActivity::class.java))
+        startActivity(Intent(this, FavoriteMovieActivity::class.java))
+    }
+
+    private fun navigateToTvShowsFavorite(){
+        startActivity(Intent(this, FavoriteTvShowActivity::class.java))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -49,7 +54,7 @@ class HomeActivity : AppCompatActivity() {
             }
 
             R.id.menu_tvshows_favorites -> {
-
+                navigateToTvShowsFavorite()
             }
         }
         return super.onOptionsItemSelected(item)

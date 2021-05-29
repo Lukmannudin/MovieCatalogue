@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.ui.movies.favoritemovie
+package com.lukmannudin.moviecatalogue.ui.tvshows.favoritetvshow
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,32 +8,32 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
-import com.lukmannudin.moviecatalogue.databinding.ActivityFavoriteMoviesBinding
-import com.lukmannudin.moviecatalogue.ui.movies.MoviesAdapter
-import com.lukmannudin.moviecatalogue.ui.movies.MoviesViewModel
-import com.lukmannudin.moviecatalogue.ui.movies.PostsLoadStateAdapter
+import com.lukmannudin.moviecatalogue.databinding.LayoutFavoriteMoviesBinding
+import com.lukmannudin.moviecatalogue.ui.tvshows.TvShowsLoadStateAdapter
+import com.lukmannudin.moviecatalogue.ui.tvshows.TvShowsAdapter
+import com.lukmannudin.moviecatalogue.ui.tvshows.TvShowsViewModel
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class FavoriteMoviesActivity : AppCompatActivity() {
+class FavoriteTvShowActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityFavoriteMoviesBinding
+    private lateinit var binding: LayoutFavoriteMoviesBinding
 
-    private val viewModel: MoviesViewModel by viewModels()
+    private val viewModel: TvShowsViewModel by viewModels()
 
-    private lateinit var moviesAdapter: MoviesAdapter
-    private lateinit var loadStateAdapter: PostsLoadStateAdapter
+    private lateinit var tvShowsAdapter: TvShowsAdapter
+    private lateinit var loadStateAdapter: TvShowsLoadStateAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFavoriteMoviesBinding.inflate(layoutInflater)
+        binding = LayoutFavoriteMoviesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = getString(R.string.favorite_movies)
+        supportActionBar?.title = getString(R.string.tv_shows_favorite)
 
         setupAdapter()
         setupObserver()
@@ -41,15 +41,15 @@ class FavoriteMoviesActivity : AppCompatActivity() {
 
     private fun setupObserver() {
         lifecycleScope.launchWhenCreated {
-            viewModel.favoriteMovies().collectLatest { pagingData ->
-                moviesAdapter.submitData(pagingData)
+            viewModel.favoriteTvShows().collectLatest { pagingData ->
+                tvShowsAdapter.submitData(pagingData)
             }
         }
 
         lifecycleScope.launchWhenCreated {
-            moviesAdapter.loadStateFlow.collectLatest {
-                if (it.refresh is LoadState.NotLoading){
-                    if (moviesAdapter.snapshot().items.isEmpty()){
+            tvShowsAdapter.loadStateFlow.collectLatest {
+                if (it.refresh is LoadState.NotLoading) {
+                    if (tvShowsAdapter.snapshot().items.isEmpty()) {
                         binding.lavEmpty.visible()
                     } else {
                         binding.lavEmpty.gone()
@@ -60,10 +60,10 @@ class FavoriteMoviesActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
-        moviesAdapter = MoviesAdapter()
-        loadStateAdapter = PostsLoadStateAdapter(moviesAdapter)
+        tvShowsAdapter = TvShowsAdapter()
+        loadStateAdapter = TvShowsLoadStateAdapter(tvShowsAdapter)
 
-        moviesAdapter.shareCallback = { movie ->
+        tvShowsAdapter.shareCallback = { movie ->
             val mimeType = "text/plain"
             ShareCompat.IntentBuilder
                 .from(this)
@@ -73,14 +73,14 @@ class FavoriteMoviesActivity : AppCompatActivity() {
                 .startChooser()
         }
 
-        moviesAdapter.favoriteCallback = { movie ->
+        tvShowsAdapter.favoriteCallback = { movie ->
             viewModel.updateFavorite(movie)
         }
 
         with(binding.rvFavoriteMovies) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
-            adapter = moviesAdapter.withLoadStateHeaderAndFooter(
+            adapter = tvShowsAdapter.withLoadStateHeaderAndFooter(
                 header = loadStateAdapter,
                 footer = loadStateAdapter
             )

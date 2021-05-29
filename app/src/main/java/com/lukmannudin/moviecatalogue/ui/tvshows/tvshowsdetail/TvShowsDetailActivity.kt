@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.ui.moviesdetail
+package com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail
 
 import android.content.Context
 import android.content.Intent
@@ -7,12 +7,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lukmannudin.moviecatalogue.R
-import com.lukmannudin.moviecatalogue.data.entity.Movie
+import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
 import com.lukmannudin.moviecatalogue.databinding.ActivityMoviesDetailBinding
-import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailViewModel.MovieDetailState
-import com.lukmannudin.moviecatalogue.utils.Converters.toPercentage
-import com.lukmannudin.moviecatalogue.utils.Converters.toPercentageNumber
+import com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail.TvShowsDetailViewModel.TvShowDetailState
 import com.lukmannudin.moviecatalogue.utils.Converters.toStringFormat
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.setImage
@@ -20,9 +18,9 @@ import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MoviesDetailActivity : AppCompatActivity() {
+class TvShowsDetailActivity : AppCompatActivity() {
 
-    private val viewModel: MoviesDetailViewModel by viewModels()
+    private val viewModel: TvShowsDetailViewModel by viewModels()
     private lateinit var binding: ActivityMoviesDetailBinding
 
     private lateinit var srLayout: SwipeRefreshLayout
@@ -32,28 +30,24 @@ class MoviesDetailActivity : AppCompatActivity() {
         setContentViewBinding()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val movieExtras = intent?.getIntExtra(MOVIE_EXTRA, -1)
-        viewModel.getMovie(movieExtras)
+        val tvShowExtra = intent?.getIntExtra(TVSHOW_EXTRA, -1)
+        viewModel.getTvShow(tvShowExtra)
 
         srLayout.setOnRefreshListener {
-            viewModel.getMovie(movieExtras)
+            viewModel.getTvShow(tvShowExtra)
             srLayout.isRefreshing = false
         }
 
         setupObserver()
     }
 
-    private fun populateMovie(movie: Movie) {
+    private fun populateTvShow(tvShow: TvShow) {
         with(binding) {
-            movie.let { movie ->
-                ivPoster.setImage(this@MoviesDetailActivity, movie.posterPath)
-                tvTitle.text = movie.title
-                tvDate.text = movie.releaseDate?.toStringFormat()
-                tvOverview.text = movie.overview
-                tvRating.text = movie.userScore.toPercentage()
-
-                pbRating.isEnabled = true
-                pbRating.progress = movie.userScore.toPercentageNumber()
+            tvShow.let { tvShow ->
+                ivPoster.setImage(this@TvShowsDetailActivity, tvShow.posterPath)
+                tvTitle.text = tvShow.title
+                tvDate.text = tvShow.releaseDate?.toStringFormat()
+                tvOverview.text = tvShow.overview
             }
         }
     }
@@ -75,17 +69,17 @@ class MoviesDetailActivity : AppCompatActivity() {
     }
 
     private fun setupObserver() {
-        viewModel.moviesState.observe(this, { viewState ->
+        viewModel.tvShowState.observe(this, { viewState ->
             when (viewState) {
-                is MovieDetailState.Loading -> {
+                is TvShowDetailState.Loading -> {
                     showLoadingAndHideFailureView(true)
                 }
-                is MovieDetailState.Error -> {
+                is TvShowDetailState.Error -> {
                     binding.lavFailure.visible()
                 }
-                is MovieDetailState.Loaded -> {
+                is TvShowDetailState.Loaded -> {
                     showLoadingAndHideFailureView(false)
-                    populateMovie(viewState.movie)
+                    populateTvShow(viewState.tvShow)
                 }
             }
         })
@@ -103,11 +97,11 @@ class MoviesDetailActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val MOVIE_EXTRA = "movie_extra"
+        private const val TVSHOW_EXTRA = "tvshow_extra"
 
-        fun start(context: Context, movieId: Int) {
-            val intent = Intent(context, MoviesDetailActivity::class.java)
-            intent.putExtra(MOVIE_EXTRA, movieId)
+        fun start(context: Context, tvShowId: Int) {
+            val intent = Intent(context, TvShowsDetailActivity::class.java)
+            intent.putExtra(TVSHOW_EXTRA, tvShowId)
             context.startActivity(intent)
         }
     }

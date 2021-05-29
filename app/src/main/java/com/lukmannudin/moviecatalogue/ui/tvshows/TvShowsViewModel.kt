@@ -28,6 +28,10 @@ class TvShowsViewModel @Inject constructor(
         return tvShowRepository.getPopularTvShows().cachedIn(viewModelScope)
     }
 
+    suspend fun favoriteTvShows(): Flow<PagingData<TvShow>>{
+        return tvShowRepository.getFavoriteTvShows(4)
+    }
+
     fun updateFavorite(tvShow: TvShow){
         viewModelScope.launch {
             tvShowRepository.updateFavorite(tvShow)

@@ -3,7 +3,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.FakeMovieDataSource
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
-import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailViewModel
+import com.lukmannudin.moviecatalogue.ui.movies.moviesdetail.MoviesDetailViewModel
 import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi

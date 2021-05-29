@@ -7,10 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.databinding.ItemMovieBinding
-import com.lukmannudin.moviecatalogue.ui.moviesdetail.MoviesDetailActivity
+import com.lukmannudin.moviecatalogue.ui.movies.moviesdetail.MoviesDetailActivity
 import com.lukmannudin.moviecatalogue.utils.Converters.toStringFormat
 import com.lukmannudin.moviecatalogue.utils.setImage
-import javax.inject.Inject
 
 /**
  * Created by Lukmannudin on 5/3/21.

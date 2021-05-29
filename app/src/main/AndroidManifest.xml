@@ -12,7 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieCatalogue">
-        <activity android:name=".ui.movies.favoritemovie.FavoriteMoviesActivity">
+        <activity android:name=".ui.movies.favoritemovie.FavoriteMovieActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.home.HomeActivity" />
+        </activity>
+        <activity android:name=".ui.tvshows.favoritetvshow.FavoriteTvShowActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.home.HomeActivity" />
@@ -27,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.moviesdetail.MoviesDetailActivity"
+            android:name="com.lukmannudin.moviecatalogue.ui.movies.moviesdetail.MoviesDetailActivity"
             android:parentActivityName=".ui.home.HomeActivity"
             android:theme="@style/Theme.MovieCatalogue.NoActionBar">
             <meta-data
@@ -35,7 +40,7 @@
                 android:value=".ui.home.HomeActivity" />
         </activity>
         <activity
-            android:name=".ui.tvshowsdetail.TvShowsDetailActivity"
+            android:name="com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail.TvShowsDetailActivity"
             android:parentActivityName=".ui.home.HomeActivity"
             android:theme="@style/Theme.MovieCatalogue.NoActionBar">
             <meta-data

@@ -29,7 +29,7 @@ class TvShowFragment : Fragment() {
 
     private val viewModel: TvShowsViewModel by viewModels()
     private lateinit var tvShowsAdapter: TvShowsAdapter
-    private lateinit var loadStateAdapter: PostsLoadStateAdapter
+    private lateinit var loadStateAdapter: TvShowsLoadStateAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,7 +47,7 @@ class TvShowFragment : Fragment() {
 
     private fun setupAdapter() {
         tvShowsAdapter = TvShowsAdapter()
-        loadStateAdapter = PostsLoadStateAdapter(tvShowsAdapter)
+        loadStateAdapter = TvShowsLoadStateAdapter(tvShowsAdapter)
 
         tvShowsAdapter.shareCallback = { tvShow ->
             if (activity != null) {

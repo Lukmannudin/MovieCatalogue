@@ -3,7 +3,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.tvshowssource.FakeTvShowDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
-import com.lukmannudin.moviecatalogue.ui.tvshowsdetail.TvShowsDetailViewModel
+import com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail.TvShowsDetailViewModel
 import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
