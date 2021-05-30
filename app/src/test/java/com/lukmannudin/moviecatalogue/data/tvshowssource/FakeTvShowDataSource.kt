@@ -1,42 +1,49 @@
-package com.lukmannudin.moviecatalogue.data.tvshowssource
-
-import com.lukmannudin.moviecatalogue.data.entity.Result
+import androidx.paging.PagingData
+import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowDataSource
+import com.lukmannudin.moviecatalogue.DummiesTest
 import com.lukmannudin.moviecatalogue.data.entity.TvShow
-import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
+import kotlinx.coroutines.flow.Flow
+import com.lukmannudin.moviecatalogue.data.entity.Result
+import kotlinx.coroutines.flow.flow
 
 /**
  * Created by Lukmannudin on 11/05/21.
  */
 
 class FakeTvShowDataSource : TvShowDataSource {
-    override suspend fun getPopularTvShows(language: String, page: Int): Result<List<TvShow>> {
-        return when {
-            language != PagingCatalogueConfig.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
-            page < 1 -> Result.Error(Exception(""))
-            else -> {
-                return Result.Success(emptyList())
-            }
+    override suspend fun getPopularTvShows(language: String, page: Int): Flow<PagingData<TvShow>> {
+        return flow {
+            emit(PagingData.from(listOf(DummiesTest.dummyTvShow)))
+        }
+    }
+
+    override suspend fun getFavoriteTvShows(pageSize: Int): Flow<PagingData<TvShow>> {
+        return flow {
+            emit(PagingData.from(listOf(DummiesTest.dummyTvShow)))
         }
     }
 
     override suspend fun getTvShow(id: Int, language: String): Result<TvShow> {
-        return when {
-            id < 0 -> Result.Error(Exception(""))
-            language != PagingCatalogueConfig.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
-            else -> {
-                return Result.Success(dummyTvShow)
-            }
+        return if (id != DummiesTest.dummyTvShow.id) {
+            Result.Error(Exception(DummiesTest.errorMessage))
+        } else {
+            Result.Success(DummiesTest.dummyTvShow)
         }
     }
 
-    companion object {
-        val dummyTvShow = TvShow(
-            1,
-            "title",
-            "overview",
-            "releaseDate",
-            0f,
-            "posterPath"
-        )
+    override suspend fun saveTvShows(TvShows: List<TvShow>) {
+        // do nothing
+    }
+
+    override suspend fun saveTvShow(TvShow: TvShow) {
+        // do nothing
+    }
+
+    override suspend fun updateFavorite(TvShow: TvShow) {
+        // do nothing
+    }
+
+    override suspend fun updateTvShow(TvShow: TvShow) {
+        // do nothing
     }
 }

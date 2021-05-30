@@ -5,7 +5,6 @@ import androidx.paging.PagingData
 import com.lukmannudin.moviecatalogue.data.PagingDataSource
 import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.entity.TvShow
-import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocalDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -20,14 +19,14 @@ import javax.inject.Inject
 @ExperimentalPagingApi
 class TvShowRepositoryImpl @ExperimentalPagingApi
 @Inject constructor(
-    private val tvShowRemoteDataSource: TvShowRemoteDataSource,
-    private val tvShowLocalDataSource: TvShowLocalDataSource,
-    private val pagingDataSource: PagingDataSource,
+    private val tvShowRemoteDataSource: TvShowDataSource,
+    private val tvShowLocalDataSource: TvShowDataSource,
+    private val pagingDataSource: PagingDataSource<TvShow>,
     private val ioDispatcher: CoroutineDispatcher
 ) : TvShowRepository {
 
     override suspend fun getPopularTvShows(): Flow<PagingData<TvShow>> {
-        return pagingDataSource.tvShowsPaging
+        return pagingDataSource.getPopularItems()
     }
 
     override suspend fun getFavoriteTvShows(pageSize: Int): Flow<PagingData<TvShow>> {
@@ -38,10 +37,10 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
 
         when (val responseRemote = tvShowRemoteDataSource.getTvShow(id, language)) {
             is Result.Success -> {
-                val responseLocal = tvShowLocalDataSource.getTvShow(id)
+                val responseLocal = tvShowLocalDataSource.getTvShow(id, language)
                 val remoteTvShow = responseRemote.data
 
-                if (responseLocal is Result.Success){
+                if (responseLocal is Result.Success) {
                     remoteTvShow.isFavorite = responseLocal.data.isFavorite
                     tvShowLocalDataSource.updateTvShow(remoteTvShow)
                 } else {
@@ -49,11 +48,11 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
                 }
             }
             is Result.Error -> {
-                emit(tvShowLocalDataSource.getTvShow(id))
+                emit(tvShowLocalDataSource.getTvShow(id, language))
             }
         }
 
-        when (val responseLocal = tvShowLocalDataSource.getTvShow(id)) {
+        when (val responseLocal = tvShowLocalDataSource.getTvShow(id, language)) {
             is Result.Success -> {
                 emit(Result.Success(responseLocal.data))
             }
@@ -64,8 +63,8 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
     }
 
     override suspend fun updateFavorite(tvShow: TvShow) {
-        withContext(ioDispatcher){
-            tvShowLocalDataSource.updateTvShowFavorite(tvShow)
+        withContext(ioDispatcher) {
+            tvShowLocalDataSource.updateFavorite(tvShow)
         }
     }
 

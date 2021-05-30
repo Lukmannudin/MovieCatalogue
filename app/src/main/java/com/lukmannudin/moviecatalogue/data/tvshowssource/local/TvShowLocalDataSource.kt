@@ -1,13 +1,13 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource.local
 
 import androidx.paging.*
-import com.lukmannudin.moviecatalogue.data.entity.Movie
-import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.entity.TvShow
+import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowDataSource
 import com.lukmannudin.moviecatalogue.mapper.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import  com.lukmannudin.moviecatalogue.data.entity.Result
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 
 /**
  * Created by Lukmannudin on 19/05/21.
@@ -15,9 +15,29 @@ import javax.inject.Inject
 
 class TvShowLocalDataSource @Inject constructor(
     private val tvShowDao: TvShowDao
-) {
+) : TvShowDataSource {
 
-    fun getTvShow(id: Int): Result<TvShow> {
+    override suspend fun getPopularTvShows(
+        language: String,
+        page: Int
+    ): Flow<PagingData<TvShow>> {
+        return Pager(
+            PagingConfig(PagingCatalogueConfig.DEFAULT_PAGE_SIZE)
+        ) {
+            tvShowDao.getTvShows()
+        }.toTvShowsFlow()
+    }
+
+
+    override suspend fun getFavoriteTvShows(pageSize: Int): Flow<PagingData<TvShow>>{
+        return Pager(
+            PagingConfig(pageSize)
+        ){
+            tvShowDao.getFavoriteTvShows()
+        }.toTvShowsFlow()
+    }
+
+    override suspend fun getTvShow(id: Int, language: String): Result<TvShow> {
         return try {
             val tvShow = tvShowDao.getTvShow(id)
             Result.Success(tvShow.toTvShow())
@@ -26,23 +46,19 @@ class TvShowLocalDataSource @Inject constructor(
         }
     }
 
-    fun getFavoriteTvShows(pageSize: Int): Flow<PagingData<TvShow>>{
-        return Pager(
-            PagingConfig(pageSize)
-        ){
-            tvShowDao.getFavoriteTvShows()
-        }.toTvShowsFlow()
+    override suspend fun saveTvShows(tvShows: List<TvShow>) {
+        tvShowDao.insertTvShows(tvShows.toTvShowsLocal())
     }
 
-    suspend fun updateTvShowFavorite(tvShow: TvShow) {
+    override suspend fun updateFavorite(tvShow: TvShow) {
         tvShowDao.updateFavorite(tvShow.id, tvShow.isFavorite)
     }
 
-    suspend fun saveTvShow(tvShow: TvShow) {
+    override suspend fun saveTvShow(tvShow: TvShow) {
         tvShowDao.insertTvShow(tvShow.toTvShowLocal())
     }
 
-    suspend fun updateTvShow(tvShow: TvShow) {
+    override suspend fun updateTvShow(tvShow: TvShow) {
         tvShowDao.updateTvShow(tvShow.toTvShowLocal())
     }
 }

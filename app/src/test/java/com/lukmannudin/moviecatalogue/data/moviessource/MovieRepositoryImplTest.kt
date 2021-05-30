@@ -1,14 +1,20 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
+import androidx.paging.*
+import com.lukmannudin.moviecatalogue.DummiesTest
 import com.lukmannudin.moviecatalogue.MainCoroutineRule
+import com.lukmannudin.moviecatalogue.data.PagingCatalogueConfig
+import com.lukmannudin.moviecatalogue.data.PagingDataSource
 import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
-import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,16 +26,22 @@ import org.mockito.junit.MockitoJUnitRunner
  * Created by Lukmannudin on 10/05/21.
  */
 
-
 @ExperimentalCoroutinesApi
+@ExperimentalPagingApi
 @RunWith(MockitoJUnitRunner::class)
 class MovieRepositoryImplTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
 
-    private lateinit var remoteMovieDataSource: FakeMovieDataSource
+    @Mock
+    private lateinit var remoteMovieDataSource: MovieDataSource
 
-    private lateinit var localMovieDataSource: FakeMovieDataSource
+    @Mock
+    private lateinit var localRemoteDataSource: MovieDataSource
+
+    @ExperimentalPagingApi
+    @Mock
+    private lateinit var pagingDataSource: PagingDataSource<Movie>
 
     @Mock
     private lateinit var movieRepository: MovieRepository
@@ -38,49 +50,71 @@ class MovieRepositoryImplTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @Before
-    fun createRepository() {
+    fun createRepository() = runBlockingTest {
+
         remoteMovieDataSource = FakeMovieDataSource()
-        localMovieDataSource = FakeMovieDataSource()
+        localRemoteDataSource = FakeMovieDataSource()
+        pagingDataSource = FakeMoviePagingDataSource()
+
         movieRepository = MovieRepositoryImpl(
-            remoteMovieDataSource, localMovieDataSource, testDispatcher
+            remoteMovieDataSource,
+            localRemoteDataSource,
+            pagingDataSource,
+            testDispatcher
         )
     }
 
+
     @Test
-    fun getValidPopularMovies() = runBlockingTest {
-        val movies = movieRepository.getPopularMovies(PagingCatalogueConfig.DEFAULT_LANGUAGE, PagingCatalogueConfig.DEFAULT_PAGE_INDEX)
-        assertEquals(Result.Success(emptyList<Movie>()), movies)
+    fun getPopularMovies() = runBlockingTest {
+        val movies = movieRepository.getPopularMovies()
+        val firstItem = movies.take(1).toList().first().collectDataForTest()
+        assertEquals(listOf(DummiesTest.dummyMovie), firstItem)
     }
 
     @Test
-    fun getValidMovie() = runBlockingTest {
-        val movie = movieRepository.getMovie(1, PagingCatalogueConfig.DEFAULT_LANGUAGE)
-        assertEquals(Result.Success(FakeMovieDataSource.dummyMovie), movie)
+    fun getFavoriteMovie() = runBlockingTest {
+        val movies = movieRepository.getFavoriteMovies(1)
+        val firstItem = movies.take(1).toList().first().collectDataForTest()
+        assertEquals(listOf(DummiesTest.dummyMovie), firstItem)
     }
 
     @Test
-    fun getInvalidPopularMovies() = runBlockingTest {
-        val moviesInvalidLanguage = movieRepository.getPopularMovies("", PagingCatalogueConfig.DEFAULT_PAGE_INDEX)
-        assertNotEquals(Result.Success(emptyList<Movie>()), moviesInvalidLanguage)
+    fun getMovie() = runBlockingTest {
+        val successMovie = movieRepository.getMovie(
+            DummiesTest.dummyMovie.id,
+            PagingCatalogueConfig.DEFAULT_LANGUAGE
+        ).last()
+        assertEquals(Result.Success(DummiesTest.dummyMovie), successMovie)
 
-        val moviesInvalidPage = movieRepository.getPopularMovies(PagingCatalogueConfig.DEFAULT_LANGUAGE, -1)
-        assertNotEquals(Result.Success(emptyList<Movie>()), moviesInvalidPage)
 
-        val moviesInvalid = movieRepository.getPopularMovies("", -1)
-        assertNotEquals(Result.Success(emptyList<Movie>()), moviesInvalid)
+        val errorMovie = movieRepository.getMovie(-1, PagingCatalogueConfig.DEFAULT_LANGUAGE).last()
+        assertTrue(errorMovie is Result.Error)
     }
 
-    @Test
-    fun getInvalidMovie() = runBlockingTest {
-        val fakeMovie = FakeMovieDataSource.dummyMovie
-
-        val movieInvalidId = movieRepository.getMovie(-1, PagingCatalogueConfig.DEFAULT_LANGUAGE)
-        assertNotEquals(Result.Success(fakeMovie), movieInvalidId)
-
-        val movieInvalidLanguage = movieRepository.getMovie(1, "")
-        assertNotEquals(Result.Success(fakeMovie), movieInvalidLanguage)
-
-        val movieInvalid = movieRepository.getMovie(-1, "")
-        assertNotEquals(Result.Success(fakeMovie), movieInvalid)
+    @ExperimentalCoroutinesApi
+    private suspend fun <T : Any> PagingData<T>.collectDataForTest(): List<T> {
+        val dcb = object : DifferCallback {
+            override fun onChanged(position: Int, count: Int) {}
+            override fun onInserted(position: Int, count: Int) {}
+            override fun onRemoved(position: Int, count: Int) {}
+        }
+        val items = mutableListOf<T>()
+        val dif = object : PagingDataDiffer<T>(dcb, TestCoroutineDispatcher()) {
+            override suspend fun presentNewList(
+                previousList: NullPaddedList<T>,
+                newList: NullPaddedList<T>,
+                newCombinedLoadStates: CombinedLoadStates,
+                lastAccessedIndex: Int,
+                onListPresentable: () -> Unit
+            ): Int? {
+                for (idx in 0 until newList.size)
+                    items.add(newList.getFromStorage(idx))
+                onListPresentable()
+                return null
+            }
+        }
+        dif.collectFrom(this)
+        return items
     }
 }

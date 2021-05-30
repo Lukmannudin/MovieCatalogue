@@ -7,8 +7,10 @@ import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepositoryImpl
 import com.lukmannudin.moviecatalogue.data.moviessource.MoviesMediator
 import com.lukmannudin.moviecatalogue.data.PagingDataSource
+import com.lukmannudin.moviecatalogue.data.moviessource.MoviePagingDataSource
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemoteDataSource
+import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowPagingDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepositoryImpl
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowsMediator
@@ -43,7 +45,7 @@ object RepositoryModule {
     fun provideTvShowsRepository(
         tvShowLocalDataSource: TvShowLocalDataSource,
         tvShowRemoteDataSource: TvShowRemoteDataSource,
-        pagingDataSource: PagingDataSource,
+        pagingDataSource: TvShowPagingDataSource,
         ioDispatcher: CoroutineDispatcher
     ): TvShowRepository =
         TvShowRepositoryImpl(
@@ -60,7 +62,7 @@ object RepositoryModule {
     fun provideMoviesRepository(
         movieLocalDataSource: MovieLocalDataSource,
         movieRemoteDataSource: MovieRemoteDataSource,
-        pagingDataSource: PagingDataSource,
+        pagingDataSource: MoviePagingDataSource,
         coroutineDispatcher: CoroutineDispatcher
     ): MovieRepository =
         MovieRepositoryImpl(

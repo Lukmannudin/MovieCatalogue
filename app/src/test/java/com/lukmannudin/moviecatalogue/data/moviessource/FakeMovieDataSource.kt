@@ -1,9 +1,11 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
+import androidx.paging.PagingData
+import com.lukmannudin.moviecatalogue.DummiesTest
 import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
-import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
-import java.util.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 /**
  * Created by Lukmannudin on 10/05/21.
@@ -11,23 +13,23 @@ import java.util.*
 
 
 class FakeMovieDataSource : MovieDataSource {
-    override suspend fun getPopularMovies(language: String, page: Int): Result<List<Movie>> {
-        return when {
-            language != PagingCatalogueConfig.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
-            page < 1 -> Result.Error(Exception(""))
-            else -> {
-                return Result.Success(emptyList())
-            }
+    override suspend fun getPopularMovies(language: String, page: Int): Flow<PagingData<Movie>> {
+        return flow {
+            emit(PagingData.from(listOf(DummiesTest.dummyMovie)))
+        }
+    }
+
+    override suspend fun getFavoriteMovies(pageSize: Int): Flow<PagingData<Movie>> {
+        return flow {
+            emit(PagingData.from(listOf(DummiesTest.dummyMovie)))
         }
     }
 
     override suspend fun getMovie(id: Int, language: String): Result<Movie> {
-        return when {
-            id < 0 -> Result.Error(Exception(""))
-            language != PagingCatalogueConfig.DEFAULT_LANGUAGE -> Result.Error(Exception(""))
-            else -> {
-                return Result.Success(dummyMovie)
-            }
+        return if (id != DummiesTest.dummyMovie.id) {
+            Result.Error(Exception(DummiesTest.errorMessage))
+        } else {
+            Result.Success(DummiesTest.dummyMovie)
         }
     }
 
@@ -35,14 +37,15 @@ class FakeMovieDataSource : MovieDataSource {
         // do nothing
     }
 
-    companion object {
-        val dummyMovie = Movie(
-            1,
-            "title",
-            "overview",
-            Date(),
-            0f,
-            "posterPath"
-        )
+    override suspend fun saveMovie(movie: Movie) {
+        // do nothing
+    }
+
+    override suspend fun updateFavorite(movie: Movie) {
+        // do nothing
+    }
+
+    override suspend fun updateMovie(movie: Movie) {
+        // do nothing
     }
 }

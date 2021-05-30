@@ -3,15 +3,15 @@ package com.lukmannudin.moviecatalogue.data.moviessource.local
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.map
 import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
+import com.lukmannudin.moviecatalogue.data.moviessource.MovieDataSource
 import com.lukmannudin.moviecatalogue.mapper.toMovieFromLocal
 import com.lukmannudin.moviecatalogue.mapper.toMovieLocal
 import com.lukmannudin.moviecatalogue.mapper.toMoviesFlow
 import com.lukmannudin.moviecatalogue.mapper.toMoviesLocal
+import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -20,17 +20,25 @@ import javax.inject.Inject
 
 class MovieLocalDataSource @Inject constructor(
     private val movieDao: MovieDao
-) {
+) : MovieDataSource {
 
-    fun getFavoriteMovies(pageSize: Int): Flow<PagingData<Movie>>{
+    override suspend fun getPopularMovies(language: String, page: Int): Flow<PagingData<Movie>> {
+        return Pager(
+            PagingConfig(PagingCatalogueConfig.DEFAULT_PAGE_SIZE)
+        ) {
+            movieDao.getMovies()
+        }.toMoviesFlow()
+    }
+
+    override suspend fun getFavoriteMovies(pageSize: Int): Flow<PagingData<Movie>> {
         return Pager(
             PagingConfig(pageSize)
-        ){
+        ) {
             movieDao.getFavoriteMovies()
         }.toMoviesFlow()
     }
 
-    fun getMovie(id: Int): Result<Movie> {
+    override suspend fun getMovie(id: Int, language: String): Result<Movie> {
         return try {
             val movies = movieDao.getMovie(id)
             Result.Success(movies.toMovieFromLocal())
@@ -39,15 +47,19 @@ class MovieLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun updateFavorite(movie: Movie) {
-        movieDao.updateFavorite(movie.id, movie.isFavorite)
+    override suspend fun saveMovies(movies: List<Movie>) {
+        movieDao.insertMovies(movies.toMoviesLocal())
     }
 
-    suspend fun saveMovie(movie: Movie) {
+    override suspend fun saveMovie(movie: Movie) {
         movieDao.insertMovie(movie.toMovieLocal())
     }
 
-    suspend fun updateMovie(movie: Movie){
+    override suspend fun updateFavorite(movie: Movie) {
+        movieDao.updateFavorite(movie.id, movie.isFavorite)
+    }
+
+    override suspend fun updateMovie(movie: Movie) {
         movieDao.updateMovie(movie.toMovieLocal())
     }
 }

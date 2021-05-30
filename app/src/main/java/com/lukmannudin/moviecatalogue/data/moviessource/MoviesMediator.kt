@@ -17,12 +17,13 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import okio.IOException
 import retrofit2.HttpException
 import retrofit2.Response
+import javax.inject.Inject
 
 /**
  * Created by Lukmannudin on 20/05/21.
  */
 @ExperimentalPagingApi
-class MoviesMediator(
+class MoviesMediator @Inject constructor(
     private val apiHelper: ApiHelper,
     private val database: MovieCatalogueDatabase,
     private val language: String
