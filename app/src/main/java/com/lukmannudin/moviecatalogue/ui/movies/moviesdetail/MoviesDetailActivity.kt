@@ -6,8 +6,10 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.chip.Chip
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.data.entity.Movie
+import com.lukmannudin.moviecatalogue.data.moviessource.local.Genre
 import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
 import com.lukmannudin.moviecatalogue.databinding.ActivityMoviesDetailBinding
 import com.lukmannudin.moviecatalogue.ui.movies.moviesdetail.MoviesDetailViewModel.MovieDetailState
@@ -56,7 +58,21 @@ class MoviesDetailActivity : AppCompatActivity() {
 
                 pbRating.isEnabled = true
                 pbRating.progress = movie.userScore.toPercentageNumber()
+
+                popularity.text = movie.popularity.toString()
+
+                movie.genres?.let { genres ->
+                    createchippes(genres)
+                }
             }
+        }
+    }
+
+    private fun createchippes(genres: List<Genre>){
+        for (genre in genres) {
+            val chip = Chip(this@MoviesDetailActivity)
+            chip.text = genre.name
+            binding.cgGenres.addView(chip)
         }
     }
 

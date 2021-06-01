@@ -1,12 +1,16 @@
 package com.lukmannudin.moviecatalogue.ui
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
 import com.google.android.material.tabs.TabLayout
+import org.hamcrest.Description
+import org.hamcrest.Matcher
 import org.hamcrest.Matchers
+import org.hamcrest.TypeSafeMatcher
 
 
 /**
@@ -30,6 +34,24 @@ fun selectTabAtPosition(tabIndex: Int): ViewAction {
                     .build()
 
             tabAtIndex.select()
+        }
+    }
+}
+
+fun childAtPosition(
+    parentMatcher: Matcher<View>, position: Int
+): Matcher<View> {
+
+    return object : TypeSafeMatcher<View>() {
+        override fun describeTo(description: Description) {
+            description.appendText("Child at position $position in parent ")
+            parentMatcher.describeTo(description)
+        }
+
+        public override fun matchesSafely(view: View): Boolean {
+            val parent = view.parent
+            return parent is ViewGroup && parentMatcher.matches(parent)
+                    && view == parent.getChildAt(position)
         }
     }
 }

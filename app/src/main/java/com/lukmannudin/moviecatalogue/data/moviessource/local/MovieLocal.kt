@@ -30,5 +30,11 @@ data class MovieLocal(
     val posterPath: String,
 
     @ColumnInfo(name = "is_favorite")
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+
+    @ColumnInfo(name = "genres")
+    val genres: String? = null,
+
+    @ColumnInfo(name = "popularity")
+    val popularity: Float? = null
 )

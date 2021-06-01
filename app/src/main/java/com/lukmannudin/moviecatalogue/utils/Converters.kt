@@ -1,6 +1,9 @@
 package com.lukmannudin.moviecatalogue.utils
 
 import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.lukmannudin.moviecatalogue.data.moviessource.local.Genre
 import java.text.DateFormatSymbols
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -14,6 +17,7 @@ import java.util.*
 object Converters {
 
     private val defaultDateFormat = "yyyy-MM-DD"
+    val gson = Gson()
 
     fun String.toDate(dateFormat: String = defaultDateFormat): Date {
         val sdf = SimpleDateFormat(dateFormat, Locale.ENGLISH)
@@ -62,5 +66,26 @@ object Converters {
         return month
     }
 
+    @TypeConverter
+    fun List<Genre>?.fromGenresToString(): String? {
+        if (this == null) {
+            return null
+        }
+        val gson = Gson()
+        val type = object :
+            TypeToken<List<Genre?>?>() {}.type
+        return gson.toJson(this, type)
+    }
+
+    @TypeConverter
+    fun String?.toGenres(): List<Genre>? {
+        if (this == null) {
+            return null
+        }
+        val gson = Gson()
+        val type = object :
+            TypeToken<List<Genre>>() {}.type
+        return gson.fromJson<List<Genre>>(this, type)
+    }
 
 }

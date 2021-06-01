@@ -2,7 +2,6 @@ package com.lukmannudin.moviecatalogue.data.moviessource.local
 
 import androidx.paging.PagingSource
 import androidx.room.*
-import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocal
 
 /**
  * Created by Lukmannudin on 19/05/21.

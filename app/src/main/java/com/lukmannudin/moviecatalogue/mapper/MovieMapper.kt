@@ -7,7 +7,9 @@ import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocal
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemote
 import com.lukmannudin.moviecatalogue.mapper.mapperhelper.*
+import com.lukmannudin.moviecatalogue.utils.Converters.fromGenresToString
 import com.lukmannudin.moviecatalogue.utils.Converters.toDate
+import com.lukmannudin.moviecatalogue.utils.Converters.toGenres
 import com.lukmannudin.moviecatalogue.utils.Converters.toLong
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -26,7 +28,10 @@ private val movieRemoteToMovieMapper: Mapper<MovieRemote, Movie> =
                 input.overview ?: "overview not defined",
                 input.releaseDate?.toDate(),
                 input.userScore ?: 0.0f,
-                basePosterPath + input.posterPath
+                basePosterPath + input.posterPath,
+                false,
+                input.genres,
+                input.popularity
             )
         }
     }
@@ -48,7 +53,9 @@ private val movieLocalToMovieMapper: Mapper<MovieLocal, Movie> =
                 input.releaseDate.toDate(),
                 input.userScore,
                 input.posterPath,
-                input.isFavorite
+                input.isFavorite,
+                input.genres.toGenres(),
+                input.popularity
             )
         }
     }
@@ -69,7 +76,10 @@ private val movieToLocalMapper: Mapper<Movie, MovieLocal> =
                 input.overview,
                 input.releaseDate.toLong(),
                 input.userScore,
-                input.posterPath
+                input.posterPath,
+                input.isFavorite,
+                input.genres.fromGenresToString(),
+                input.popularity
             )
         }
     }
@@ -93,7 +103,7 @@ fun MovieRemote.toMovieFromRemote(): Movie {
     return movieRemoteToMovieMapper.map(this)
 }
 
-fun List<MovieLocal>.toMoviesFromLocal(): List<Movie>{
+fun List<MovieLocal>.toMoviesFromLocal(): List<Movie> {
     return moviesLocalToMoviesMapper.map(this)
 }
 
