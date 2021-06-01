@@ -1,17 +1,19 @@
 package com.lukmannudin.moviecatalogue.ui.tvshows.favoritetvshow
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.LayoutFavoriteMoviesBinding
-import com.lukmannudin.moviecatalogue.ui.tvshows.TvShowsLoadStateAdapter
 import com.lukmannudin.moviecatalogue.ui.tvshows.TvShowsAdapter
+import com.lukmannudin.moviecatalogue.ui.tvshows.TvShowsLoadStateAdapter
 import com.lukmannudin.moviecatalogue.ui.tvshows.TvShowsViewModel
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +50,7 @@ class FavoriteTvShowActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenCreated {
             tvShowsAdapter.loadStateFlow.collectLatest {
+                idlingResourceCheck(it)
                 if (it.refresh is LoadState.NotLoading) {
                     if (tvShowsAdapter.snapshot().items.isEmpty()) {
                         binding.lavEmpty.visible()
@@ -56,6 +59,15 @@ class FavoriteTvShowActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    // for ui testing
+    private fun idlingResourceCheck(loadState: CombinedLoadStates) {
+        if (loadState.refresh == LoadState.Loading) {
+            EspressoIdlingResource.increment()
+        } else {
+            EspressoIdlingResource.decrement()
         }
     }
 

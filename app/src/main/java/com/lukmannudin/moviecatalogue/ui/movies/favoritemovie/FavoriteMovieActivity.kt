@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
@@ -12,6 +13,7 @@ import com.lukmannudin.moviecatalogue.databinding.LayoutFavoriteMoviesBinding
 import com.lukmannudin.moviecatalogue.ui.movies.MoviesAdapter
 import com.lukmannudin.moviecatalogue.ui.movies.MoviesViewModel
 import com.lukmannudin.moviecatalogue.ui.movies.MoviesLoadStateAdapter
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +50,7 @@ class FavoriteMovieActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenCreated {
             moviesAdapter.loadStateFlow.collectLatest {
+                idlingResourceCheck(it)
                 if (it.refresh is LoadState.NotLoading){
                     if (moviesAdapter.snapshot().items.isEmpty()){
                         binding.lavEmpty.visible()
@@ -56,6 +59,15 @@ class FavoriteMovieActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    // for ui testing
+    private fun idlingResourceCheck(loadState: CombinedLoadStates) {
+        if (loadState.refresh == LoadState.Loading) {
+            EspressoIdlingResource.increment()
+        } else {
+            EspressoIdlingResource.decrement()
         }
     }
 

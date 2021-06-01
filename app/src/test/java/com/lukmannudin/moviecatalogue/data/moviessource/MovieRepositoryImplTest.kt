@@ -87,7 +87,6 @@ class MovieRepositoryImplTest {
         ).last()
         assertEquals(Result.Success(DummiesTest.dummyMovie), successMovie)
 
-
         val errorMovie = movieRepository.getMovie(-1, PagingCatalogueConfig.DEFAULT_LANGUAGE).last()
         assertTrue(errorMovie is Result.Error)
     }

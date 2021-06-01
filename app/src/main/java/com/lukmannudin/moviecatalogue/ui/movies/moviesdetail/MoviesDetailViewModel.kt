@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig.DEFAULT_LANGUAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher

@@ -14,6 +14,7 @@ import com.lukmannudin.moviecatalogue.ui.movies.moviesdetail.MoviesDetailViewMod
 import com.lukmannudin.moviecatalogue.utils.Converters.toPercentage
 import com.lukmannudin.moviecatalogue.utils.Converters.toPercentageNumber
 import com.lukmannudin.moviecatalogue.utils.Converters.toStringFormat
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.setImage
 import com.lukmannudin.moviecatalogue.utils.visible
@@ -42,6 +43,7 @@ class MoviesDetailActivity : AppCompatActivity() {
 
         setupObserver()
     }
+
 
     private fun populateMovie(movie: Movie) {
         with(binding) {
@@ -75,6 +77,7 @@ class MoviesDetailActivity : AppCompatActivity() {
     }
 
     private fun setupObserver() {
+        EspressoIdlingResource.increment()
         viewModel.moviesState.observe(this, { viewState ->
             when (viewState) {
                 is MovieDetailState.Loading -> {
@@ -86,6 +89,7 @@ class MoviesDetailActivity : AppCompatActivity() {
                 is MovieDetailState.Loaded -> {
                     showLoadingAndHideFailureView(false)
                     populateMovie(viewState.movie)
+                    EspressoIdlingResource.decrement()
                 }
             }
         })

@@ -7,6 +7,7 @@ import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemoteDataSource
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

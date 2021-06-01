@@ -1,6 +1,7 @@
 package com.lukmannudin.moviecatalogue.ui.tvshows
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,10 +9,12 @@ import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentTvShowBinding
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -78,6 +81,7 @@ class TvShowFragment : Fragment() {
     private fun setupObserver() {
         lifecycleScope.launchWhenCreated {
             tvShowsAdapter.loadStateFlow.collectLatest { loadState ->
+                idlingResourceCheck(loadState)
                 showLoadingAndHideFailureView(loadState.mediator?.refresh is LoadState.Loading)
             }
         }
@@ -86,6 +90,15 @@ class TvShowFragment : Fragment() {
             viewModel.tvShows().collectLatest {
                 tvShowsAdapter.submitData(it)
             }
+        }
+    }
+
+    // for ui testing
+    private fun idlingResourceCheck(loadState: CombinedLoadStates){
+        if (loadState.refresh == LoadState.Loading){
+            EspressoIdlingResource.increment()
+        } else {
+            EspressoIdlingResource.decrement()
         }
     }
 

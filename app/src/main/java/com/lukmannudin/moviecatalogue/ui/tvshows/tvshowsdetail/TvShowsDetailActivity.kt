@@ -12,6 +12,7 @@ import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
 import com.lukmannudin.moviecatalogue.databinding.ActivityMoviesDetailBinding
 import com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail.TvShowsDetailViewModel.TvShowDetailState
 import com.lukmannudin.moviecatalogue.utils.Converters.toStringFormat
+import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.setImage
 import com.lukmannudin.moviecatalogue.utils.visible
@@ -69,6 +70,7 @@ class TvShowsDetailActivity : AppCompatActivity() {
     }
 
     private fun setupObserver() {
+        EspressoIdlingResource.increment()
         viewModel.tvShowState.observe(this, { viewState ->
             when (viewState) {
                 is TvShowDetailState.Loading -> {
@@ -80,6 +82,7 @@ class TvShowsDetailActivity : AppCompatActivity() {
                 is TvShowDetailState.Loaded -> {
                     showLoadingAndHideFailureView(false)
                     populateTvShow(viewState.tvShow)
+                    EspressoIdlingResource.decrement()
                 }
             }
         })
