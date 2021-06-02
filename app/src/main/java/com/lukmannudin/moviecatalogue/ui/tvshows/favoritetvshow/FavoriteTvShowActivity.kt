@@ -35,7 +35,7 @@ class FavoriteTvShowActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = getString(R.string.tv_shows_favorite)
+        supportActionBar?.title = getString(R.string.favorite_tv_shows)
 
         setupAdapter()
         setupObserver()

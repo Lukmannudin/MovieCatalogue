@@ -149,7 +149,7 @@ class HomeActivityTest {
             (5, ClickOnBtnFavoriteTvShow()))
 
         openActionBarOverflowOrOptionsMenu(instrumentalContext)
-        onView(withText(instrumentalContext.getString(R.string.tv_shows_favorite))).perform(click())
+        onView(withText(instrumentalContext.getString(R.string.favorite_tv_shows))).perform(click())
         onView(withId(R.id.rv_favorite_movies)).check(matches(isDisplayed()))
     }
 
@@ -170,24 +170,6 @@ class HomeActivityTest {
         }
     }
 
-    private fun childAtPosition(
-        parentMatcher: Matcher<View>, position: Int
-    ): Matcher<View> {
-
-        return object : TypeSafeMatcher<View>() {
-            override fun describeTo(description: Description) {
-                description.appendText("Child at position $position in parent ")
-                parentMatcher.describeTo(description)
-            }
-
-            public override fun matchesSafely(view: View): Boolean {
-                val parent = view.parent
-                return parent is ViewGroup && parentMatcher.matches(parent)
-                        && view == parent.getChildAt(position)
-            }
-        }
-    }
-
     inner class ClickOnBtnFavoriteMovie : ViewAction {
         private var click = click()
 
@@ -200,7 +182,6 @@ class HomeActivityTest {
         }
 
         override fun perform(uiController: UiController, view: View) {
-            //btnClickMe -> Custom row item view button
             click.perform(uiController, view.findViewById(R.id.cb_favorite))
         }
     }
@@ -217,7 +198,6 @@ class HomeActivityTest {
         }
 
         override fun perform(uiController: UiController, view: View) {
-            //btnClickMe -> Custom row item view button
             click.perform(uiController, view.findViewById(R.id.cb_favorite))
         }
     }

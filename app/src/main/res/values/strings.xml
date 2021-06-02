@@ -13,7 +13,7 @@
     <string name="something_wrong">something wrong</string>
     <string name="rating">rating</string>
     <string name="favorite_movies">Favorite Movies</string>
-    <string name="tv_shows_favorite">Tv Shows Favorite</string>
+    <string name="favorite_tv_shows"> Favorite Tv Shows</string>
     <string name="user_rating">User Rating</string>
     <string name="popularity">Popularity</string>
     <string name="genres">Genres</string>
