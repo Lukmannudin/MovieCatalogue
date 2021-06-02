@@ -9,7 +9,9 @@ import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocal
 import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocal
 import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemote
 import com.lukmannudin.moviecatalogue.mapper.mapperhelper.*
+import com.lukmannudin.moviecatalogue.utils.Converters.fromGenresToString
 import com.lukmannudin.moviecatalogue.utils.Converters.toDate
+import com.lukmannudin.moviecatalogue.utils.Converters.toGenres
 import com.lukmannudin.moviecatalogue.utils.Converters.toLong
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -28,7 +30,10 @@ private val tvShowRemoteToTvShow : Mapper<TvShowRemote, TvShow> =
                 input.overview ?: "overview not defined",
                 input.releaseDate?.toDate(),
                 input.userScore ?: 0.0f,
-                basePosterPath + input.posterPath
+                basePosterPath + input.posterPath,
+                false,
+                input.genres,
+                input.popularity
             )
         }
     }
@@ -50,7 +55,9 @@ private val tvShowLocalToTvShowMapper: Mapper<TvShowLocal, TvShow> =
                 input.releaseDate.toDate(),
                 input.userScore,
                 input.posterPath,
-                input.isFavorite
+                input.isFavorite,
+                input.genres.toGenres(),
+                input.popularity
             )
         }
     }
@@ -72,7 +79,9 @@ private val tvShowToLocalMapper: Mapper<TvShow, TvShowLocal> =
                 input.releaseDate.toLong(),
                 input.userScore,
                 input.posterPath,
-                input.isFavorite
+                input.isFavorite,
+                input.genres.fromGenresToString(),
+                input.popularity
             )
         }
     }

@@ -1,147 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:descendantFocusability="blocksDescendants"
-    android:padding="16dp">
+    android:background="@color/pickled_bluewood">
 
-    <ImageView
-        android:id="@+id/iv_poster"
-        android:layout_width="150dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="18dp"
-        android:src="@drawable/ic_loading"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
-
-    <TextView
-        android:id="@+id/tv_rating"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
-        android:textColor="@color/purple_700"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@id/pb_rating"
-        app:layout_constraintEnd_toEndOf="@id/pb_rating"
-        app:layout_constraintStart_toStartOf="@id/pb_rating"
-        app:layout_constraintTop_toTopOf="@id/pb_rating"
-        tools:text="0%" />
+        android:background="@color/pickled_bluewood"
+        android:clipToPadding="false"
+        android:descendantFocusability="blocksDescendants"
+        android:padding="@dimen/small_margin"
+        android:paddingBottom="150dp">
 
-    <ProgressBar
-        android:id="@+id/pb_rating"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="@dimen/standard_margin"
-        android:background="@drawable/circular_shape"
-        android:indeterminate="false"
-        android:max="100"
-        android:progressDrawable="@drawable/circular_progressbar"
-        app:layout_constraintStart_toEndOf="@id/iv_poster"
-        app:layout_constraintTop_toTopOf="@id/iv_poster" />
+        <ImageView
+            android:id="@+id/iv_poster"
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="@dimen/small_margin"
+            android:src="@drawable/ic_loading"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
 
-    <TextView
-        android:id="@+id/popularity_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/small_margin"
-        android:text="@string/popularity"
-        android:textAllCaps="true"
-        android:textColor="@color/purple_700"
-        app:layout_constraintStart_toStartOf="@id/pb_rating"
-        app:layout_constraintTop_toBottomOf="@id/pb_rating" />
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cg_genres"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/standard_margin"
+            android:foregroundGravity="center"
+            android:textAlignment="center"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_poster" />
 
-    <TextView
-        android:id="@+id/popularity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="true"
-        app:layout_constraintStart_toStartOf="@id/pb_rating"
-        app:layout_constraintTop_toBottomOf="@id/popularity_label"
-        tools:text="1234.2" />
+        <TextView
+            android:id="@+id/tv_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@id/pb_rating"
+            app:layout_constraintEnd_toEndOf="@id/pb_rating"
+            app:layout_constraintStart_toStartOf="@id/pb_rating"
+            app:layout_constraintTop_toTopOf="@id/pb_rating"
+            tools:text="0%" />
 
-    <TextView
-        android:id="@+id/genre_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/small_margin"
-        android:text="@string/genres"
-        android:textAllCaps="true"
-        android:textColor="@color/purple_700"
-        app:layout_constraintStart_toStartOf="@id/pb_rating"
-        app:layout_constraintTop_toBottomOf="@id/popularity" />
+        <ProgressBar
+            android:id="@+id/pb_rating"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/large_margin"
+            android:background="@drawable/circular_shape"
+            android:indeterminate="false"
+            android:max="100"
+            android:progressDrawable="@drawable/circular_progressbar"
+            app:layout_constraintEnd_toStartOf="@id/popularity_label"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cg_genres" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/cg_genres"
-        android:layout_width="0dp"
-        android:layout_marginEnd="@dimen/standard_margin"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/pb_rating"
-        app:layout_constraintTop_toBottomOf="@id/genre_label" />
+        <TextView
+            android:id="@+id/popularity_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:text="@string/popularity"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/pb_rating"
+            app:layout_constraintTop_toTopOf="@id/pb_rating" />
 
-    <TextView
-        android:id="@+id/tv_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:gravity="start"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_poster"
-        tools:text="@string/dateline" />
+        <TextView
+            android:id="@+id/popularity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:textColor="@android:color/darker_gray"
+            app:layout_constraintStart_toStartOf="@id/popularity_label"
+            app:layout_constraintTop_toBottomOf="@id/popularity_label"
+            tools:text="1234.2" />
 
+        <TextView
+            android:id="@+id/release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:text="@string/release_date"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/popularity"
+            app:layout_constraintTop_toBottomOf="@id/popularity" />
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tv_date"
-        app:layout_constraintTop_toBottomOf="@+id/tv_date"
-        tools:text="@string/title" />
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/release_date"
+            app:layout_constraintTop_toBottomOf="@id/release_date"
+            tools:text="@string/dateline" />
 
-    <TextView
-        android:id="@+id/tv_overview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:gravity="start"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title"
-        tools:text="@string/overview" />
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/large_margin"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_date"
+            tools:text="@string/title" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lav_loading"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_poster"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/lottie_woman_walk" />
+        <TextView
+            android:id="@+id/tv_overview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            tools:text="@string/overview" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lav_failure"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_poster"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/lottie_woman_walk" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lav_loading"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_poster"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/lottie_woman_walk" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lav_failure"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_poster"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/lottie_woman_walk" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

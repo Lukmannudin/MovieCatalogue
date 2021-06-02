@@ -2,10 +2,15 @@ package com.lukmannudin.moviecatalogue.ui.movies.moviesdetail
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.chip.Chip
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.data.entity.Movie
@@ -50,6 +55,8 @@ class MoviesDetailActivity : AppCompatActivity() {
     private fun populateMovie(movie: Movie) {
         with(binding) {
             movie.let { movie ->
+                supportActionBar?.title = movie.title
+
                 ivPoster.setImage(this@MoviesDetailActivity, movie.posterPath)
                 tvTitle.text = movie.title
                 tvDate.text = movie.releaseDate?.toStringFormat()
@@ -68,9 +75,11 @@ class MoviesDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun createchippes(genres: List<Genre>){
+    private fun createchippes(genres: List<Genre>) {
+        binding.cgGenres.removeAllViews()
         for (genre in genres) {
             val chip = Chip(this@MoviesDetailActivity)
+            chip.setChipBackgroundColorResource(android.R.color.transparent)
             chip.text = genre.name
             binding.cgGenres.addView(chip)
         }
@@ -90,6 +99,7 @@ class MoviesDetailActivity : AppCompatActivity() {
 
         setContentView(activityDetailBinding.root)
         setSupportActionBar(activityDetailBinding.toolbar)
+
     }
 
     private fun setupObserver() {

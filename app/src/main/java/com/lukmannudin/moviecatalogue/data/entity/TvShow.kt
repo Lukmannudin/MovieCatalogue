@@ -1,6 +1,7 @@
 package com.lukmannudin.moviecatalogue.data.entity
 
 import android.os.Parcelable
+import com.lukmannudin.moviecatalogue.data.moviessource.local.Genre
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -12,5 +13,7 @@ data class TvShow(
     val releaseDate: Date?,
     val userScore: Float,
     val posterPath: String,
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    var genres: List<Genre>? = null,
+    var popularity: Float? = null,
 ) : Parcelable

@@ -1,6 +1,7 @@
 package com.lukmannudin.moviecatalogue.data.tvshowssource.remote
 
 import com.google.gson.annotations.SerializedName
+import com.lukmannudin.moviecatalogue.data.moviessource.local.Genre
 
 /**
  * Created by Lukmannudin on 09/05/21.
@@ -29,4 +30,10 @@ data class TvShowRemote(
 
     @SerializedName("poster_path")
     val posterPath: String? = null,
+
+    @SerializedName("genres")
+    val genres: List<Genre>? = null,
+
+    @SerializedName("popularity")
+    val popularity: Float? = null
 )

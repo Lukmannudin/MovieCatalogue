@@ -30,5 +30,11 @@ data class TvShowLocal(
     val posterPath: String,
 
     @ColumnInfo(name = "is_favorite")
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+
+    @ColumnInfo(name = "genres")
+    val genres: String? = null,
+
+    @ColumnInfo(name = "popularity")
+    val popularity: Float? = null
 )

@@ -34,7 +34,7 @@
         <activity
             android:name="com.lukmannudin.moviecatalogue.ui.movies.moviesdetail.MoviesDetailActivity"
             android:parentActivityName=".ui.home.HomeActivity"
-            android:theme="@style/Theme.MovieCatalogue.NoActionBar">
+            android:theme="@style/Theme.MovieCatalogue.Darker.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.home.HomeActivity" />
@@ -42,7 +42,7 @@
         <activity
             android:name="com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail.TvShowsDetailActivity"
             android:parentActivityName=".ui.home.HomeActivity"
-            android:theme="@style/Theme.MovieCatalogue.NoActionBar">
+            android:theme="@style/Theme.MovieCatalogue.Darker.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.home.HomeActivity" />
