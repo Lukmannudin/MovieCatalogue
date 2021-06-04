@@ -56,7 +56,6 @@ class HomeActivityTest {
     @Test
     fun loadMovies() {
         onView(withId(R.id.tabs)).perform(selectTabAtPosition(0))
-        Thread.sleep(500)
         onView(withId(R.id.rv_movies)).check(matches(isDisplayed()))
         onView(withId(R.id.rv_movies)).perform(
             RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(
@@ -68,7 +67,6 @@ class HomeActivityTest {
     @Test
     fun loadTvShows() {
         onView(withId(R.id.tabs)).perform(selectTabAtPosition(1))
-        Thread.sleep(500)
         onView(withId(R.id.rv_tvshows)).check(matches(isDisplayed()))
         onView(withId(R.id.rv_tvshows)).perform(
             RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(
@@ -112,16 +110,6 @@ class HomeActivityTest {
         onView(withId(R.id.rv_movies)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
             (1, ClickOnBtnFavoriteMovie()))
 
-        onView(withId(R.id.rv_movies)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
-            (3, ClickOnBtnFavoriteMovie()))
-
-        onView(withId(R.id.rv_movies)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
-            (4, ClickOnBtnFavoriteMovie()))
-
-        onView(withId(R.id.rv_movies)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
-            (5, ClickOnBtnFavoriteMovie()))
-
-
         openActionBarOverflowOrOptionsMenu(instrumentalContext)
         onView(withText(instrumentalContext.getString(R.string.favorite_movies))).perform(click())
         onView(withId(R.id.rv_favorite_movies)).check(matches(isDisplayed()))
@@ -130,7 +118,6 @@ class HomeActivityTest {
     @Test
     fun loadFavoriteTvShow() {
         onView(withId(R.id.tabs)).perform(selectTabAtPosition(1))
-        Thread.sleep(500)
         onView(withId(R.id.rv_tvshows)).check(matches(isDisplayed()))
 
         onView(withId(R.id.rv_tvshows)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
@@ -138,15 +125,6 @@ class HomeActivityTest {
 
         onView(withId(R.id.rv_tvshows)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
             (2, ClickOnBtnFavoriteTvShow()))
-
-        onView(withId(R.id.rv_tvshows)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
-            (3, ClickOnBtnFavoriteTvShow()))
-
-        onView(withId(R.id.rv_tvshows)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
-            (4, ClickOnBtnFavoriteTvShow()))
-
-        onView(withId(R.id.rv_tvshows)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
-            (5, ClickOnBtnFavoriteTvShow()))
 
         openActionBarOverflowOrOptionsMenu(instrumentalContext)
         onView(withText(instrumentalContext.getString(R.string.favorite_tv_shows))).perform(click())
