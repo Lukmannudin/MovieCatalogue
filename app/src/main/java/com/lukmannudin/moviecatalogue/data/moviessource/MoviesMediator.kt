@@ -13,7 +13,6 @@ import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieRemoteKey
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemote
 import com.lukmannudin.moviecatalogue.mapper.toMoviesFromRemote
 import com.lukmannudin.moviecatalogue.mapper.toMoviesLocal
-import kotlinx.coroutines.DelicateCoroutinesApi
 import okio.IOException
 import retrofit2.HttpException
 import retrofit2.Response
@@ -36,7 +35,6 @@ class MoviesMediator @Inject constructor(
         return InitializeAction.SKIP_INITIAL_REFRESH
     }
 
-    @DelicateCoroutinesApi
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, MovieLocal>
@@ -51,7 +49,8 @@ class MoviesMediator @Inject constructor(
             val response = remoteResponse(loadKey)
 
             val results = response?.body()?.results ?: return MediatorResult.Error(
-                Exception("something wrong with server"))
+                Exception("something wrong with server")
+            )
 
             if (isLastPage(remoteKey, response.body()!!.totalPages)) return MediatorResult.Success(
                 endOfPaginationReached = true
@@ -77,7 +76,7 @@ class MoviesMediator @Inject constructor(
         }
     }
 
-    private fun getLoadKey(remoteKey: MovieRemoteKey, loadType: LoadType): Int?{
+    private fun getLoadKey(remoteKey: MovieRemoteKey, loadType: LoadType): Int? {
         return when (loadType) {
             LoadType.REFRESH -> null
             LoadType.PREPEND -> prependType
@@ -100,12 +99,12 @@ class MoviesMediator @Inject constructor(
         }
     }
 
-    private fun isLastPage(remoteKey: MovieRemoteKey, lastPage:Int?): Boolean{
+    private fun isLastPage(remoteKey: MovieRemoteKey, lastPage: Int?): Boolean {
         if (remoteKey.movieNextPage == null || lastPage == null) return true
         return remoteKey.movieNextPage == lastPage
     }
 
-    private suspend fun remoteResponse(loadKey: Int?): Response<BaseResponse<List<MovieRemote>>>?{
+    private suspend fun remoteResponse(loadKey: Int?): Response<BaseResponse<List<MovieRemote>>>? {
         return loadKey?.let { key ->
             apiHelper.getPopularMovies(
                 language,
@@ -114,7 +113,7 @@ class MoviesMediator @Inject constructor(
         }
     }
 
-    private suspend fun insertMoviesToDB(movies: List<MovieRemote>){
+    private suspend fun insertMoviesToDB(movies: List<MovieRemote>) {
         movies.toMoviesFromRemote().toMoviesLocal().let { moviesLocal ->
             movieDao.insertMovies(
                 moviesLocal

@@ -36,7 +36,6 @@ class TvShowsMediator @Inject constructor(
         return InitializeAction.SKIP_INITIAL_REFRESH
     }
 
-    @DelicateCoroutinesApi
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, TvShowLocal>
