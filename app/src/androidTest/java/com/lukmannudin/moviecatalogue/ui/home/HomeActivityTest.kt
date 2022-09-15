@@ -56,8 +56,8 @@ class HomeActivityTest {
     @Test
     fun loadMovies() {
         onView(withId(R.id.tabs)).perform(selectTabAtPosition(0))
-        onView(withId(R.id.rv_movies)).check(matches(isDisplayed()))
-        onView(withId(R.id.rv_movies)).perform(
+        onView(withId(R.id.rv_popular_movies)).check(matches(isDisplayed()))
+        onView(withId(R.id.rv_popular_movies)).perform(
             RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(
                 targetPosition
             )
@@ -78,8 +78,8 @@ class HomeActivityTest {
     @Test
     fun loadDetailMovie() {
         onView(withId(R.id.tabs)).perform(selectTabAtPosition(0))
-        onView(withId(R.id.rv_movies)).check(matches(isDisplayed()))
-        onView(withId(R.id.rv_movies)).perform(
+        onView(withId(R.id.rv_popular_movies)).check(matches(isDisplayed()))
+        onView(withId(R.id.rv_popular_movies)).perform(
             RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
                 0, click()
             )
@@ -102,12 +102,12 @@ class HomeActivityTest {
     @Test
     fun loadFavoriteMovies() {
         onView(withId(R.id.tabs)).perform(selectTabAtPosition(0))
-        onView(withId(R.id.rv_movies)).check(matches(isDisplayed()))
+        onView(withId(R.id.rv_popular_movies)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.rv_movies)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
+        onView(withId(R.id.rv_popular_movies)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
             (0, ClickOnBtnFavoriteMovie()))
 
-        onView(withId(R.id.rv_movies)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
+        onView(withId(R.id.rv_popular_movies)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>
             (1, ClickOnBtnFavoriteMovie()))
 
         openActionBarOverflowOrOptionsMenu(instrumentalContext)

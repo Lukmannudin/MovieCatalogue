@@ -5,9 +5,6 @@ import androidx.paging.PagingData
 import com.lukmannudin.moviecatalogue.data.PagingDataSource
 import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
-import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
-import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemoteDataSource
-import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -32,6 +29,10 @@ class MovieRepositoryImpl @ExperimentalPagingApi
         return pagingDataSource.getPopularItems()
     }
 
+    override suspend fun getNowPlayingMovies(): Flow<PagingData<Movie>> {
+        return pagingDataSource.getNowPlayingItems()
+    }
+
     override suspend fun getFavoriteMovies(pageSize: Int): Flow<PagingData<Movie>> {
         return movieLocalDataSource.getFavoriteMovies(pageSize)
     }
@@ -39,27 +40,29 @@ class MovieRepositoryImpl @ExperimentalPagingApi
     override suspend fun getMovie(id: Int, language: String): Flow<Result<Movie>> = flow {
         when (val responseRemote = movieRemoteDataSource.getMovie(id, language)) {
             is Result.Success -> {
-                val responseLocal = movieLocalDataSource.getMovie(id, language)
-                val remoteMovie = responseRemote.data
-
-                if (responseLocal is Result.Success) {
-                    remoteMovie.isFavorite = responseLocal.data.isFavorite
-                    movieLocalDataSource.updateMovie(remoteMovie)
-                } else {
-                    movieLocalDataSource.saveMovie(remoteMovie)
-                }
+                val movie = responseRemote.data
+                emit(Result.Success(movie))
+                movieLocalDataSource.saveMovie(movie)
             }
             is Result.Error -> {
                 emit(movieLocalDataSource.getMovie(id, language))
             }
+            else -> {}
         }
+    }
 
-        when (val responseLocal = movieLocalDataSource.getMovie(id, language)) {
-            is Result.Success -> {
-                emit(Result.Success(responseLocal.data))
-            }
-            is Result.Error -> {
-                emit(Result.Error(responseLocal.exception))
+    override suspend fun getLatestMovie(language: String): Flow<Result<Movie>> {
+        return flow {
+            when (val responseRemote = movieRemoteDataSource.getLatestMovie(language)) {
+                is Result.Success -> {
+                    val movie = responseRemote.data
+                    emit(Result.Success(movie))
+                    movieLocalDataSource.saveMovie(movie)
+                }
+                is Result.Error -> {
+                    emit(movieLocalDataSource.getLatestMovie(language))
+                }
+                else -> {}
             }
         }
     }

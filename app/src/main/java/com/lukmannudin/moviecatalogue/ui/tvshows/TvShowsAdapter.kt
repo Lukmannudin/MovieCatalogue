@@ -60,23 +60,9 @@ class TvShowsAdapter : PagingDataAdapter<TvShow, TvShowsAdapter.TvShowViewHolder
         RecyclerView.ViewHolder(binding.root) {
         fun bind(tvShow: TvShow, shareCallback: (TvShow) -> Unit) {
             with(binding) {
-                tvItemTitle.text = tvShow.title
-                tvItemDate.text = tvShow.releaseDate?.toStringFormat()
-                tvItemOverview.text = tvShow.overview
                 ivPoster.setImage(itemView.context, tvShow.posterPath)
-                cbFavorite.isChecked = tvShow.isFavorite
-
-                ivShare.setOnClickListener {
-                    shareCallback.invoke(tvShow)
-                }
-
                 itemView.setOnClickListener {
                     TvShowsDetailActivity.start(itemView.context, tvShow.id)
-                }
-
-                cbFavorite.setOnClickListener {
-                    tvShow.isFavorite = cbFavorite.isChecked
-                    favoriteCallback.invoke(tvShow)
                 }
             }
         }

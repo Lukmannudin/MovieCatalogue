@@ -17,9 +17,12 @@ import java.util.*
 object Converters {
 
     private val defaultDateFormat = "yyyy-MM-DD"
-    val gson = Gson()
 
-    fun String.toDate(dateFormat: String = defaultDateFormat): Date {
+    fun String.toDate(dateFormat: String = defaultDateFormat): Date? {
+        if (this.isEmpty()) {
+            return null
+        }
+
         val sdf = SimpleDateFormat(dateFormat, Locale.ENGLISH)
         val cal = Calendar.getInstance()
         cal.time = sdf.parse(this) ?: throw IllegalArgumentException("date format not match")

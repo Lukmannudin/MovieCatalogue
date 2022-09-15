@@ -5,10 +5,10 @@ import com.lukmannudin.moviecatalogue.MovieCatalogueDatabase
 import com.lukmannudin.moviecatalogue.api.ApiHelper
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepository
 import com.lukmannudin.moviecatalogue.data.moviessource.MovieRepositoryImpl
-import com.lukmannudin.moviecatalogue.data.moviessource.MoviesMediator
-import com.lukmannudin.moviecatalogue.data.PagingDataSource
+import com.lukmannudin.moviecatalogue.data.moviessource.mediator.PopularMoviesMediator
 import com.lukmannudin.moviecatalogue.data.moviessource.MoviePagingDataSource
 import com.lukmannudin.moviecatalogue.data.moviessource.local.MovieLocalDataSource
+import com.lukmannudin.moviecatalogue.data.moviessource.mediator.NowPlayingMoviesMediator
 import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemoteDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowPagingDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
@@ -23,6 +23,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import java.util.*
 import javax.inject.Singleton
 
 /**
@@ -74,11 +75,19 @@ object RepositoryModule {
 
     @ExperimentalPagingApi
     @Provides
-    fun provideMoviesMediator(
+    fun providePopularMoviesMediator(
         apiHelper: ApiHelper,
         database: MovieCatalogueDatabase
-    ): MoviesMediator =
-        MoviesMediator(apiHelper, database, PagingCatalogueConfig.DEFAULT_LANGUAGE)
+    ): PopularMoviesMediator =
+        PopularMoviesMediator(apiHelper, database, Locale.getDefault().displayLanguage)
+
+    @ExperimentalPagingApi
+    @Provides
+    fun provideNowPlayingMoviesMediator(
+        apiHelper: ApiHelper,
+        database: MovieCatalogueDatabase
+    ): NowPlayingMoviesMediator =
+        NowPlayingMoviesMediator(apiHelper, database, Locale.getDefault().displayLanguage)
 
     @ExperimentalPagingApi
     @Provides

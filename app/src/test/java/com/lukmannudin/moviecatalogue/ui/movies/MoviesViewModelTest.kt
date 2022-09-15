@@ -53,7 +53,7 @@ class MoviesViewModelTest {
 
         verify(moviesRepository).getPopularMovies()
 
-        val movies = viewModel.movies()
+        val movies = viewModel.popularMovies()
 
         assertEquals(
             listOf(DummiesTest.dummyMovie),

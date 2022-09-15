@@ -12,6 +12,7 @@ import com.lukmannudin.moviecatalogue.mapper.toMoviesFlow
 import com.lukmannudin.moviecatalogue.mapper.toMoviesLocal
 import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /**
@@ -26,7 +27,7 @@ class MovieLocalDataSource @Inject constructor(
         return Pager(
             PagingConfig(PagingCatalogueConfig.DEFAULT_PAGE_SIZE)
         ) {
-            movieDao.getMovies()
+            movieDao.getPopularMovies()
         }.toMoviesFlow()
     }
 
@@ -36,6 +37,23 @@ class MovieLocalDataSource @Inject constructor(
         ) {
             movieDao.getFavoriteMovies()
         }.toMoviesFlow()
+    }
+
+    override suspend fun getNowPlayingMovies(language: String, page: Int): Flow<PagingData<Movie>> {
+        return Pager(
+            PagingConfig(PagingCatalogueConfig.DEFAULT_PAGE_SIZE)
+        ) {
+            movieDao.getLatestMovies()
+        }.toMoviesFlow()
+    }
+
+    override suspend fun getLatestMovie(language: String): Result<Movie> {
+        val latestMovie = movieDao.getLatestMovie()
+        return latestMovie?.let {
+            Result.Success(it.toMovieFromLocal())
+        } ?: kotlin.run {
+            Result.Error(Exception("movies is empty"))
+        }
     }
 
     override suspend fun getMovie(id: Int, language: String): Result<Movie> {

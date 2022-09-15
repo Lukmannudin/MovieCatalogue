@@ -14,20 +14,29 @@ interface ApiHelper {
     suspend fun getPopularMovies(
         language: String,
         page: Int
-    ) : Response<BaseResponse<List<MovieRemote>>>
+    ): Response<BaseResponse<List<MovieRemote>>>
 
     suspend fun getMovie(
         id: Int,
         language: String
-    ) : Response<MovieRemote>
+    ): Response<MovieRemote>
 
     suspend fun getPopularTvShows(
         language: String,
         page: Int
-    ) : Response<BaseResponse<List<TvShowRemote>>>
+    ): Response<BaseResponse<List<TvShowRemote>>>
 
     suspend fun getTvShow(
         id: Int,
         language: String
-    ) : Response<TvShowRemote>
+    ): Response<TvShowRemote>
+
+    suspend fun getLatestMovie(
+        language: String
+    ): Response<MovieRemote>
+
+    suspend fun getNowPlayingMovies(
+        language: String,
+        page: Int
+    ): Response<BaseResponse<List<MovieRemote>>>
 }

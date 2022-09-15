@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.data.moviessource
+package com.lukmannudin.moviecatalogue.data.moviessource.mediator
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
@@ -22,7 +22,7 @@ import javax.inject.Inject
  * Created by Lukmannudin on 20/05/21.
  */
 @ExperimentalPagingApi
-class MoviesMediator @Inject constructor(
+class NowPlayingMoviesMediator @Inject constructor(
     private val apiHelper: ApiHelper,
     private val database: MovieCatalogueDatabase,
     private val language: String
@@ -46,7 +46,7 @@ class MoviesMediator @Inject constructor(
             val loadKey = getLoadKey(remoteKey, loadType)
             if (loadKey == prependType) return MediatorResult.Success(endOfPaginationReached = true)
 
-            val response = remoteResponse(loadKey)
+            val response = remoteNowPlayingMoviesResponse(loadKey)
 
             val results = response?.body()?.results ?: return MediatorResult.Error(
                 Exception("something wrong with server")
@@ -104,9 +104,9 @@ class MoviesMediator @Inject constructor(
         return remoteKey.movieNextPage == lastPage
     }
 
-    private suspend fun remoteResponse(loadKey: Int?): Response<BaseResponse<List<MovieRemote>>>? {
+    private suspend fun remoteNowPlayingMoviesResponse(loadKey: Int?): Response<BaseResponse<List<MovieRemote>>>? {
         return loadKey?.let { key ->
-            apiHelper.getPopularMovies(
+            apiHelper.getNowPlayingMovies(
                 language,
                 key
             )

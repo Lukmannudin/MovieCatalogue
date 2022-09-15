@@ -22,6 +22,13 @@ interface ApiService {
         @Query("page") page: Int,
     ): Response<BaseResponse<List<MovieRemote>>>
 
+    @GET("movie/now_playing")
+    suspend fun getNowPlaying(
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String,
+        @Query("page") page: Int,
+    ): Response<BaseResponse<List<MovieRemote>>>
+
     @GET("movie/{movie_id}")
     suspend fun getMovie(
         @Path("movie_id") id: Int,
@@ -42,4 +49,10 @@ interface ApiService {
         @Query("api_key") apiKey: String,
         @Query("language") language: String
     ) : Response<TvShowRemote>
+
+    @GET("movie/latest")
+    suspend fun getLatestMovie(
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String
+    ) : Response<MovieRemote>
 }

@@ -17,8 +17,11 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovie(movie: MovieLocal)
 
-    @Query("SELECT * FROM movies ORDER BY release_date DESC")
-    fun getMovies(): PagingSource<Int, MovieLocal>
+    @Query("SELECT * FROM movies ORDER BY movies.popularity DESC")
+    fun getPopularMovies(): PagingSource<Int, MovieLocal>
+
+    @Query("SELECT * FROM movies ORDER BY movies.release_date DESC")
+    fun getLatestMovies(): PagingSource<Int, MovieLocal>
 
     @Query("SELECT * FROM movies WHERE is_favorite = 1")
     fun getFavoriteMovies(): PagingSource<Int, MovieLocal>
@@ -28,6 +31,9 @@ interface MovieDao {
 
     @Query("UPDATE movies SET is_favorite = :isFavorite WHERE id = :movieId")
     suspend fun updateFavorite(movieId: Int, isFavorite: Boolean)
+
+    @Query("SELECT * FROM movies ORDER BY movies.release_date DESC LIMIT 1")
+    suspend fun getLatestMovie(): MovieLocal?
 
     @Update
     suspend fun updateMovie(movieLocal: MovieLocal)

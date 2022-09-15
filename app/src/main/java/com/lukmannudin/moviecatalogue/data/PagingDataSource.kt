@@ -8,4 +8,5 @@ import kotlinx.coroutines.flow.Flow
  */
 interface PagingDataSource<T : Any> {
     fun getPopularItems(): Flow<PagingData<T>>
+    fun getNowPlayingItems(): Flow<PagingData<T>>
 }

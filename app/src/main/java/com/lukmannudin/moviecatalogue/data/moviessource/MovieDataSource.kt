@@ -16,6 +16,10 @@ interface MovieDataSource {
 
     suspend fun getFavoriteMovies(pageSize: Int): Flow<PagingData<Movie>>
 
+    suspend fun getNowPlayingMovies(language: String, page: Int): Flow<PagingData<Movie>>
+
+    suspend fun getLatestMovie(language: String): Result<Movie>
+
     suspend fun getMovie(id: Int, language: String): Result<Movie>
 
     suspend fun saveMovies(movies: List<Movie>)

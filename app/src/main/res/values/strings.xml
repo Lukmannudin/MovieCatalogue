@@ -18,4 +18,7 @@
     <string name="popularity">Popularity</string>
     <string name="genres">Genres</string>
     <string name="release_date">Release Date</string>
+    <string name="trending">Trending</string>
+    <string name="movie_highlight">Movie Highlight</string>
+    <string name="discover">Discover</string>
 </resources>

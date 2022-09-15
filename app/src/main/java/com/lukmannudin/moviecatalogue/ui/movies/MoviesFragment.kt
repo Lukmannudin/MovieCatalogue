@@ -11,10 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentMovieBinding
 import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
+import com.lukmannudin.moviecatalogue.utils.setImage
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -29,8 +31,10 @@ class MoviesFragment : Fragment() {
     private var _binding: FragmentMovieBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var moviesAdapter: MoviesAdapter
-    private lateinit var loadStateAdapter: MoviesLoadStateAdapter
+    private lateinit var popularMoviesAdapter: MoviesAdapter
+    private lateinit var popularLoadStateAdapter: MoviesLoadStateAdapter
+    private lateinit var nowPlayingMoviesAdapter: MoviesAdapter
+    private lateinit var nowPlayingLoadStateAdapter: MoviesLoadStateAdapter
 
     private val viewModel: MoviesViewModel by viewModels()
 
@@ -46,13 +50,20 @@ class MoviesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupAdapter()
         setupObserver()
+
+        viewModel.getLatestMovie()
     }
 
     private fun setupAdapter() {
-        moviesAdapter = MoviesAdapter()
-        loadStateAdapter = MoviesLoadStateAdapter(moviesAdapter)
+        setPopularMoviesAdapter()
+        setNowPlayingMoviesAdapter()
+    }
 
-        moviesAdapter.shareCallback = { movie ->
+    private fun setPopularMoviesAdapter() {
+        popularMoviesAdapter = MoviesAdapter()
+        popularLoadStateAdapter = MoviesLoadStateAdapter(popularMoviesAdapter)
+
+        popularMoviesAdapter.shareCallback = { movie ->
             if (activity != null) {
                 val mimeType = "text/plain"
                 ShareCompat.IntentBuilder
@@ -64,38 +75,103 @@ class MoviesFragment : Fragment() {
             }
         }
 
-        moviesAdapter.favoriteCallback = { movie ->
+        popularMoviesAdapter.favoriteCallback = { movie ->
             viewModel.updateFavorite(movie)
         }
 
-        with(binding.rvMovies) {
-            layoutManager = LinearLayoutManager(context)
+        with(binding.rvPopularMovies) {
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             setHasFixedSize(true)
-            adapter = moviesAdapter.withLoadStateHeaderAndFooter(
-                header = loadStateAdapter,
-                footer = loadStateAdapter
+            adapter = popularMoviesAdapter.withLoadStateHeaderAndFooter(
+                header = popularLoadStateAdapter,
+                footer = popularLoadStateAdapter
+            )
+        }
+    }
+
+    private fun setNowPlayingMoviesAdapter() {
+        nowPlayingMoviesAdapter = MoviesAdapter()
+        nowPlayingLoadStateAdapter = MoviesLoadStateAdapter(nowPlayingMoviesAdapter)
+
+        nowPlayingMoviesAdapter.shareCallback = { movie ->
+            if (activity != null) {
+                val mimeType = "text/plain"
+                ShareCompat.IntentBuilder
+                    .from(requireActivity())
+                    .setType(mimeType)
+                    .setChooserTitle(resources.getString(R.string.share_the_film_now))
+                    .setText(resources.getString(R.string.share_text, movie.title))
+                    .startChooser()
+            }
+        }
+
+        nowPlayingMoviesAdapter.favoriteCallback = { movie ->
+            viewModel.updateFavorite(movie)
+        }
+
+        with(binding.rvNowPlayingMovies) {
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            setHasFixedSize(true)
+            adapter = nowPlayingMoviesAdapter.withLoadStateHeaderAndFooter(
+                header = nowPlayingLoadStateAdapter,
+                footer = nowPlayingLoadStateAdapter
             )
         }
     }
 
     private fun setupObserver() {
-        lifecycleScope.launchWhenCreated {
-            moviesAdapter.loadStateFlow.collectLatest { loadState ->
+        setPopularMoviesObserver()
+        setNowPlayingObserver()
+
+        viewModel.latestMovie.observe(viewLifecycleOwner) { movie ->
+            binding.ivHighlight.setImage(requireContext(), movie.posterPath, false)
+        }
+    }
+
+    private fun setPopularMoviesObserver() {
+        lifecycleScope.launchWhenStarted {
+            popularMoviesAdapter.loadStateFlow.collectLatest { loadState ->
                 idlingResourceCheck(loadState)
                 showLoadingAndHideFailureView(loadState.refresh is LoadState.Loading)
             }
         }
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.movies().collectLatest {
-                moviesAdapter.submitData(it)
+        lifecycleScope.launchWhenStarted {
+            viewModel.popularMovies().collectLatest { pagingData ->
+                popularMoviesAdapter.apply {
+                    submitData(pagingData)
+                    if (snapshot().size > 0) {
+                        showHighlightMovie(snapshot()[0]?.posterPath)
+                    }
+                }
             }
         }
     }
 
+    private fun setNowPlayingObserver() {
+        lifecycleScope.launchWhenResumed {
+            nowPlayingMoviesAdapter.loadStateFlow.collectLatest { loadState ->
+                idlingResourceCheck(loadState)
+                showLoadingAndHideFailureView(loadState.refresh is LoadState.Loading)
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            viewModel.nowPlayingMovies().collectLatest { pagingData ->
+                nowPlayingMoviesAdapter.submitData(pagingData)
+            }
+        }
+    }
+
+    private fun showHighlightMovie(url: String?) {
+        url?.let {
+            binding.ivHighlight.setImage(requireContext(), url)
+        }
+    }
+
     // for ui testing
-    private fun idlingResourceCheck(loadState: CombinedLoadStates){
-        if (loadState.refresh == LoadState.Loading){
+    private fun idlingResourceCheck(loadState: CombinedLoadStates) {
+        if (loadState.refresh == LoadState.Loading) {
             EspressoIdlingResource.increment()
         } else {
             EspressoIdlingResource.decrement()

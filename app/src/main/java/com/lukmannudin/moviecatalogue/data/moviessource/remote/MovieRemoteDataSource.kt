@@ -49,6 +49,27 @@ class MovieRemoteDataSource @Inject constructor(
         }
     }
 
+    override suspend fun getNowPlayingMovies(language: String, page: Int): Flow<PagingData<Movie>> {
+        return flow {
+            val moviesRequest = apiHelper.getNowPlayingMovies(language, page)
+            emit(PagingData.from(moviesRequest.body()?.results.toMoviesFromRemote()))
+        }
+    }
+
+    override suspend fun getLatestMovie(language: String): Result<Movie> {
+        val movieRequest = apiHelper.getLatestMovie(language)
+        return if (movieRequest.isSuccessful) {
+            val movieRequestResults = movieRequest.body()
+            if (movieRequestResults == null) {
+                Result.Error(Exception("movie is empty"))
+            } else {
+                Result.Success(movieRequestResults.toMovieFromRemote())
+            }
+        } else {
+            Result.Error(Exception(movieRequest.message()))
+        }
+    }
+
     override suspend fun saveMovies(movies: List<Movie>) {
         // currently api not available
     }
@@ -64,5 +85,4 @@ class MovieRemoteDataSource @Inject constructor(
     override suspend fun updateMovie(movie: Movie) {
         // currently api not available
     }
-
 }

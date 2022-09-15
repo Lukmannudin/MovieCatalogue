@@ -15,24 +15,29 @@ import com.lukmannudin.moviecatalogue.R
  */
 
 
-fun ImageView.setImage(context: Context, imagePath: String) {
+fun ImageView.setImage(context: Context, imagePath: String, isRounded: Boolean = true) {
+    val requestOptions = if (isRounded) {
+        RequestOptions.placeholderOf(R.drawable.ic_loading)
+            .error(R.drawable.ic_error).transform(CenterCrop(), RoundedCorners(16))
+    } else {
+        RequestOptions.placeholderOf(R.drawable.ic_loading)
+            .error(R.drawable.ic_error).transform(CenterCrop())
+    }
+
     Glide.with(context)
         .load(imagePath)
-        .apply(
-            RequestOptions.placeholderOf(R.drawable.ic_loading)
-                .error(R.drawable.ic_error).transform(CenterCrop(), RoundedCorners(16))
-        )
+        .apply(requestOptions)
         .into(this)
 }
 
-fun Context.showToast(message: String){
+fun Context.showToast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
-fun View.visible(){
+fun View.visible() {
     this.visibility = View.VISIBLE
 }
 
-fun View.gone(){
+fun View.gone() {
     this.visibility = View.GONE
 }

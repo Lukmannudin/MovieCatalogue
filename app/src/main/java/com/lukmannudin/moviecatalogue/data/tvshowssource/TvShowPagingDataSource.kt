@@ -7,6 +7,7 @@ import com.lukmannudin.moviecatalogue.data.PagingDataSource
 import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.mapper.toTvShow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -26,6 +27,12 @@ class TvShowPagingDataSource @Inject constructor(
             pagingData.map { tvShowLocal ->
                 tvShowLocal.toTvShow()
             }
+        }
+    }
+
+    override fun getNowPlayingItems(): Flow<PagingData<TvShow>> {
+        return flow {
+
         }
     }
 }
