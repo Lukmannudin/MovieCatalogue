@@ -1,4 +1,4 @@
-package com.lukmannudin.moviecatalogue.data.tvshowssource
+package com.lukmannudin.moviecatalogue.data.tvshowssource.mediator
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
@@ -13,7 +13,6 @@ import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocal
 import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemote
 import com.lukmannudin.moviecatalogue.mapper.toTvShows
 import com.lukmannudin.moviecatalogue.mapper.toTvShowsLocal
-import kotlinx.coroutines.DelicateCoroutinesApi
 import okio.IOException
 import retrofit2.HttpException
 import retrofit2.Response
@@ -23,7 +22,7 @@ import javax.inject.Inject
  * Created by Lukmannudin on 20/05/21.
  */
 @ExperimentalPagingApi
-class TvShowsMediator @Inject constructor(
+class TvShowsPopularMediator @Inject constructor(
     private val apiHelper: ApiHelper,
     private val database: MovieCatalogueDatabase,
     private val language: String

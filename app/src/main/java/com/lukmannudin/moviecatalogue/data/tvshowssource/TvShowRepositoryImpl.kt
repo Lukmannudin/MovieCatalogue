@@ -29,8 +29,28 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
         return pagingDataSource.getPopularItems()
     }
 
+    override suspend fun getOnAirTvShows(): Flow<PagingData<TvShow>> {
+        return pagingDataSource.getNowPlayingItems()
+    }
+
     override suspend fun getFavoriteTvShows(pageSize: Int): Flow<PagingData<TvShow>> {
         return tvShowLocalDataSource.getFavoriteTvShows(pageSize)
+    }
+
+    override suspend fun getLatestTvShow(language: String): Flow<Result<TvShow>> {
+        return flow {
+            when (val responseRemote = tvShowRemoteDataSource.getLatestTvShow(language)) {
+                is Result.Success -> {
+                    val tvShow = responseRemote.data
+                    emit(Result.Success(tvShow))
+                    tvShowLocalDataSource.saveTvShow(tvShow)
+                }
+                is Result.Error -> {
+                    emit(tvShowLocalDataSource.getLatestTvShow(language))
+                }
+                else -> {}
+            }
+        }
     }
 
     override suspend fun getTvShow(id: Int, language: String): Flow<Result<TvShow>> = flow {
@@ -50,6 +70,7 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
             is Result.Error -> {
                 emit(tvShowLocalDataSource.getTvShow(id, language))
             }
+            else -> {}
         }
 
         when (val responseLocal = tvShowLocalDataSource.getTvShow(id, language)) {
@@ -59,6 +80,7 @@ class TvShowRepositoryImpl @ExperimentalPagingApi
             is Result.Error -> {
                 emit(Result.Error(responseLocal.exception))
             }
+            else -> {}
         }
     }
 

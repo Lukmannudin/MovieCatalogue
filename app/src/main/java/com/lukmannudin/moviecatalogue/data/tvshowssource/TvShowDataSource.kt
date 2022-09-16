@@ -26,4 +26,8 @@ interface TvShowDataSource {
 
     suspend fun updateTvShow(tvShow: TvShow)
 
+    suspend fun getOnAirTvShows(language: String, page: Int): Flow<PagingData<TvShow>>
+
+    suspend fun getLatestTvShow(language: String): Result<TvShow>
+
 }

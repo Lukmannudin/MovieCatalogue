@@ -17,8 +17,14 @@ interface TvShowDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTvShows(tvShows: List<TvShowLocal>)
 
+    @Query("SELECT * FROM tvshow ORDER BY popularity DESC")
+    fun getPopularTvShows(): PagingSource<Int, TvShowLocal>
+
     @Query("SELECT * FROM tvshow ORDER BY release_date DESC")
-    fun getTvShows(): PagingSource<Int, TvShowLocal>
+    fun getLatestReleases(): PagingSource<Int, TvShowLocal>
+
+    @Query("SELECT * FROM tvshow ORDER BY release_date DESC LIMIT 1")
+    fun getLatestRelease(): TvShowLocal?
 
     @Query("SELECT * FROM tvshow WHERE id = :tvShowId")
     fun getTvShow(tvShowId: Int): TvShowLocal

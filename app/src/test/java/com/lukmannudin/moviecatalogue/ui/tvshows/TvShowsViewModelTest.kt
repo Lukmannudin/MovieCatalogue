@@ -51,7 +51,7 @@ class TvShowsViewModelTest {
 
         verify(tvShowRepository).getPopularTvShows()
 
-        val tvShows = viewModel.tvShows()
+        val tvShows = viewModel.popularTvShows()
 
         assertEquals(
             listOf(DummiesTest.dummyTvShow),

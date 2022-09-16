@@ -15,10 +15,14 @@ interface TvShowRepository {
 
     suspend fun getPopularTvShows(): Flow<PagingData<TvShow>>
 
+    suspend fun getOnAirTvShows(): Flow<PagingData<TvShow>>
+
     suspend fun getTvShow(id: Int, language: String): Flow<Result<TvShow>>
 
     suspend fun updateFavorite(tvShow: TvShow)
 
     suspend fun getFavoriteTvShows(pageSize: Int): Flow<PagingData<TvShow>>
+
+    suspend fun getLatestTvShow(language: String): Flow<Result<TvShow>>
 
 }

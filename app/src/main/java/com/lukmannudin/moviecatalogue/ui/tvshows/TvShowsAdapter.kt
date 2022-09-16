@@ -16,7 +16,7 @@ import com.lukmannudin.moviecatalogue.utils.setImage
  */
 
 
-class TvShowsAdapter : PagingDataAdapter<TvShow, TvShowsAdapter.TvShowViewHolder>(DIFF_CALLBACK) {
+class TvShowsAdapter : PagingDataAdapter<TvShow, TvShowViewHolder>(DIFF_CALLBACK) {
 
     lateinit var shareCallback: (TvShow) -> Unit
     lateinit var favoriteCallback: (TvShow) -> Unit
@@ -56,17 +56,6 @@ class TvShowsAdapter : PagingDataAdapter<TvShow, TvShowsAdapter.TvShowViewHolder
         }
     }
 
-    inner class TvShowViewHolder(private val binding: ItemMovieBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(tvShow: TvShow, shareCallback: (TvShow) -> Unit) {
-            with(binding) {
-                ivPoster.setImage(itemView.context, tvShow.posterPath)
-                itemView.setOnClickListener {
-                    TvShowsDetailActivity.start(itemView.context, tvShow.id)
-                }
-            }
-        }
-    }
 
     override fun onBindViewHolder(holder: TvShowViewHolder, position: Int) {
         getItem(position)?.let { holder.bind(it, shareCallback) }

@@ -13,8 +13,9 @@ import com.lukmannudin.moviecatalogue.data.moviessource.remote.MovieRemoteDataSo
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowPagingDataSource
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepository
 import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowRepositoryImpl
-import com.lukmannudin.moviecatalogue.data.tvshowssource.TvShowsMediator
+import com.lukmannudin.moviecatalogue.data.tvshowssource.mediator.TvShowsPopularMediator
 import com.lukmannudin.moviecatalogue.data.tvshowssource.local.TvShowLocalDataSource
+import com.lukmannudin.moviecatalogue.data.tvshowssource.mediator.TvShowsOnAirMediator
 import com.lukmannudin.moviecatalogue.data.tvshowssource.remote.TvShowRemoteDataSource
 import com.lukmannudin.moviecatalogue.utils.PagingCatalogueConfig
 import dagger.Module
@@ -91,11 +92,19 @@ object RepositoryModule {
 
     @ExperimentalPagingApi
     @Provides
-    fun provideTvShowsMediator(
+    fun provideTvShowsPopularMediator(
         apiHelper: ApiHelper,
         database: MovieCatalogueDatabase
-    ): TvShowsMediator =
-        TvShowsMediator(apiHelper, database, PagingCatalogueConfig.DEFAULT_LANGUAGE)
+    ): TvShowsPopularMediator =
+        TvShowsPopularMediator(apiHelper, database, PagingCatalogueConfig.DEFAULT_LANGUAGE)
+
+    @ExperimentalPagingApi
+    @Provides
+    fun provideTvShowsOnAirMediator(
+        apiHelper: ApiHelper,
+        database: MovieCatalogueDatabase
+    ): TvShowsOnAirMediator =
+        TvShowsOnAirMediator(apiHelper, database, PagingCatalogueConfig.DEFAULT_LANGUAGE)
 
 }
 

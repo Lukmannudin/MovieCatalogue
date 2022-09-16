@@ -48,4 +48,17 @@ class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : Ap
     ): Response<BaseResponse<List<MovieRemote>>> {
         return apiService.getNowPlaying(apiKey, language, page)
     }
+
+    override suspend fun getOnAirTvShows(
+        language: String,
+        page: Int
+    ): Response<BaseResponse<List<TvShowRemote>>> {
+        return apiService.getOnAirTvShows(apiKey, language)
+    }
+
+    override suspend fun getLatestTvShow(language: String): Response<TvShowRemote> {
+        return apiService.getLatestTvShow(apiKey, language)
+    }
+
+
 }

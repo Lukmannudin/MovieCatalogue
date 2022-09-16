@@ -67,4 +67,25 @@ class TvShowRemoteDataSource @Inject constructor(
     override suspend fun updateTvShow(tvShow: TvShow) {
         // currently api not available
     }
+
+    override suspend fun getOnAirTvShows(language: String, page: Int): Flow<PagingData<TvShow>> {
+        return flow {
+            val tvShowsRequest = apiHelper.getOnAirTvShows(language, page)
+            emit(PagingData.from(tvShowsRequest.body()?.results.toTvShows()))
+        }
+    }
+
+    override suspend fun getLatestTvShow(language: String): Result<TvShow> {
+        val tvShowRequest = apiHelper.getLatestTvShow(language)
+        return if (tvShowRequest.isSuccessful) {
+            val tvShowResult = tvShowRequest.body()
+            if (tvShowResult == null) {
+                Result.Error(Exception("tv show is empty"))
+            } else {
+                Result.Success(tvShowResult.toTvShow())
+            }
+        } else {
+            Result.Error(Exception(tvShowRequest.message()))
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package com.lukmannudin.moviecatalogue.ui.tvshows
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.R
 import com.lukmannudin.moviecatalogue.databinding.FragmentTvShowBinding
 import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
+import com.lukmannudin.moviecatalogue.utils.setImage
 import com.lukmannudin.moviecatalogue.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -31,8 +32,11 @@ class TvShowFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: TvShowsViewModel by viewModels()
-    private lateinit var tvShowsAdapter: TvShowsAdapter
-    private lateinit var loadStateAdapter: TvShowsLoadStateAdapter
+    private lateinit var tvShowsPopularAdapter: TvShowsAdapter
+    private lateinit var tvShowsPopularloadStateAdapter: TvShowsLoadStateAdapter
+
+    private lateinit var tvShowsOnAirAdapter: TvShowsAdapter
+    private lateinit var tvShowsOnAirLoadStateAdapter: TvShowsLoadStateAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,50 +50,114 @@ class TvShowFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupAdapter()
         setupObserver()
+
+        viewModel.getLatestTvShow()
     }
 
     private fun setupAdapter() {
-        tvShowsAdapter = TvShowsAdapter()
-        loadStateAdapter = TvShowsLoadStateAdapter(tvShowsAdapter)
+        setTvShowPopularAdapter()
+        setTvShowOnAirAdapter()
+    }
 
-        tvShowsAdapter.shareCallback = { tvShow ->
+    private fun setTvShowPopularAdapter() {
+        tvShowsPopularAdapter = TvShowsAdapter()
+        tvShowsPopularloadStateAdapter = TvShowsLoadStateAdapter(tvShowsPopularAdapter)
+
+        tvShowsPopularAdapter.shareCallback = { movie ->
             if (activity != null) {
                 val mimeType = "text/plain"
                 ShareCompat.IntentBuilder
                     .from(requireActivity())
                     .setType(mimeType)
                     .setChooserTitle(resources.getString(R.string.share_the_film_now))
-                    .setText(resources.getString(R.string.share_text, tvShow.title))
+                    .setText(resources.getString(R.string.share_text, movie.title))
                     .startChooser()
             }
         }
 
-        tvShowsAdapter.favoriteCallback = { tvShow ->
-            viewModel.updateFavorite(tvShow)
+        tvShowsPopularAdapter.favoriteCallback = { movie ->
+            viewModel.updateFavorite(movie)
         }
 
         with(binding.rvTvshows) {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             setHasFixedSize(true)
-            adapter = tvShowsAdapter.withLoadStateHeaderAndFooter(
-                header = loadStateAdapter,
-                footer = loadStateAdapter
+            adapter = tvShowsPopularAdapter.withLoadStateHeaderAndFooter(
+                header = tvShowsPopularloadStateAdapter,
+                footer = tvShowsPopularloadStateAdapter
+            )
+        }
+    }
+
+    private fun setTvShowOnAirAdapter() {
+        tvShowsOnAirAdapter = TvShowsAdapter()
+        tvShowsOnAirLoadStateAdapter = TvShowsLoadStateAdapter(tvShowsOnAirAdapter)
+
+        tvShowsOnAirAdapter.shareCallback = { movie ->
+            if (activity != null) {
+                val mimeType = "text/plain"
+                ShareCompat.IntentBuilder
+                    .from(requireActivity())
+                    .setType(mimeType)
+                    .setChooserTitle(resources.getString(R.string.share_the_film_now))
+                    .setText(resources.getString(R.string.share_text, movie.title))
+                    .startChooser()
+            }
+        }
+
+        tvShowsOnAirAdapter.favoriteCallback = { movie ->
+            viewModel.updateFavorite(movie)
+        }
+
+        with(binding.rvNowPlayingTvshows) {
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            setHasFixedSize(true)
+            adapter = tvShowsOnAirAdapter.withLoadStateHeaderAndFooter(
+                header = tvShowsOnAirLoadStateAdapter,
+                footer = tvShowsOnAirLoadStateAdapter
             )
         }
     }
 
     private fun setupObserver() {
-        lifecycleScope.launchWhenCreated {
-            tvShowsAdapter.loadStateFlow.collectLatest { loadState ->
+        setTvShowsPopularObserver()
+        setTvShowsOnAirObserver()
+        setLatestTvShowObserver()
+    }
+
+    private fun setTvShowsPopularObserver() {
+        lifecycleScope.launchWhenResumed {
+            tvShowsPopularAdapter.loadStateFlow.collectLatest { loadState ->
                 idlingResourceCheck(loadState)
                 showLoadingAndHideFailureView(loadState.mediator?.refresh is LoadState.Loading)
             }
         }
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.tvShows().collectLatest {
-                tvShowsAdapter.submitData(it)
+        lifecycleScope.launchWhenResumed {
+            viewModel.popularTvShows().collectLatest {
+                tvShowsPopularAdapter.submitData(it)
             }
+        }
+    }
+
+    private fun setTvShowsOnAirObserver() {
+        lifecycleScope.launchWhenResumed {
+            tvShowsOnAirAdapter.loadStateFlow.collectLatest { loadState ->
+                idlingResourceCheck(loadState)
+                showLoadingAndHideFailureView(loadState.mediator?.refresh is LoadState.Loading)
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            viewModel.onAirTvShows().collectLatest {
+                tvShowsOnAirAdapter.submitData(it)
+            }
+        }
+    }
+
+    private fun setLatestTvShowObserver() {
+        viewModel.latestTvShow.observe(viewLifecycleOwner) { tvShow ->
+            binding.ivHighlight.setImage(requireContext(), tvShow.posterPath)
         }
     }
 

@@ -39,4 +39,13 @@ interface ApiHelper {
         language: String,
         page: Int
     ): Response<BaseResponse<List<MovieRemote>>>
+
+    suspend fun getOnAirTvShows(
+        language: String,
+        page: Int
+    ): Response<BaseResponse<List<TvShowRemote>>>
+
+    suspend fun getLatestTvShow(
+        language: String
+    ): Response<TvShowRemote>
 }

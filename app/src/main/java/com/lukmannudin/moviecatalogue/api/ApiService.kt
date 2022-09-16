@@ -55,4 +55,16 @@ interface ApiService {
         @Query("api_key") apiKey: String,
         @Query("language") language: String
     ) : Response<MovieRemote>
+
+    @GET("tv/on_the_air")
+    suspend fun getOnAirTvShows(
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String
+    ) : Response<BaseResponse<List<TvShowRemote>>>
+
+    @GET("tv/latest")
+    suspend fun getLatestTvShow(
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String
+    ) : Response<TvShowRemote>
 }

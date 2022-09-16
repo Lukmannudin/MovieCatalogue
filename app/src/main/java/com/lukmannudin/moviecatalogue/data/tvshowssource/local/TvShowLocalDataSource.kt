@@ -24,7 +24,7 @@ class TvShowLocalDataSource @Inject constructor(
         return Pager(
             PagingConfig(PagingCatalogueConfig.DEFAULT_PAGE_SIZE)
         ) {
-            tvShowDao.getTvShows()
+            tvShowDao.getPopularTvShows()
         }.toTvShowsFlow()
     }
 
@@ -60,5 +60,26 @@ class TvShowLocalDataSource @Inject constructor(
 
     override suspend fun updateTvShow(tvShow: TvShow) {
         tvShowDao.updateTvShow(tvShow.toTvShowLocal())
+    }
+
+    override suspend fun getOnAirTvShows(language: String, page: Int): Flow<PagingData<TvShow>> {
+        return Pager(
+            PagingConfig(PagingCatalogueConfig.DEFAULT_PAGE_SIZE)
+        ) {
+            tvShowDao.getPopularTvShows()
+        }.toTvShowsFlow()
+    }
+
+    override suspend fun getLatestTvShow(language: String): Result<TvShow> {
+        return try {
+            val tvShow = tvShowDao.getLatestRelease()
+            tvShow?.let {
+                Result.Success(tvShow.toTvShow())
+            } ?: kotlin.run {
+                Result.Error(NullPointerException())
+            }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }

@@ -6,16 +6,58 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
+    <ImageView
+        android:id="@+id/iv_highlight"
+        android:layout_width="0dp"
+        android:layout_height="240dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_trending_label"
+        style="@style/heading.label1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/standard_x_margin"
+        android:layout_marginTop="@dimen/standard_x_margin"
+        android:text="@string/trending"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_highlight" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tvshows"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/standard_x_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_tvshow">
+        app:layout_constraintTop_toBottomOf="@id/tv_trending_label"
+        />
+
+    <TextView
+        android:id="@+id/tv_discover_label"
+        style="@style/heading.label1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/standard_x_margin"
+        android:layout_marginTop="@dimen/standard_x_margin"
+        android:text="@string/discover"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_tvshows" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_now_playing_tvshows"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/standard_x_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_discover_label">
 
     </androidx.recyclerview.widget.RecyclerView>
 
