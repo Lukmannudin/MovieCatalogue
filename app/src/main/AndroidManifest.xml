@@ -3,8 +3,7 @@
     package="com.lukmannudin.moviecatalogue">
 
     <uses-permission android:name="android.permission.INTERNET" />
-        <uses-permission android:name="android.permission.ACCEPT_HANDOVER" />
-
+    <uses-permission android:name="android.permission.ACCEPT_HANDOVER" />
 
     <application
         android:name=".MovieCatalogueApplication"
@@ -14,6 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieCatalogue">
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:theme="@style/Theme.MovieCatalogue"
+            android:exported="false" />
+
         <activity android:name=".ui.movies.favoritemovie.FavoriteMovieActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -25,9 +29,9 @@
                 android:value=".ui.home.HomeActivity" />
         </activity>
         <activity
-            android:name=".ui.home.HomeActivity"
-            android:theme="@style/Theme.MovieCatalogue"
-            android:exported="true">
+            android:name=".ui.login.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Design.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

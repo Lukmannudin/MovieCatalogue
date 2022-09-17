@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">MovieCata</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name">TMDB</string>
     <string name="movies">Movies</string>
     <string name="tv_shows">Tv Shows</string>
     <string name="title">title</string>
@@ -22,4 +21,5 @@
     <string name="movie_highlight">Movie Highlight</string>
     <string name="discover">Discover</string>
     <string name="vote_average">Vote Average</string>
+    <string name="guest">Guest</string>
 </resources>
