@@ -8,11 +8,12 @@ import com.lukmannudin.moviecatalogue.utils.setImage
 
 class TvShowViewHolder(private val binding: ItemMovieBinding) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(tvShow: TvShow, shareCallback: (TvShow) -> Unit) {
+    fun bind(tvShow: TvShow, onMoveClick: (tvShowId: Int) -> Unit) {
         with(binding) {
             ivPoster.setImage(itemView.context, tvShow.posterPath)
             itemView.setOnClickListener {
-                TvShowsDetailActivity.start(itemView.context, tvShow.id)
+//                TvShowsDetailActivity.start(itemView.context, tvShow.id)
+                onMoveClick.invoke(tvShow.id)
             }
         }
     }

@@ -27,5 +27,4 @@ class MainCoroutineRule : TestWatcher(), TestCoroutineScope by TestCoroutineScop
         super.finished(description)
         Dispatchers.resetMain()
     }
-
 }

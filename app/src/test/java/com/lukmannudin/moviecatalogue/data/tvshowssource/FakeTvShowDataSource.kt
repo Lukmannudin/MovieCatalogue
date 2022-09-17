@@ -46,4 +46,14 @@ class FakeTvShowDataSource : TvShowDataSource {
     override suspend fun updateTvShow(TvShow: TvShow) {
         // do nothing
     }
+
+    override suspend fun getOnAirTvShows(language: String, page: Int): Flow<PagingData<TvShow>> {
+        return flow {
+            emit(PagingData.from(listOf(DummiesTest.dummyTvShow)))
+        }
+    }
+
+    override suspend fun getLatestTvShow(language: String): Result<TvShow> {
+        return Result.Success(DummiesTest.dummyTvShow)
+    }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagedList
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.lukmannudin.moviecatalogue.data.entity.Movie
@@ -32,6 +33,9 @@ class MoviesViewModel @Inject constructor(
 
     private val _latestMovie = MutableLiveData<Movie>()
     val latestMovie: LiveData<Movie> = _latestMovie
+
+    private val _movies = MutableLiveData<PagedList<Movie>>()
+    val movies: LiveData<PagedList<Movie>> = _movies
 
     suspend fun popularMovies(): Flow<PagingData<Movie>> {
         return movieRepository.getPopularMovies().cachedIn(viewModelScope)

@@ -32,30 +32,4 @@ class HomeActivity : AppCompatActivity() {
         supportActionBar?.elevation = 0f
         supportActionBar?.title = getString(R.string.app_name)
     }
-
-    private fun navigateToMoviesFavorite(){
-        startActivity(Intent(this, FavoriteMovieActivity::class.java))
-    }
-
-    private fun navigateToTvShowsFavorite(){
-        startActivity(Intent(this, FavoriteTvShowActivity::class.java))
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.home_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
-            R.id.menu_movie_favorite -> {
-                navigateToMoviesFavorite()
-            }
-
-            R.id.menu_tvshows_favorites -> {
-                navigateToTvShowsFavorite()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
 }

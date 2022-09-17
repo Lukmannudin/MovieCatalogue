@@ -58,30 +58,9 @@ class MoviesDetailActivity : AppCompatActivity() {
                 supportActionBar?.title = movie.title
 
                 ivPoster.setImage(this@MoviesDetailActivity, movie.posterPath)
-                tvTitle.text = movie.title
-                tvDate.text = movie.releaseDate?.toStringFormat()
+                tvReleaseDate.text = movie.releaseDate?.toStringFormat()
                 tvOverview.text = movie.overview
-                tvRating.text = movie.userScore.toPercentage()
-
-                pbRating.isEnabled = true
-                pbRating.progress = movie.userScore.toPercentageNumber()
-
-                popularity.text = movie.popularity.toString()
-
-                movie.genres?.let { genres ->
-                    createchippes(genres)
-                }
             }
-        }
-    }
-
-    private fun createchippes(genres: List<Genre>) {
-        binding.cgGenres.removeAllViews()
-        for (genre in genres) {
-            val chip = Chip(this@MoviesDetailActivity)
-            chip.setChipBackgroundColorResource(android.R.color.transparent)
-            chip.text = genre.name
-            binding.cgGenres.addView(chip)
         }
     }
 
@@ -104,7 +83,7 @@ class MoviesDetailActivity : AppCompatActivity() {
 
     private fun setupObserver() {
         EspressoIdlingResource.increment()
-        viewModel.moviesState.observe(this, { viewState ->
+        viewModel.moviesState.observe(this) { viewState ->
             when (viewState) {
                 is MovieDetailState.Loading -> {
                     showLoadingAndHideFailureView(true)
@@ -118,7 +97,7 @@ class MoviesDetailActivity : AppCompatActivity() {
                     EspressoIdlingResource.decrement()
                 }
             }
-        })
+        }
     }
 
     private fun showLoadingAndHideFailureView(status: Boolean) {

@@ -1,6 +1,6 @@
 package com.lukmannudin.moviecatalogue.data.moviessource
 
-import androidx.paging.*
+import androidx.paging.ExperimentalPagingApi
 import com.lukmannudin.moviecatalogue.DummiesTest
 import com.lukmannudin.moviecatalogue.MainCoroutineRule
 import com.lukmannudin.moviecatalogue.data.PagingCatalogueConfig
@@ -9,10 +9,8 @@ import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.data.entity.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -50,7 +48,7 @@ class MovieRepositoryImplTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @Before
-    fun createRepository() = runBlockingTest {
+    fun createRepository() = runTest {
 
         remoteMovieDataSource = FakeMovieDataSource()
         localRemoteDataSource = FakeMovieDataSource()
@@ -64,23 +62,8 @@ class MovieRepositoryImplTest {
         )
     }
 
-
     @Test
-    fun getPopularMovies() = runBlockingTest {
-        val movies = movieRepository.getPopularMovies()
-        val firstItem = movies.take(1).toList().first().collectDataForTest()
-        assertEquals(listOf(DummiesTest.dummyMovie), firstItem)
-    }
-
-    @Test
-    fun getFavoriteMovie() = runBlockingTest {
-        val movies = movieRepository.getFavoriteMovies(1)
-        val firstItem = movies.take(1).toList().first().collectDataForTest()
-        assertEquals(listOf(DummiesTest.dummyMovie), firstItem)
-    }
-
-    @Test
-    fun getMovie() = runBlockingTest {
+    fun getMovie() = runTest {
         val successMovie = movieRepository.getMovie(
             DummiesTest.dummyMovie.id,
             PagingCatalogueConfig.DEFAULT_LANGUAGE
@@ -89,31 +72,5 @@ class MovieRepositoryImplTest {
 
         val errorMovie = movieRepository.getMovie(-1, PagingCatalogueConfig.DEFAULT_LANGUAGE).last()
         assertTrue(errorMovie is Result.Error)
-    }
-
-    @ExperimentalCoroutinesApi
-    private suspend fun <T : Any> PagingData<T>.collectDataForTest(): List<T> {
-        val dcb = object : DifferCallback {
-            override fun onChanged(position: Int, count: Int) {}
-            override fun onInserted(position: Int, count: Int) {}
-            override fun onRemoved(position: Int, count: Int) {}
-        }
-        val items = mutableListOf<T>()
-        val dif = object : PagingDataDiffer<T>(dcb, TestCoroutineDispatcher()) {
-            override suspend fun presentNewList(
-                previousList: NullPaddedList<T>,
-                newList: NullPaddedList<T>,
-                newCombinedLoadStates: CombinedLoadStates,
-                lastAccessedIndex: Int,
-                onListPresentable: () -> Unit
-            ): Int? {
-                for (idx in 0 until newList.size)
-                    items.add(newList.getFromStorage(idx))
-                onListPresentable()
-                return null
-            }
-        }
-        dif.collectFrom(this)
-        return items
     }
 }

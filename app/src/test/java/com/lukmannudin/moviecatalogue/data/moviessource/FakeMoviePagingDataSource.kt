@@ -14,4 +14,10 @@ class FakeMoviePagingDataSource : PagingDataSource<Movie> {
             emit(PagingData.from(listOf(DummiesTest.dummyMovie)))
         }
     }
+
+    override fun getNowPlayingItems(): Flow<PagingData<Movie>> {
+        return flow {
+            emit(PagingData.from(listOf(DummiesTest.dummyMovie)))
+        }
+    }
 }

@@ -14,4 +14,10 @@ class FakeTvShowPagingDataSource : PagingDataSource<TvShow> {
             emit(PagingData.from(listOf(DummiesTest.dummyTvShow)))
         }
     }
+
+    override fun getNowPlayingItems(): Flow<PagingData<TvShow>> {
+        return flow {
+            emit(PagingData.from(listOf(DummiesTest.dummyTvShow)))
+        }
+    }
 }

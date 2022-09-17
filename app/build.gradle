@@ -18,9 +18,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
-        buildConfigField "String", "MOVIE_DB_API_KEY", "\"71a0aa78b8982598bc043f96ac0b3937\""
     }
 
     buildTypes {
@@ -45,6 +42,11 @@ android {
         }
         testOptions {
             unitTests.returnDefaultValues = true
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path 'src/CMakeLists.txt'
         }
     }
 }

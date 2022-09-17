@@ -3,6 +3,8 @@ package com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -12,6 +14,7 @@ import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.data.moviessource.local.Genre
 import com.lukmannudin.moviecatalogue.databinding.ActivityDetailBinding
 import com.lukmannudin.moviecatalogue.databinding.ActivityMoviesDetailBinding
+import com.lukmannudin.moviecatalogue.ui.home.HomeActivity
 import com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail.TvShowsDetailViewModel.TvShowDetailState
 import com.lukmannudin.moviecatalogue.utils.Converters.toPercentage
 import com.lukmannudin.moviecatalogue.utils.Converters.toPercentageNumber
@@ -52,31 +55,18 @@ class TvShowsDetailActivity : AppCompatActivity() {
                 supportActionBar?.title = tvShow.title
 
                 ivPoster.setImage(this@TvShowsDetailActivity, tvShow.posterPath)
-                tvTitle.text = tvShow.title
-                tvDate.text = tvShow.releaseDate?.toStringFormat()
+                tvReleaseDate.text = tvShow.releaseDate?.toStringFormat()
                 tvOverview.text = tvShow.overview
-                tvRating.text = tvShow.userScore.toPercentage()
-
-
-                pbRating.isEnabled = true
-                pbRating.progress = tvShow.userScore.toPercentageNumber()
-
-                popularity.text = tvShow.popularity.toString()
-
-                tvShow.genres?.let { genres ->
-                    createchippes(genres)
-                }
             }
         }
     }
 
-    private fun createchippes(genres: List<Genre>) {
-        for (genre in genres) {
-            val chip = Chip(this@TvShowsDetailActivity)
-            chip.setChipBackgroundColorResource(android.R.color.transparent)
-            chip.text = genre.name
-            binding.cgGenres.addView(chip)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
         }
+        return false
     }
 
     private fun setContentViewBinding() {
@@ -97,7 +87,7 @@ class TvShowsDetailActivity : AppCompatActivity() {
 
     private fun setupObserver() {
         EspressoIdlingResource.increment()
-        viewModel.tvShowState.observe(this, { viewState ->
+        viewModel.tvShowState.observe(this) { viewState ->
             when (viewState) {
                 is TvShowDetailState.Loading -> {
                     showLoadingAndHideFailureView(true)
@@ -111,7 +101,7 @@ class TvShowsDetailActivity : AppCompatActivity() {
                     EspressoIdlingResource.decrement()
                 }
             }
-        })
+        }
     }
 
     private fun showLoadingAndHideFailureView(status: Boolean) {
@@ -129,7 +119,9 @@ class TvShowsDetailActivity : AppCompatActivity() {
         private const val TVSHOW_EXTRA = "tvshow_extra"
 
         fun start(context: Context, tvShowId: Int) {
-            val intent = Intent(context, TvShowsDetailActivity::class.java)
+            val intent = Intent(context, TvShowsDetailActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
             intent.putExtra(TVSHOW_EXTRA, tvShowId)
             context.startActivity(intent)
         }

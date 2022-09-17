@@ -4,6 +4,7 @@ import com.lukmannudin.moviecatalogue.BuildConfig
 import com.lukmannudin.moviecatalogue.api.ApiHelper
 import com.lukmannudin.moviecatalogue.api.ApiHelperImpl
 import com.lukmannudin.moviecatalogue.api.ApiService
+import com.lukmannudin.moviecatalogue.utils.Keys
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,41 +26,42 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    @Provides
-    fun providesBaseUrl() = BuildConfig.BASE_URL
-
     @Singleton
     @Provides
-    fun provideOkHttpClient(
-        MOVIE_DB_API_KEY: String
-    ) = if (BuildConfig.DEBUG){
-        val logginInterceptor = HttpLoggingInterceptor()
-
+    fun provideOkHttpClient(): OkHttpClient {
         val apiKeyInterceptor = object : Interceptor {
             override fun intercept(chain: Interceptor.Chain): Response {
-                val request = chain.request().newBuilder().addHeader("api_key", MOVIE_DB_API_KEY)
-                return chain.proceed(request.build())
+                val original = chain.request()
+                val originalHttpUrl = original.url.newBuilder().addQueryParameter(
+                    "api_key", Keys.getApiKey()).build()
+                val request = original.newBuilder().url(originalHttpUrl).build()
+                return chain.proceed(request)
             }
         }
-        logginInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        OkHttpClient.Builder()
-            .addInterceptor(logginInterceptor)
-            .addInterceptor(apiKeyInterceptor)
-            .build()
-    } else {
-        OkHttpClient.Builder()
-            .build()
+
+       return if (BuildConfig.DEBUG){
+            val logginInterceptor = HttpLoggingInterceptor()
+
+            logginInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            OkHttpClient.Builder()
+                .addInterceptor(logginInterceptor)
+                .addInterceptor(apiKeyInterceptor)
+                .build()
+        } else {
+            OkHttpClient.Builder()
+                .addInterceptor(apiKeyInterceptor)
+                .build()
+        }
     }
 
     @Singleton
     @Provides
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
-        BASE_URL: String
     ): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
+            .baseUrl(Keys.getBaseUrl())
             .client(okHttpClient)
             .build()
 

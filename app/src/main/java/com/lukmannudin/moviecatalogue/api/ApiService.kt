@@ -17,14 +17,12 @@ interface ApiService {
 
     @GET("movie/popular")
     suspend fun getPopularMovies(
-        @Query("api_key") apiKey: String,
         @Query("language") language: String,
         @Query("page") page: Int,
     ): Response<BaseResponse<List<MovieRemote>>>
 
     @GET("movie/now_playing")
     suspend fun getNowPlaying(
-        @Query("api_key") apiKey: String,
         @Query("language") language: String,
         @Query("page") page: Int,
     ): Response<BaseResponse<List<MovieRemote>>>
@@ -32,13 +30,11 @@ interface ApiService {
     @GET("movie/{movie_id}")
     suspend fun getMovie(
         @Path("movie_id") id: Int,
-        @Query("api_key") apiKey: String,
         @Query("language") language: String
     ) : Response<MovieRemote>
 
     @GET("tv/popular")
     suspend fun getPopularTvShows(
-        @Query("api_key") apiKey: String,
         @Query("language") language: String,
         @Query("page") page: Int
     ): Response<BaseResponse<List<TvShowRemote>>>
@@ -46,25 +42,21 @@ interface ApiService {
     @GET("tv/{tv_id}")
     suspend fun getTvShow(
         @Path("tv_id") id: Int,
-        @Query("api_key") apiKey: String,
         @Query("language") language: String
     ) : Response<TvShowRemote>
 
     @GET("movie/latest")
     suspend fun getLatestMovie(
-        @Query("api_key") apiKey: String,
         @Query("language") language: String
     ) : Response<MovieRemote>
 
     @GET("tv/on_the_air")
     suspend fun getOnAirTvShows(
-        @Query("api_key") apiKey: String,
         @Query("language") language: String
     ) : Response<BaseResponse<List<TvShowRemote>>>
 
     @GET("tv/latest")
     suspend fun getLatestTvShow(
-        @Query("api_key") apiKey: String,
         @Query("language") language: String
     ) : Response<TvShowRemote>
 }

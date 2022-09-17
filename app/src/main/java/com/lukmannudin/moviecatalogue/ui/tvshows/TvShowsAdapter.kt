@@ -16,10 +16,11 @@ import com.lukmannudin.moviecatalogue.utils.setImage
  */
 
 
-class TvShowsAdapter : PagingDataAdapter<TvShow, TvShowViewHolder>(DIFF_CALLBACK) {
+class TvShowsAdapter : PagingDataAdapter<TvShow, TvShowViewHolder>(TvShowCallback()) {
 
     lateinit var shareCallback: (TvShow) -> Unit
     lateinit var favoriteCallback: (TvShow) -> Unit
+    lateinit var onMoveClicked: (Int) -> Unit
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TvShowViewHolder {
         val itemsAcademyBinding =
@@ -34,30 +35,13 @@ class TvShowsAdapter : PagingDataAdapter<TvShow, TvShowViewHolder>(DIFF_CALLBACK
     ) {
         if (payloads.isNotEmpty()) {
             val item = getItem(position)
-            item?.let { holder.bind(it, shareCallback) }
+            item?.let { holder.bind(it, onMoveClicked) }
         } else {
             onBindViewHolder(holder, position)
         }
     }
 
-    companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TvShow>() {
-            override fun areItemsTheSame(oldItem: TvShow, newItem: TvShow): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: TvShow, newItem: TvShow): Boolean {
-                return oldItem == newItem
-            }
-
-            override fun getChangePayload(oldItem: TvShow, newItem: TvShow): Any {
-                return oldItem.id == newItem.id
-            }
-        }
-    }
-
-
     override fun onBindViewHolder(holder: TvShowViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it, shareCallback) }
+        getItem(position)?.let { holder.bind(it, onMoveClicked) }
     }
 }

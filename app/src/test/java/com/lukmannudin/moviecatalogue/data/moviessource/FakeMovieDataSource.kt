@@ -25,6 +25,16 @@ class FakeMovieDataSource : MovieDataSource {
         }
     }
 
+    override suspend fun getNowPlayingMovies(language: String, page: Int): Flow<PagingData<Movie>> {
+        return flow {
+            emit(PagingData.from(listOf(DummiesTest.dummyMovie)))
+        }
+    }
+
+    override suspend fun getLatestMovie(language: String): Result<Movie> {
+        return Result.Success(DummiesTest.dummyMovie)
+    }
+
     override suspend fun getMovie(id: Int, language: String): Result<Movie> {
         return if (id != DummiesTest.dummyMovie.id) {
             Result.Error(Exception(DummiesTest.errorMessage))

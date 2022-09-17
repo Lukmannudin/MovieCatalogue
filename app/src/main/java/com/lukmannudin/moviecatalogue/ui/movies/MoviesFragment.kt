@@ -13,6 +13,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.R
+import com.lukmannudin.moviecatalogue.data.entity.Movie
 import com.lukmannudin.moviecatalogue.databinding.FragmentMovieBinding
 import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
@@ -122,9 +123,12 @@ class MoviesFragment : Fragment() {
     private fun setupObserver() {
         setPopularMoviesObserver()
         setNowPlayingObserver()
+        setLatestMovieObserver()
+    }
 
+    private fun setLatestMovieObserver() {
         viewModel.latestMovie.observe(viewLifecycleOwner) { movie ->
-            binding.ivHighlight.setImage(requireContext(), movie.posterPath, false)
+            showHighlightMovie(movie)
         }
     }
 
@@ -141,7 +145,7 @@ class MoviesFragment : Fragment() {
                 popularMoviesAdapter.apply {
                     submitData(pagingData)
                     if (snapshot().size > 0) {
-                        showHighlightMovie(snapshot()[0]?.posterPath)
+                        showHighlightMovie(snapshot()[0])
                     }
                 }
             }
@@ -163,9 +167,12 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    private fun showHighlightMovie(url: String?) {
-        url?.let {
-            binding.ivHighlight.setImage(requireContext(), url)
+    private fun showHighlightMovie(movie: Movie?) {
+        movie?.let {
+            with(binding) {
+                tvHightlightTitle.text = movie.title
+                ivHighlight.setImage(requireContext(), movie.posterPath)
+            }
         }
     }
 

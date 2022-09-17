@@ -10,10 +10,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
+import androidx.paging.LoadStates
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lukmannudin.moviecatalogue.R
+import com.lukmannudin.moviecatalogue.data.entity.TvShow
 import com.lukmannudin.moviecatalogue.databinding.FragmentTvShowBinding
+import com.lukmannudin.moviecatalogue.ui.tvshows.tvshowsdetail.TvShowsDetailActivity
 import com.lukmannudin.moviecatalogue.utils.EspressoIdlingResource
 import com.lukmannudin.moviecatalogue.utils.gone
 import com.lukmannudin.moviecatalogue.utils.setImage
@@ -79,6 +82,11 @@ class TvShowFragment : Fragment() {
             viewModel.updateFavorite(movie)
         }
 
+        tvShowsPopularAdapter.onMoveClicked = {
+            TvShowsDetailActivity.start(requireActivity(), it)
+            requireActivity().finish()
+        }
+
         with(binding.rvTvshows) {
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             setHasFixedSize(true)
@@ -109,6 +117,10 @@ class TvShowFragment : Fragment() {
             viewModel.updateFavorite(movie)
         }
 
+        tvShowsOnAirAdapter.onMoveClicked = {
+            TvShowsDetailActivity.start(requireActivity(), it)
+        }
+
         with(binding.rvNowPlayingTvshows) {
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             setHasFixedSize(true)
@@ -135,7 +147,10 @@ class TvShowFragment : Fragment() {
 
         lifecycleScope.launchWhenResumed {
             viewModel.popularTvShows().collectLatest {
-                tvShowsPopularAdapter.submitData(it)
+                tvShowsPopularAdapter.apply {
+                    submitData(it)
+                    showHightlightTvShow(tvShowsPopularAdapter.snapshot()[0])
+                }
             }
         }
     }
@@ -157,7 +172,16 @@ class TvShowFragment : Fragment() {
 
     private fun setLatestTvShowObserver() {
         viewModel.latestTvShow.observe(viewLifecycleOwner) { tvShow ->
-            binding.ivHighlight.setImage(requireContext(), tvShow.posterPath)
+            showHightlightTvShow(tvShow)
+        }
+    }
+
+    private fun showHightlightTvShow(tvShow: TvShow?) {
+        tvShow?.let {
+            with(binding) {
+                ivHighlight.setImage(requireContext(), tvShow.posterPath)
+                tvHightlightTitle.text = tvShow.title
+            }
         }
     }
 
